@@ -7,7 +7,7 @@ import { getWordStorm, onWordsChange, clearWordStorm } from '@/lib/wordstorm';
 import WordCloud from '@/components/wordstorm/WordCloud';
 import Button from '@/components/Button';
 import HostMenu from '@/components/HostMenu';
-import html2canvas from 'html2canvas';
+
 import { Icons } from '@/components/picpick/Icons';
 
 export default function WordStormHostPage({ params }: { params: Promise<{ id: string }> }) {
@@ -87,27 +87,7 @@ export default function WordStormHostPage({ params }: { params: Promise<{ id: st
         return () => { isMounted = false; };
     }, [id]);
 
-    const handleDownload = async () => {
-        const element = document.getElementById('word-cloud-container');
-        if (!element) return;
 
-        try {
-            const canvas = await html2canvas(element, {
-                backgroundColor: null, // Transparent background
-                scale: 2, // Higher resolution
-                logging: false,
-                useCORS: true
-            } as any);
-
-            const link = document.createElement('a');
-            link.download = `WordStorm-${new Date().toISOString().slice(0, 10)}.png`;
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-        } catch (error) {
-            console.error('Download failed:', error);
-            alert('Failed to download image.');
-        }
-    };
 
     const handleClear = async () => {
         if (confirm('Are you sure you want to clear all words?')) {
@@ -132,13 +112,7 @@ export default function WordStormHostPage({ params }: { params: Promise<{ id: st
                     </div>
 
                     <div className="flex gap-3 items-center">
-                        <button
-                            onClick={handleDownload}
-                            className="px-5 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg text-sm font-semibold flex items-center gap-2 transition-colors shadow-sm"
-                            title="Download Image"
-                        >
-                            <Icons.Download className="w-4 h-4" /> Download
-                        </button>
+
                         <button
                             onClick={handleClear}
                             className="px-5 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-semibold flex items-center gap-2 transition-colors shadow-sm"

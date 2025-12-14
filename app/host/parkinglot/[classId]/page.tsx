@@ -86,7 +86,7 @@ export default function HostParkingLotPage({ params }: { params: Promise<{ class
                     </div>
                     <Button
                         variant="secondary"
-                        className="bg-slate-800 hover:bg-slate-700 text-white border-slate-700"
+                        className="bg-gray-900 text-white hover:bg-gray-800 dark:bg-slate-700 dark:hover:bg-slate-600 border-transparent shadow"
                         onClick={() => router.push(`/dashboard/class?id=${classId}`)}
                     >
                         ← Back to Class

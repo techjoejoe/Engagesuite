@@ -7,7 +7,7 @@ import { db } from '@/lib/firebase';
 import { updateClassActivity } from '@/lib/classes';
 import Button from '@/components/Button';
 import HostMenu from '@/components/HostMenu';
-import html2canvas from 'html2canvas';
+
 
 function CommitmentWallContent() {
     const searchParams = useSearchParams();
@@ -44,27 +44,30 @@ function CommitmentWallContent() {
         await batch.commit();
     };
 
-    const handleDownload = async () => {
-        const element = document.getElementById('commitment-wall-container');
-        if (!element) return;
 
-        try {
-            const canvas = await html2canvas(element, {
-                backgroundColor: '#0f172a',
-                scale: 2,
-                useCORS: true,
-                logging: false,
-            } as any);
+    const handleExportCSV = () => {
+        if (!commitments.length) return alert("No commitments to export.");
 
-            const link = document.createElement('a');
-            link.download = `commitment-wall-${new Date().toISOString().split('T')[0]}.png`;
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-        } catch (error) {
-            console.error('Error downloading wall:', error);
-            alert('Failed to download image.');
-        }
+        const headers = ["Student Name", "Commitment", "Time"];
+        const rows = commitments.map(c => [
+            `"${(c.userName || 'Anonymous').replace(/"/g, '""')}"`, // Escape quotes
+            `"${(c.text || '').replace(/"/g, '""')}"`,
+            `"${c.timestamp ? new Date(c.timestamp.seconds * 1000).toLocaleString() : ''}"`
+        ]);
+
+        const csvContent = "data:text/csv;charset=utf-8,"
+            + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `commitment_wall_${new Date().toISOString().split('T')[0]}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     };
+
+
 
     if (!classId) return <div className="text-white p-8">Missing Class ID</div>;
 
@@ -83,10 +86,11 @@ function CommitmentWallContent() {
                             What is your commitment to success?
                         </p>
                     </div>
-                    <div className="flex gap-3">
-                        <Button variant="secondary" onClick={handleDownload} className="bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 border border-indigo-500/20">
-                            📸 Save Image
+                    <div className="flex gap-3 flex-wrap justify-center">
+                        <Button variant="secondary" onClick={handleExportCSV} className="bg-green-500/10 text-green-400 hover:bg-green-500/20 border border-green-500/20">
+                            📊 Export Excel
                         </Button>
+
                         <Button variant="secondary" onClick={handleClear} className="bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20">
                             🗑️ Clear Wall
                         </Button>

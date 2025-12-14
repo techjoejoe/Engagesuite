@@ -519,21 +519,7 @@ export default function UserDash({ classData, userId, onLeaveClass }: UserDashPr
             }
         }
 
-        // 2. Priority: Pulse Check (if not dismissed)
-        if (activePulse && userProfile && activePulse.id !== dismissedPulseId) {
-            return (
-                <div className="relative">
-                    <button
-                        onClick={() => setDismissedPulseId(activePulse.id)}
-                        className="absolute -top-2 -right-2 z-10 bg-white/10 hover:bg-white/20 text-white rounded-full p-2 backdrop-blur-md transition-colors"
-                        title="Dismiss"
-                    >
-                        ✕
-                    </button>
-                    <PulseCheckView classId={classData.id} sessionId={activePulse.id} userId={userId} displayName={userProfile.displayName || 'Student'} />
-                </div>
-            );
-        }
+
 
         // 3. Fallback: Leaderboard (Should rarely be reached if isIdle logic handles Dashboard)
         return <ClassLeaderboard classId={classData.id} userId={userId} />;
@@ -649,6 +635,27 @@ export default function UserDash({ classData, userId, onLeaveClass }: UserDashPr
                         >
                             Close
                         </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Pulse Check Overlay */}
+            {activePulse && userProfile && activePulse.id !== dismissedPulseId && (
+                <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/95 backdrop-blur-md animate-fade-in p-6">
+                    <div className="relative w-full max-w-4xl flex flex-col items-center">
+                        <button
+                            onClick={() => setDismissedPulseId(activePulse.id)}
+                            className="absolute -top-12 right-0 z-50 bg-white/10 hover:bg-white/20 text-white rounded-full p-2 backdrop-blur-md transition-colors"
+                            title="Dismiss"
+                        >
+                            ✕
+                        </button>
+                        <PulseCheckView
+                            classId={classData.id}
+                            sessionId={activePulse.id}
+                            userId={userId}
+                            displayName={userProfile.displayName || 'Student'}
+                        />
                     </div>
                 </div>
             )}

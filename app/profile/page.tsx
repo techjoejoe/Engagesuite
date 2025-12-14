@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/Button';
 import Card from '@/components/Card';
-import { getCurrentUser, getUserProfile, signOutUser, updateUserProfile, onAuthStateChange } from '@/lib/auth';
+import { getCurrentUser, getUserProfile, signOutUser, updateUserProfile, onAuthStateChange, resetPassword } from '@/lib/auth';
 import { UserProfile } from '@/lib/auth';
 import { Icons } from '@/components/picpick/Icons';
 import ImageCropper from '@/components/ImageCropper';
@@ -19,16 +19,15 @@ export default function ProfilePage() {
     const [error, setError] = useState('');
     const [cropImageSrc, setCropImageSrc] = useState<string | null>(null);
 
+    // Editing State
+    const [isEditing, setIsEditing] = useState(false);
+    const [editName, setEditName] = useState('');
+    const [resetSent, setResetSent] = useState(false);
+
     useEffect(() => {
         let timer: NodeJS.Timeout;
-        let safetyTimer: NodeJS.Timeout;
+        const safetyTimer = setTimeout(() => setLoading(false), 5000);
 
-        // Safety timeout to prevent infinite loading
-        safetyTimer = setTimeout(() => {
-            setLoading(false);
-        }, 5000);
-
-        // Check if user is already known synchronously
         const currentUser = getCurrentUser();
         if (currentUser) {
             loadProfile(currentUser.uid);
@@ -39,10 +38,7 @@ export default function ProfilePage() {
                 clearTimeout(timer);
                 loadProfile(user.uid);
             } else {
-                // Delay showing "logged out" state to prevent flash during auth init
-                timer = setTimeout(() => {
-                    setLoading(false);
-                }, 2000);
+                timer = setTimeout(() => setLoading(false), 2000);
             }
         });
         return () => {
@@ -57,6 +53,7 @@ export default function ProfilePage() {
             const data = await getUserProfile(uid);
             if (data) {
                 setProfile(data);
+                setEditName(data.displayName || '');
             } else {
                 setError('Profile document not found.');
             }
@@ -87,8 +84,6 @@ export default function ProfilePage() {
             setCropImageSrc(reader.result as string);
         };
         reader.readAsDataURL(file);
-
-        // Reset input value to allow selecting the same file again
         e.target.value = '';
     };
 
@@ -108,10 +103,35 @@ export default function ProfilePage() {
         }
     };
 
+    const handleSaveProfile = async () => {
+        if (!profile) return;
+        if (!editName.trim()) return alert("Name cannot be empty");
+
+        try {
+            await updateUserProfile(profile.uid, { displayName: editName });
+            setProfile({ ...profile, displayName: editName });
+            setIsEditing(false);
+        } catch (e) {
+            console.error("Error updating profile:", e);
+            alert("Failed to update profile");
+        }
+    };
+
+    const handlePasswordReset = async () => {
+        if (!profile?.email) return;
+        try {
+            await resetPassword(profile.email);
+            setResetSent(true);
+            setTimeout(() => setResetSent(false), 5000);
+        } catch (e: any) {
+            alert("Error sending reset email: " + e.message);
+        }
+    };
+
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-900">
-                <div className="animate-pulse text-white">Loading profile...</div>
+                <div className="animate-pulse text-white font-medium">Loading profile...</div>
             </div>
         );
     }
@@ -120,12 +140,8 @@ export default function ProfilePage() {
         return (
             <div className="min-h-screen flex items-center justify-center flex-col gap-4 bg-gray-900 text-white">
                 <div className="text-xl text-red-400">Error: {error}</div>
-                <Button variant="primary" onClick={() => window.location.reload()}>
-                    Retry
-                </Button>
-                <Button variant="secondary" onClick={() => router.push('/')}>
-                    Go Home
-                </Button>
+                <Button variant="primary" onClick={() => window.location.reload()}>Retry</Button>
+                <Button variant="secondary" onClick={() => router.push('/')}>Go Home</Button>
             </div>
         );
     }
@@ -134,35 +150,19 @@ export default function ProfilePage() {
         return (
             <div className="min-h-screen flex items-center justify-center flex-col gap-4 bg-gray-900 text-white">
                 <div className="text-xl">Please log in to view your profile</div>
-                <div className="text-sm text-gray-400">
-                    Status: {loading ? 'Loading...' : 'Not Authenticated'}
-                </div>
-                <Button variant="primary" onClick={() => router.push('/login')}>
-                    Login
-                </Button>
-                <Button variant="secondary" onClick={() => window.location.reload()}>
-                    Force Refresh
-                </Button>
+                <Button variant="primary" onClick={() => router.push('/login')}>Login</Button>
             </div>
         );
     }
 
-    // Safely calculate stats with defaults
     const gamesPlayed = profile.gamesPlayed || 0;
     const gamesWon = profile.gamesWon || 0;
     const lifetimePoints = profile.lifetimePoints || 0;
-
-    const winRate = gamesPlayed > 0
-        ? ((gamesWon / gamesPlayed) * 100).toFixed(1)
-        : '0.0';
+    const winRate = gamesPlayed > 0 ? ((gamesWon / gamesPlayed) * 100).toFixed(1) : '0.0';
 
     return (
         <main className="min-h-screen bg-gray-50 dark:bg-slate-900 p-8 overflow-y-auto transition-colors duration-300">
-            {profile.role === 'host' ? (
-                <HostMenu currentPage="Profile" />
-            ) : (
-                <StudentMenu currentPage="Profile" />
-            )}
+            {profile.role === 'host' ? <HostMenu currentPage="Profile" /> : <StudentMenu currentPage="Profile" />}
 
             {cropImageSrc && (
                 <ImageCropper
@@ -172,17 +172,14 @@ export default function ProfilePage() {
                 />
             )}
 
-            <div className="container mx-auto max-w-4xl pb-16">
+            <div className="container mx-auto max-w-4xl pb-24">
                 <div className="animate-fade-in">
                     <div className="flex justify-between items-center mb-8">
                         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">My Profile</h1>
                         <div className="flex items-center gap-2">
-                            <button
-                                onClick={() => router.push(profile.role === 'host' ? '/dashboard' : '/student/dashboard')}
-                                className="px-5 py-2.5 rounded-xl font-bold transition-all bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 shadow-sm"
-                            >
-                                {profile.role === 'host' ? 'Dashboard' : 'Dashboard'}
-                            </button>
+                            <Button variant="secondary" onClick={() => router.push(profile.role === 'host' ? '/dashboard' : '/student/dashboard')}>
+                                Dashboard
+                            </Button>
                             <Button variant="danger" onClick={handleLogout}>
                                 Logout
                             </Button>
@@ -191,7 +188,7 @@ export default function ProfilePage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {/* Profile Card */}
-                        <Card className="md:col-span-1 flex flex-col items-center text-center gap-4 p-6 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700">
+                        <Card className="md:col-span-1 flex flex-col items-center text-center gap-4 p-6 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 h-fit">
                             <div className="relative group">
                                 <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-indigo-500 shadow-lg relative bg-gray-800">
                                     {profile.photoURL ? (
@@ -201,7 +198,6 @@ export default function ProfilePage() {
                                             {(profile.displayName || 'U').charAt(0).toUpperCase()}
                                         </div>
                                     )}
-
                                     {uploading && (
                                         <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
                                             <div className="animate-spin text-white">⏳</div>
@@ -210,20 +206,55 @@ export default function ProfilePage() {
                                 </div>
                                 <label className="absolute bottom-0 right-0 bg-indigo-600 text-white p-2 rounded-full cursor-pointer shadow-lg hover:bg-indigo-700 transition-colors">
                                     <Icons.Camera className="w-4 h-4" />
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        className="hidden"
-                                        onChange={handlePhotoSelect}
-                                        disabled={uploading}
-                                    />
+                                    <input type="file" accept="image/*" className="hidden" onChange={handlePhotoSelect} disabled={uploading} />
                                 </label>
                             </div>
 
-                            <div>
-                                <h2 className="text-xl font-bold text-gray-900 dark:text-white">{profile.displayName || 'User'}</h2>
-                                <p className="text-sm text-gray-500 dark:text-gray-400 capitalize">{profile.role || 'player'}</p>
-                                <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{profile.email}</p>
+                            <div className="w-full">
+                                {isEditing ? (
+                                    <div className="space-y-3 w-full">
+                                        <div>
+                                            <label className="text-xs text-gray-500 uppercase font-bold self-start">Display Name</label>
+                                            <input
+                                                type="text"
+                                                value={editName}
+                                                onChange={(e) => setEditName(e.target.value)}
+                                                className="w-full p-2 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded text-center text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500"
+                                            />
+                                        </div>
+                                        <div className="flex gap-2 justify-center">
+                                            <Button variant="primary" onClick={handleSaveProfile} className="text-xs !py-1 !px-3">Save</Button>
+                                            <Button variant="secondary" onClick={() => { setIsEditing(false); setEditName(profile.displayName || ''); }} className="text-xs !py-1 !px-3">Cancel</Button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center justify-center gap-2">
+                                            {profile.displayName || 'User'}
+                                            <button onClick={() => setIsEditing(true)} className="text-gray-400 hover:text-indigo-400">
+                                                <Icons.Edit className="w-4 h-4" />
+                                            </button>
+                                        </h2>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400 capitalize">{profile.role || 'player'}</p>
+                                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{profile.email}</p>
+                                    </>
+                                )}
+                            </div>
+
+                            <hr className="w-full border-gray-200 dark:border-slate-700 my-2" />
+
+                            <div className="w-full text-left">
+                                <h3 className="text-xs font-bold text-gray-500 uppercase mb-2">Account</h3>
+                                {resetSent ? (
+                                    <div className="text-sm text-green-500 font-bold bg-green-500/10 p-2 rounded text-center">✓ Email Sent</div>
+                                ) : (
+                                    <button
+                                        onClick={handlePasswordReset}
+                                        className="w-full py-2 px-3 text-sm text-center border border-gray-300 dark:border-slate-600 rounded hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-600 dark:text-gray-300 transition-colors"
+                                    >
+                                        Reset Password
+                                    </button>
+                                )}
                             </div>
                         </Card>
 

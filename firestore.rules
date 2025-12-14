@@ -1,211 +1,181 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Helper function to check if user is authenticated
+  
+    // --- Helper Functions ---
+
     function isAuthenticated() {
       return request.auth != null;
     }
 
-    // Helper function to check if user is accessing their own document
     function isOwner(userId) {
       return isAuthenticated() && request.auth.uid == userId;
     }
     
-    // Helper to check if the user is the Host of the class
-    function isClassHost(classId) {
-    	return isAuthenticated() && (
-      	resource.data.hostId == request.auth.uid ||
-        get(/databases/$(database)/documents/classes/$(classId)).data.hostId == request.auth.uid
-      );
-    }
-
-    // Users collection
-    match /users/{userId} {
-      allow read: if isAuthenticated();
-      allow create: if isAuthenticated(); 
-      // SECURITY: Only owner can update their profile/stats OR the Host of their current class (for points)
-      allow update: if isOwner(userId) || (
-        resource.data.joinedClassId != null && 
-        get(/databases/$(database)/documents/classes/$(resource.data.joinedClassId)).data.hostId == request.auth.uid
-      );
-      allow delete: if false; 
-      
-      // Subcollection for redemption history
-      match /redemptions/{redemptionId} {
-      	allow read: if isOwner(userId);
-        allow write: if isOwner(userId);
-      }
-    }
-
-    // Games collection (If used for Firestore-based games)
-    match /games/{gameId} {
-      allow read: if true; 
-      allow create: if isAuthenticated();
-      allow update: if isAuthenticated(); // Note: Consider restricting to Host if switched to Firestore
-      allow delete: if isAuthenticated() && resource.data.hostId == request.auth.uid;
-      
-      match /responses/{responseId} {
-        allow read: if isAuthenticated();
-        allow create: if isAuthenticated();
-        allow update: if isAuthenticated();
-      }
+    // Checks if the user is the 'hostId' listed on the resource
+    function isResourceHost() {
+       return isAuthenticated() && resource.data.hostId == request.auth.uid;
     }
     
-    // Templates collection
-    match /templates/{templateId} {
-      allow read: if isAuthenticated() && resource.data.hostId == request.auth.uid;
-      allow create: if isAuthenticated();
-      allow update: if isAuthenticated() && resource.data.hostId == request.auth.uid;
-      allow delete: if isAuthenticated() && resource.data.hostId == request.auth.uid;
+    // Checks if the user is the 'hostId' of the PARENT class
+    function isClassHost(classId) {
+      return isAuthenticated() && get(/databases/$(database)/documents/classes/$(classId)).data.hostId == request.auth.uid;
     }
 
-    // Classes collection
+    // --- Collection Rules ---
+
+    // USERS
+    // Public read needed for leaderboards (to see names/photos)
+    // Write STRICTLY limited to the user themselves
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+      allow update: if isOwner(userId);
+      allow delete: if false; // Users cannot delete themselves via client SDK for safety
+      
+      // Redemption History (Private to user)
+      match /redemptions/{redemptionId} {
+        allow read: if isOwner(userId);
+        // Only allow creation if the user IDs match (logic handled in functions/client)
+        allow write: if isOwner(userId); 
+      }
+    }
+
+    // CLASSES
     match /classes/{classId} {
       allow read: if isAuthenticated();
       allow create: if isAuthenticated();
       
-      // SECURITY: Restrict updates
-      // Host: Can update anything (change activity, name, etc.)
-      // Student: Can ONLY update 'memberIds' (to join the class)
+      // Update: Host has full control. 
+      // Students can ONLY update 'memberIds' to join/leave.
       allow update: if isAuthenticated() && (
         resource.data.hostId == request.auth.uid || 
         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['memberIds'])
       );
       
+      // Delete: Only Host
       allow delete: if isAuthenticated() && resource.data.hostId == request.auth.uid;
-      
-      // Subcollection for class members
+
+      // Sub: MEMBERS
       match /members/{memberId} {
         allow read: if isAuthenticated();
         allow create: if isAuthenticated();
-        // SECURITY: Allow users to update ONLY their own score/data. Host can update all.
+        // Update: Member can update their own data; Host can update anyone
         allow update: if isAuthenticated() && (
           request.auth.uid == memberId || 
-          get(/databases/$(database)/documents/classes/$(classId)).data.hostId == request.auth.uid
+          isClassHost(classId)
         );
-        allow delete: if isAuthenticated() && request.auth.uid == memberId;
+        allow delete: if isAuthenticated() && (request.auth.uid == memberId || isClassHost(classId));
         
-        // Point History
         match /history/{historyId} {
-            allow read: if isAuthenticated() && (
-                request.auth.uid == memberId || 
-                get(/databases/$(database)/documents/classes/$(classId)).data.hostId == request.auth.uid
-            );
-            // Allow members to write their own history (for QR redemptions) and Hosts to write (for adjustments)
-            allow write: if isAuthenticated() && (
-                request.auth.uid == memberId || 
-                get(/databases/$(database)/documents/classes/$(classId)).data.hostId == request.auth.uid
-            );
+            allow read, write: if isAuthenticated() && (request.auth.uid == memberId || isClassHost(classId));
         }
       }
       
-      // Subcollection for energy tracking
+      // Sub: ENERGY
       match /energy/{userId} {
         allow read: if isAuthenticated();
         allow write: if isAuthenticated() && request.auth.uid == userId;
       }
       
-      // Subcollection for pulse checks
+      // Sub: PULSE CHECKS
       match /pulseChecks/{pulseId} {
         allow read: if isAuthenticated();
-        // Only Host creates/updates pulse checks
-        allow write: if isAuthenticated() && get(/databases/$(database)/documents/classes/$(classId)).data.hostId == request.auth.uid;
+        allow write: if isClassHost(classId);
       }
       
-      // Subcollection for tools
+      // Sub: TOOLS (Buzzer, etc.)
       match /tools/{toolId} {
         allow read: if isAuthenticated();
-         // SECURITY: 
-         // Host can write anything.
-         // Student can only write to 'buzzer' AND cannot change the 'status' (lock/unlock).
+        
+        // Update: Host full; Student can only buzz (cannot change config/status)
         allow update: if isAuthenticated() && (
-          get(/databases/$(database)/documents/classes/$(classId)).data.hostId == request.auth.uid ||
+          isClassHost(classId) ||
           (toolId == 'buzzer' && request.resource.data.status == resource.data.status)
         );
-        // Create/Delete only by Host
-        allow create, delete: if isAuthenticated() && get(/databases/$(database)/documents/classes/$(classId)).data.hostId == request.auth.uid;
+        
+        allow create, delete: if isClassHost(classId);
       }
 
-      // Subcollection for commitments
+      // Sub: COMMITMENTS
       match /commitments/{commitmentId} {
         allow read: if isAuthenticated();
         allow create: if isAuthenticated();
-        allow delete: if isAuthenticated();
+        allow delete: if isClassHost(classId); // Only host can moderate/delete
       }
     }
 
-    // Leader Grid Codes
+    // LEADER GRID CODES (QR Codes)
     match /leader_grid_codes/{codeId} {
-      allow read: if isAuthenticated();
-      allow create: if isAuthenticated();
-      allow update: if isAuthenticated(); 
-      allow delete: if isAuthenticated() && resource.data.hostId == request.auth.uid;
+      allow read: if isAuthenticated(); // Students need to read to validate code
       
+      // Only Host can create/manage codes
+      allow create: if isAuthenticated() && request.resource.data.hostId == request.auth.uid;
+      allow update, delete: if isResourceHost(); // Only the host who created it
+
       match /redemptions/{userId} {
         allow read: if isAuthenticated();
         allow write: if isAuthenticated() && request.auth.uid == userId;
       }
     }
 
-    // Quizzes collection
+    // QUIZZES (Library)
     match /quizzes/{quizId} {
-      // Anyone authenticated can read (simplifies sharing/playing)
       allow read: if isAuthenticated();
-      // Create: Must be authenticated and set themselves as creator
       allow create: if isAuthenticated() && request.resource.data.createdBy == request.auth.uid;
-      // Update/Delete: Only the creator
       allow update, delete: if isAuthenticated() && resource.data.createdBy == request.auth.uid;
     }
 
-    // Polls collection (Standalone)
+    // POLLS
     match /polls/{pollId} {
       allow read: if isAuthenticated();
       allow create: if isAuthenticated();
-      allow update: if isAuthenticated() && resource.data.hostId == request.auth.uid;
-      allow delete: if isAuthenticated() && resource.data.hostId == request.auth.uid;
+      allow update, delete: if isResourceHost();
       
       match /votes/{voteId} {
         allow read: if isAuthenticated();
-        allow write: if isAuthenticated();
+        allow write: if isAuthenticated(); // Students vote
       }
     }
     
-    // WordStorms collection
+    // WORDSTORMS
     match /wordstorms/{stormId} {
       allow read: if isAuthenticated();
       allow create: if isAuthenticated();
-      allow update: if isAuthenticated();
-      allow delete: if isAuthenticated();
+      
+      // Only Host can archive/update the storm settings
+      allow update, delete: if isResourceHost();
       
       match /words/{wordId} {
         allow read: if isAuthenticated();
-        allow create: if isAuthenticated(); 
-        allow delete: if isAuthenticated(); 
+        allow create: if isAuthenticated(); // Students submit words
+        allow delete: if isAuthenticated() && (
+            resource.data.userId == request.auth.uid || 
+            get(/databases/$(database)/documents/wordstorms/$(stormId)).data.hostId == request.auth.uid
+        );
       }
     }
 
-    // Galleries collection (PicPick)
+    // PICPICK GALLERIES
     match /galleries/{galleryId} {
       allow read: if isAuthenticated();
       allow create: if isAuthenticated();
-      // Only host (owner of gallery) can update/delete
-      allow update, delete: if isAuthenticated() && resource.data.hostId == request.auth.uid;
+      allow update, delete: if isResourceHost();
       
       match /photos/{photoId} {
         allow read: if isAuthenticated();
         allow create: if isAuthenticated();
-        // Update: Host (Manage) OR Student (Vote)
+        
         allow update: if isAuthenticated() && (
-           // Host
+           // Host manages (approve/reject)
            get(/databases/$(database)/documents/galleries/$(galleryId)).data.hostId == request.auth.uid || 
            (
-             // Voting: Only 'votes' field changes
+             // Students Vote: Only 'votes' field, increment by 1
              request.resource.data.diff(resource.data).affectedKeys().hasOnly(['votes']) &&
-             // Only increment by 1
              request.resource.data.votes == resource.data.votes + 1
            )
         );
-        // Delete: Owner or Host
+        
         allow delete: if isAuthenticated() && (
           request.auth.uid == resource.data.userId || 
           get(/databases/$(database)/documents/galleries/$(galleryId)).data.hostId == request.auth.uid
@@ -213,24 +183,32 @@ service cloud.firestore {
       }
     }
 
-    // Parking Lot
+    // PARKING LOT
     match /parking_lot/{questionId} {
       allow read: if isAuthenticated();
       allow create: if isAuthenticated();
-      // Update: Host only (answering)
+      
+      // Host answers (updates)
       allow update: if isAuthenticated() && 
         get(/databases/$(database)/documents/classes/$(resource.data.classId)).data.hostId == request.auth.uid;
-      // Delete: Host or the Asker
+        
       allow delete: if isAuthenticated() && (
         resource.data.userId == request.auth.uid ||
         get(/databases/$(database)/documents/classes/$(resource.data.classId)).data.hostId == request.auth.uid
       );
     }
-
-    // Analytics Events
+    
+    // ANALYTICS (Strict)
     match /analytics_events/{eventId} {
-      allow create: if isAuthenticated();
-      allow read: if isAuthenticated();
+      allow create: if isAuthenticated(); // All activities/users log events
+      // Read: RESTRICTED. 
+      // Only the Host of the class or the User who triggered it can read details if needed.
+      // For Super Admin Dashboard to work, we'd typically use the Admin SDK (server-side).
+      // If the client needs to read stats, we only allow reading your own class's events.
+      allow read: if isAuthenticated() && (
+         resource.data.userId == request.auth.uid ||
+         (resource.data.classId != null && get(/databases/$(database)/documents/classes/$(resource.data.classId)).data.hostId == request.auth.uid)
+      );
     }
   }
 }
