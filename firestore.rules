@@ -1,0 +1,236 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Helper function to check if user is accessing their own document
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // Helper to check if the user is the Host of the class
+    function isClassHost(classId) {
+    	return isAuthenticated() && (
+      	resource.data.hostId == request.auth.uid ||
+        get(/databases/$(database)/documents/classes/$(classId)).data.hostId == request.auth.uid
+      );
+    }
+
+    // Users collection
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated(); 
+      // SECURITY: Only owner can update their profile/stats OR the Host of their current class (for points)
+      allow update: if isOwner(userId) || (
+        resource.data.joinedClassId != null && 
+        get(/databases/$(database)/documents/classes/$(resource.data.joinedClassId)).data.hostId == request.auth.uid
+      );
+      allow delete: if false; 
+      
+      // Subcollection for redemption history
+      match /redemptions/{redemptionId} {
+      	allow read: if isOwner(userId);
+        allow write: if isOwner(userId);
+      }
+    }
+
+    // Games collection (If used for Firestore-based games)
+    match /games/{gameId} {
+      allow read: if true; 
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated(); // Note: Consider restricting to Host if switched to Firestore
+      allow delete: if isAuthenticated() && resource.data.hostId == request.auth.uid;
+      
+      match /responses/{responseId} {
+        allow read: if isAuthenticated();
+        allow create: if isAuthenticated();
+        allow update: if isAuthenticated();
+      }
+    }
+    
+    // Templates collection
+    match /templates/{templateId} {
+      allow read: if isAuthenticated() && resource.data.hostId == request.auth.uid;
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && resource.data.hostId == request.auth.uid;
+      allow delete: if isAuthenticated() && resource.data.hostId == request.auth.uid;
+    }
+
+    // Classes collection
+    match /classes/{classId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      
+      // SECURITY: Restrict updates
+      // Host: Can update anything (change activity, name, etc.)
+      // Student: Can ONLY update 'memberIds' (to join the class)
+      allow update: if isAuthenticated() && (
+        resource.data.hostId == request.auth.uid || 
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['memberIds'])
+      );
+      
+      allow delete: if isAuthenticated() && resource.data.hostId == request.auth.uid;
+      
+      // Subcollection for class members
+      match /members/{memberId} {
+        allow read: if isAuthenticated();
+        allow create: if isAuthenticated();
+        // SECURITY: Allow users to update ONLY their own score/data. Host can update all.
+        allow update: if isAuthenticated() && (
+          request.auth.uid == memberId || 
+          get(/databases/$(database)/documents/classes/$(classId)).data.hostId == request.auth.uid
+        );
+        allow delete: if isAuthenticated() && request.auth.uid == memberId;
+        
+        // Point History
+        match /history/{historyId} {
+            allow read: if isAuthenticated() && (
+                request.auth.uid == memberId || 
+                get(/databases/$(database)/documents/classes/$(classId)).data.hostId == request.auth.uid
+            );
+            // Allow members to write their own history (for QR redemptions) and Hosts to write (for adjustments)
+            allow write: if isAuthenticated() && (
+                request.auth.uid == memberId || 
+                get(/databases/$(database)/documents/classes/$(classId)).data.hostId == request.auth.uid
+            );
+        }
+      }
+      
+      // Subcollection for energy tracking
+      match /energy/{userId} {
+        allow read: if isAuthenticated();
+        allow write: if isAuthenticated() && request.auth.uid == userId;
+      }
+      
+      // Subcollection for pulse checks
+      match /pulseChecks/{pulseId} {
+        allow read: if isAuthenticated();
+        // Only Host creates/updates pulse checks
+        allow write: if isAuthenticated() && get(/databases/$(database)/documents/classes/$(classId)).data.hostId == request.auth.uid;
+      }
+      
+      // Subcollection for tools
+      match /tools/{toolId} {
+        allow read: if isAuthenticated();
+         // SECURITY: 
+         // Host can write anything.
+         // Student can only write to 'buzzer' AND cannot change the 'status' (lock/unlock).
+        allow update: if isAuthenticated() && (
+          get(/databases/$(database)/documents/classes/$(classId)).data.hostId == request.auth.uid ||
+          (toolId == 'buzzer' && request.resource.data.status == resource.data.status)
+        );
+        // Create/Delete only by Host
+        allow create, delete: if isAuthenticated() && get(/databases/$(database)/documents/classes/$(classId)).data.hostId == request.auth.uid;
+      }
+
+      // Subcollection for commitments
+      match /commitments/{commitmentId} {
+        allow read: if isAuthenticated();
+        allow create: if isAuthenticated();
+        allow delete: if isAuthenticated();
+      }
+    }
+
+    // Leader Grid Codes
+    match /leader_grid_codes/{codeId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated(); 
+      allow delete: if isAuthenticated() && resource.data.hostId == request.auth.uid;
+      
+      match /redemptions/{userId} {
+        allow read: if isAuthenticated();
+        allow write: if isAuthenticated() && request.auth.uid == userId;
+      }
+    }
+
+    // Quizzes collection
+    match /quizzes/{quizId} {
+      // Anyone authenticated can read (simplifies sharing/playing)
+      allow read: if isAuthenticated();
+      // Create: Must be authenticated and set themselves as creator
+      allow create: if isAuthenticated() && request.resource.data.createdBy == request.auth.uid;
+      // Update/Delete: Only the creator
+      allow update, delete: if isAuthenticated() && resource.data.createdBy == request.auth.uid;
+    }
+
+    // Polls collection (Standalone)
+    match /polls/{pollId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && resource.data.hostId == request.auth.uid;
+      allow delete: if isAuthenticated() && resource.data.hostId == request.auth.uid;
+      
+      match /votes/{voteId} {
+        allow read: if isAuthenticated();
+        allow write: if isAuthenticated();
+      }
+    }
+    
+    // WordStorms collection
+    match /wordstorms/{stormId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated();
+      allow delete: if isAuthenticated();
+      
+      match /words/{wordId} {
+        allow read: if isAuthenticated();
+        allow create: if isAuthenticated(); 
+        allow delete: if isAuthenticated(); 
+      }
+    }
+
+    // Galleries collection (PicPick)
+    match /galleries/{galleryId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      // Only host (owner of gallery) can update/delete
+      allow update, delete: if isAuthenticated() && resource.data.hostId == request.auth.uid;
+      
+      match /photos/{photoId} {
+        allow read: if isAuthenticated();
+        allow create: if isAuthenticated();
+        // Update: Host (Manage) OR Student (Vote)
+        allow update: if isAuthenticated() && (
+           // Host
+           get(/databases/$(database)/documents/galleries/$(galleryId)).data.hostId == request.auth.uid || 
+           (
+             // Voting: Only 'votes' field changes
+             request.resource.data.diff(resource.data).affectedKeys().hasOnly(['votes']) &&
+             // Only increment by 1
+             request.resource.data.votes == resource.data.votes + 1
+           )
+        );
+        // Delete: Owner or Host
+        allow delete: if isAuthenticated() && (
+          request.auth.uid == resource.data.userId || 
+          get(/databases/$(database)/documents/galleries/$(galleryId)).data.hostId == request.auth.uid
+        );
+      }
+    }
+
+    // Parking Lot
+    match /parking_lot/{questionId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      // Update: Host only (answering)
+      allow update: if isAuthenticated() && 
+        get(/databases/$(database)/documents/classes/$(resource.data.classId)).data.hostId == request.auth.uid;
+      // Delete: Host or the Asker
+      allow delete: if isAuthenticated() && (
+        resource.data.userId == request.auth.uid ||
+        get(/databases/$(database)/documents/classes/$(resource.data.classId)).data.hostId == request.auth.uid
+      );
+    }
+
+    // Analytics Events
+    match /analytics_events/{eventId} {
+      allow create: if isAuthenticated();
+      allow read: if isAuthenticated();
+    }
+  }
+}

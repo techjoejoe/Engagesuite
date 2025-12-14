@@ -1,0 +1,23 @@
+{
+    "indexes": [
+        {
+            "collectionGroup": "leader_grid_codes",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "hostId",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "classId",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "createdAt",
+                    "order": "DESCENDING"
+                }
+            ]
+        }
+    ],
+    "fieldOverrides": []
+}
