@@ -44,20 +44,25 @@ export default function TickrHostPage({ params }: { params: Promise<{ id: string
 
     // Initial sync and Class Activity Update
     useEffect(() => {
-        if (timer && !hasSyncedActivity) {
-            if (timer.status === 'stopped' && timeLeft === 0 && timer.duration > 0) {
+        if (!timer) return;
+
+        if (timer.status === 'stopped' && timer.duration > 0) {
+            // Always sync local time with stored duration when stopped
+            // This ensures multi-tab/device consistency
+            if (timeLeft !== timer.duration) {
                 setTimeLeft(timer.duration);
             }
-            // Sync class activity
-            if (timer.classId) {
-                updateClassActivity(timer.classId, { type: 'tickr', id: id });
-                setHasSyncedActivity(true);
-            }
-        } else if (timer && timer.status === 'stopped' && timeLeft === 0 && timer.duration > 0) {
-            // Keep this logic for stopped timer updates if needed, but separate from activity sync
+        } else if (timer.status === 'paused') {
             setTimeLeft(timer.duration);
+            setIsFinished(false);
         }
-    }, [timer, id, hasSyncedActivity]);
+
+        // Sync class activity
+        if (timer.classId && !hasSyncedActivity) {
+            updateClassActivity(timer.classId, { type: 'tickr', id: id });
+            setHasSyncedActivity(true);
+        }
+    }, [timer, id, hasSyncedActivity, timeLeft]);
 
     // Countdown logic
     useEffect(() => {
@@ -83,39 +88,62 @@ export default function TickrHostPage({ params }: { params: Promise<{ id: string
     }, [timer]);
 
     const handleStart = async () => {
-        let duration = timeLeft;
-        if (isFinished) {
-            // Reset to original duration if finished
-            duration = timer.duration;
-            setIsFinished(false);
+        try {
+            let duration = timeLeft;
+            if (isFinished || duration <= 0) {
+                // Reset to original duration if finished or zero
+                duration = timer.duration > 0 ? timer.duration : 300;
+                setIsFinished(false);
+            }
+            await startTimer(id, duration);
+        } catch (error) {
+            console.error('Failed to start timer:', error);
+            alert('Failed to start timer. Please try again.');
         }
-        await startTimer(id, duration);
     };
 
     const handlePause = async () => {
-        await pauseTimer(id, timeLeft);
+        try {
+            await pauseTimer(id, timeLeft);
+        } catch (error) {
+            console.error('Failed to pause timer:', error);
+        }
     };
 
     const handleReset = async () => {
-        // Reset to the last set duration
-        await updateTimer(id, {
-            status: 'stopped',
-            endTime: null,
-            pausedAt: null
-        });
-        setTimeLeft(timer.duration);
-        setIsFinished(false);
+        try {
+            // Reset to the last set duration
+            await updateTimer(id, {
+                status: 'stopped',
+                endTime: null,
+                pausedAt: null
+            });
+            setTimeLeft(timer.duration);
+            setIsFinished(false);
+        } catch (error) {
+            console.error('Failed to reset timer:', error);
+        }
     };
 
     const handleSetTime = async (seconds: number) => {
-        setTimeLeft(seconds);
-        await updateTimer(id, {
-            duration: seconds,
-            status: 'stopped',
-            endTime: null,
-            pausedAt: null
-        });
-        setIsFinished(false);
+        if (seconds <= 0) {
+            alert('Please set a duration greater than 0.');
+            return;
+        }
+        try {
+            console.log('Setting timer to seconds:', seconds);
+            setTimeLeft(seconds);
+            await updateTimer(id, {
+                duration: seconds,
+                status: 'stopped',
+                endTime: null,
+                pausedAt: null
+            });
+            setIsFinished(false);
+        } catch (error) {
+            console.error('Failed to set time:', error);
+            alert('Failed to save timer settings.');
+        }
     };
 
     const formatTime = (seconds: number) => {

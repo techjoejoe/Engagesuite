@@ -260,7 +260,9 @@ function ClassDashboardContent() {
                         icon="🏅"
                         title="Badge Library"
                         description="Create and manage custom badges for your students."
-                        status="coming-soon"
+                        status="active"
+                        action={() => { logEvent('tool_launch', { toolName: 'Badge Library', classId }); router.push('/host/badges'); }}
+                        actionLabel="Manage"
                         color="bg-yellow-600"
                     />
 

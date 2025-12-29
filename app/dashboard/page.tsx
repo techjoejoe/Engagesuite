@@ -168,6 +168,46 @@ export default function Dashboard() {
                     </div>
                 </div>
 
+                {/* Libraries & Tools Section */}
+                <div className="mb-12 animate-fade-in">
+                    <h2 className="text-2xl font-bold text-white mb-6">Host Tools</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {/* Badge Library Card */}
+                        <div
+                            onClick={() => router.push('/host/badges')}
+                            className="glass-card glass-card-hover p-6 cursor-pointer group flex flex-col items-center text-center hover:bg-indigo-900/20 border-l-4 border-l-indigo-500"
+                        >
+                            <div className="w-16 h-16 rounded-2xl bg-indigo-500/20 flex items-center justify-center text-4xl mb-4 group-hover:scale-110 transition-transform">
+                                🛡️
+                            </div>
+                            <h3 className="text-xl font-bold text-white mb-2">Badge Library</h3>
+                            <p className="text-gray-400 text-sm">
+                                Create, manage, and upload custom badges to award to your students.
+                            </p>
+                            <div className="mt-4 text-indigo-400 font-bold text-sm bg-indigo-500/10 px-3 py-1 rounded-full">
+                                Manage Collection →
+                            </div>
+                        </div>
+
+                        {/* Designer Studio Card */}
+                        <div
+                            onClick={() => router.push('/host/design')}
+                            className="glass-card glass-card-hover p-6 cursor-pointer group flex flex-col items-center text-center hover:bg-blue-900/20 border-l-4 border-l-blue-500"
+                        >
+                            <div className="w-16 h-16 rounded-2xl bg-blue-500/20 flex items-center justify-center text-4xl mb-4 group-hover:scale-110 transition-transform">
+                                🎨
+                            </div>
+                            <h3 className="text-xl font-bold text-white mb-2">Designer Studio</h3>
+                            <p className="text-gray-400 text-sm">
+                                Build interactive workbooks, albums, and study materials.
+                            </p>
+                            <div className="mt-4 text-blue-400 font-bold text-sm bg-blue-500/10 px-3 py-1 rounded-full">
+                                Open Studio →
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 {/* My Classes Section */}
                 <div className="animate-fade-in">
                     {error && (

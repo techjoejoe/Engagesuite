@@ -269,15 +269,40 @@ const CreateGalleryModal = ({ onClose, setToast }: { onClose: () => void, setToa
         setError('');
 
         try {
+            // Validate dates
+            const uploadStart = new Date(formData.uploadStart);
+            const uploadEnd = new Date(formData.uploadEnd);
+            const votingStart = new Date(formData.votingStart);
+            const votingEnd = new Date(formData.votingEnd);
+
+            if (isNaN(uploadStart.getTime()) || isNaN(uploadEnd.getTime()) ||
+                isNaN(votingStart.getTime()) || isNaN(votingEnd.getTime())) {
+                setError('Invalid date format');
+                setLoading(false);
+                return;
+            }
+
+            if (uploadStart >= uploadEnd) {
+                setError('Upload end time must be after start time');
+                setLoading(false);
+                return;
+            }
+
+            if (votingStart >= votingEnd) {
+                setError('Voting end time must be after start time');
+                setLoading(false);
+                return;
+            }
+
             const code = generateGalleryCode();
 
             await addDoc(collection(db, 'galleries'), {
                 ...formData,
                 code,
-                uploadStart: new Date(formData.uploadStart),
-                uploadEnd: new Date(formData.uploadEnd),
-                votingStart: new Date(formData.votingStart),
-                votingEnd: new Date(formData.votingEnd),
+                uploadStart,
+                uploadEnd,
+                votingStart,
+                votingEnd,
                 createdAt: serverTimestamp()
             });
 

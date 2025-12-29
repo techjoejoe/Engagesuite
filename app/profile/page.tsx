@@ -6,6 +6,7 @@ import Button from '@/components/Button';
 import Card from '@/components/Card';
 import { getCurrentUser, getUserProfile, signOutUser, updateUserProfile, onAuthStateChange, resetPassword } from '@/lib/auth';
 import { UserProfile } from '@/lib/auth';
+import { getUserBadges, UserBadgeEnriched } from '@/lib/badges';
 import { Icons } from '@/components/picpick/Icons';
 import ImageCropper from '@/components/ImageCropper';
 import HostMenu from '@/components/HostMenu';
@@ -14,6 +15,7 @@ import StudentMenu from '@/components/StudentMenu';
 export default function ProfilePage() {
     const router = useRouter();
     const [profile, setProfile] = useState<UserProfile | null>(null);
+    const [badges, setBadges] = useState<UserBadgeEnriched[]>([]);
     const [loading, setLoading] = useState(true);
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState('');
@@ -50,10 +52,15 @@ export default function ProfilePage() {
 
     const loadProfile = async (uid: string) => {
         try {
-            const data = await getUserProfile(uid);
+            const [data, userBadges] = await Promise.all([
+                getUserProfile(uid),
+                getUserBadges(uid)
+            ]);
+
             if (data) {
                 setProfile(data);
                 setEditName(data.displayName || '');
+                setBadges(userBadges);
             } else {
                 setError('Profile document not found.');
             }
@@ -155,10 +162,7 @@ export default function ProfilePage() {
         );
     }
 
-    const gamesPlayed = profile.gamesPlayed || 0;
-    const gamesWon = profile.gamesWon || 0;
     const lifetimePoints = profile.lifetimePoints || 0;
-    const winRate = gamesPlayed > 0 ? ((gamesWon / gamesPlayed) * 100).toFixed(1) : '0.0';
 
     return (
         <main className="min-h-screen bg-gray-50 dark:bg-slate-900 p-8 overflow-y-auto transition-colors duration-300">
@@ -260,19 +264,6 @@ export default function ProfilePage() {
 
                         {/* Stats Card */}
                         <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <Card className="p-6 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 flex flex-col items-center justify-center">
-                                <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400 mb-1">{gamesPlayed}</div>
-                                <div className="text-sm text-gray-500 dark:text-gray-400">Games Played</div>
-                            </Card>
-                            <Card className="p-6 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 flex flex-col items-center justify-center">
-                                <div className="text-3xl font-bold text-green-600 dark:text-green-400 mb-1">{gamesWon}</div>
-                                <div className="text-sm text-gray-500 dark:text-gray-400">Games Won</div>
-                            </Card>
-                            <Card className="p-6 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 flex flex-col items-center justify-center">
-                                <div className="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-1">{winRate}%</div>
-                                <div className="text-sm text-gray-500 dark:text-gray-400">Win Rate</div>
-                            </Card>
-
                             <Card className="col-span-1 sm:col-span-3 p-6 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700">
                                 <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Total Points</h3>
                                 <div className="flex items-end gap-2">
@@ -281,6 +272,37 @@ export default function ProfilePage() {
                                     </span>
                                     <span className="text-gray-500 dark:text-gray-400 mb-1">pts</span>
                                 </div>
+                            </Card>
+
+                            {/* Badges Section */}
+                            <Card className="col-span-1 sm:col-span-3 p-6 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700">
+                                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                                    <span>🏅</span> My Badges
+                                    <span className="text-sm bg-gray-100 dark:bg-slate-700 px-2 py-0.5 rounded-full text-gray-500 dark:text-gray-400">{badges.length}</span>
+                                </h3>
+
+                                {badges.length === 0 ? (
+                                    <div className="text-center py-8 text-gray-500 dark:text-gray-400 border-2 border-dashed border-gray-100 dark:border-slate-700 rounded-xl">
+                                        <p>No badges earned yet. Keep playing to unlock trophies!</p>
+                                    </div>
+                                ) : (
+                                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                                        {badges.map((b, idx) => (
+                                            <div key={idx} className="group relative bg-gray-50 dark:bg-slate-900 p-4 rounded-xl flex flex-col items-center text-center transition-all hover:scale-105 hover:shadow-lg border border-transparent hover:border-indigo-500/30">
+                                                <div className="w-20 h-20 mb-3 relative drop-shadow-md">
+                                                    <img src={b.details?.imageUrl} alt={b.details?.name} className="w-full h-full object-contain" />
+                                                </div>
+                                                <h4 className="font-bold text-sm text-gray-900 dark:text-white mb-1 line-clamp-1">{b.details?.name}</h4>
+
+                                                {/* Tooltip Description */}
+                                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-black/90 text-white text-xs p-3 rounded-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-all z-20 shadow-xl">
+                                                    <div className="font-bold mb-1 text-indigo-300">{b.details?.name}</div>
+                                                    <p className="opacity-90">{b.details?.description}</p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </Card>
                         </div>
                     </div>

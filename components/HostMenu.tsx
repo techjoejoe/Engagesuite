@@ -310,6 +310,28 @@ export default function HostMenu({ currentPage = '', classId, className = '' }: 
                             <span className="text-xl">📈</span>
                             <span className="font-medium">Analytics</span>
                         </Link>
+                        <Link
+                            href="/host/badges"
+                            onClick={() => setIsOpen(false)}
+                            className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all ${currentPage === 'badges'
+                                ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30'
+                                : 'hover:bg-white/10 text-gray-300 hover:text-white'
+                                }`}
+                        >
+                            <span className="text-xl">🛡️</span>
+                            <span className="font-medium">Badge Library</span>
+                        </Link>
+                        <Link
+                            href="/host/design"
+                            onClick={() => setIsOpen(false)}
+                            className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all ${currentPage === 'design'
+                                ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30'
+                                : 'hover:bg-white/10 text-gray-300 hover:text-white'
+                                }`}
+                        >
+                            <span className="text-xl">🎨</span>
+                            <span className="font-medium">Designer Studio</span>
+                        </Link>
                     </div>
 
                     {/* Current Class Section */}

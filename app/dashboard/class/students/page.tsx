@@ -10,6 +10,7 @@ import { getUserProfile, UserProfile } from '@/lib/auth';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { User } from 'firebase/auth';
 import HostMenu from '@/components/HostMenu';
+import { getHostBadges, awardBadge, Badge } from '@/lib/badges';
 
 interface StudentData extends ClassMember {
     lifetimePoints: number;
@@ -39,6 +40,11 @@ function StudentsManagementContent() {
     const [historyLoading, setHistoryLoading] = useState(false);
     const [viewingStudent, setViewingStudent] = useState<StudentData | null>(null);
 
+    // Badge State
+    const [hostBadges, setHostBadges] = useState<Badge[]>([]);
+    const [showBadgeModal, setShowBadgeModal] = useState(false);
+    const [studentToAward, setStudentToAward] = useState<StudentData | null>(null);
+
     useEffect(() => {
         const unsubscribe = onAuthStateChange((currentUser) => {
             if (!currentUser) {
@@ -59,6 +65,8 @@ function StudentsManagementContent() {
                 if (cls && cls.hostId === user.uid) {
                     setClassData(cls);
                     await loadStudents(classId);
+                    // Load badges
+                    getHostBadges(user.uid).then(setHostBadges);
                 } else {
                     router.push('/dashboard');
                 }
@@ -178,6 +186,22 @@ function StudentsManagementContent() {
             console.error('Error fetching history:', error);
         } finally {
             setHistoryLoading(false);
+        }
+
+    };
+
+    const handleAwardBadge = async (studentId: string, badgeId: string) => {
+        if (!user) return;
+        setProcessing(true);
+        try {
+            await awardBadge(studentId, badgeId, user.uid);
+            alert('Badge awarded! 🏆');
+            setShowBadgeModal(false);
+        } catch (error) {
+            console.error(error);
+            alert('Failed to award badge');
+        } finally {
+            setProcessing(false);
         }
     };
 
@@ -476,6 +500,19 @@ function StudentsManagementContent() {
                                                             <Button
                                                                 variant="secondary"
                                                                 size="sm"
+                                                                onClick={() => {
+                                                                    setStudentToAward(student);
+                                                                    setShowBadgeModal(true);
+                                                                }}
+                                                                disabled={processing}
+                                                                className="!bg-purple-100 dark:!bg-purple-900/20 !text-purple-600 dark:!text-purple-400 border border-purple-200 dark:border-purple-800 hover:!bg-purple-200 !bg-none"
+                                                                title="Award Badge"
+                                                            >
+                                                                🏅
+                                                            </Button>
+                                                            <Button
+                                                                variant="secondary"
+                                                                size="sm"
                                                                 onClick={() => handleAdjustPoints(student.userId, -10)}
                                                                 disabled={processing}
                                                                 className="!bg-red-100 dark:!bg-red-900/20 !text-black dark:!text-red-400 border border-red-200 dark:border-red-800 hover:!bg-red-200 dark:hover:!bg-red-900/30 !bg-none"
@@ -534,6 +571,40 @@ function StudentsManagementContent() {
                         </div>
                     </div>
                 </div>
+
+                {/* Badge Award Modal */}
+                {showBadgeModal && studentToAward && (
+                    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-2xl w-full p-6 border border-gray-100 dark:border-slate-700 animate-scale-in flex flex-col max-h-[80vh]">
+                            <div className="flex justify-between items-center mb-6">
+                                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                                    Award Badge to <span className="text-indigo-500">{studentToAward.nickname}</span>
+                                </h2>
+                                <button onClick={() => setShowBadgeModal(false)} className="text-gray-400 hover:text-white">✕</button>
+                            </div>
+
+                            <div className="overflow-y-auto p-2 grid grid-cols-2 sm:grid-cols-4 gap-4">
+                                {hostBadges.length === 0 ? (
+                                    <div className="col-span-full text-center py-8 text-gray-500">
+                                        No badges found. <a href="/host/badges" className="text-indigo-400 font-bold hover:underline">Create some badges first!</a>
+                                    </div>
+                                ) : (
+                                    hostBadges.map(badge => (
+                                        <button
+                                            key={badge.id}
+                                            onClick={() => handleAwardBadge(studentToAward.userId, badge.id)}
+                                            disabled={processing}
+                                            className="flex flex-col items-center p-4 bg-gray-50 dark:bg-slate-900 rounded-xl border-2 border-transparent hover:border-indigo-500 transition-all hover:scale-105"
+                                        >
+                                            <img src={badge.imageUrl} alt={badge.name} className="w-16 h-16 object-contain mb-2" />
+                                            <div className="font-bold text-sm text-gray-900 dark:text-white">{badge.name}</div>
+                                        </button>
+                                    ))
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </main>
     );

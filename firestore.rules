@@ -30,8 +30,10 @@ service cloud.firestore {
     match /users/{userId} {
       allow read: if isAuthenticated();
       allow create: if isAuthenticated() && request.auth.uid == userId;
-      allow update: if isOwner(userId);
+      allow update: if isOwner(userId) || (isAuthenticated() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['badges']));
       allow delete: if false; // Users cannot delete themselves via client SDK for safety
+      
+
       
       // Redemption History (Private to user)
       match /redemptions/{redemptionId} {
@@ -39,6 +41,13 @@ service cloud.firestore {
         // Only allow creation if the user IDs match (logic handled in functions/client)
         allow write: if isOwner(userId); 
       }
+    }
+
+    // BADGES COLLECTION (Global Library)
+    match /badges/{badgeId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated(); // Hosts create badges
+      allow update, delete: if resource.data.hostId == request.auth.uid;
     }
 
     // CLASSES
@@ -78,10 +87,11 @@ service cloud.firestore {
         allow write: if isAuthenticated() && request.auth.uid == userId;
       }
       
-      // Sub: PULSE CHECKS
       match /pulseChecks/{pulseId} {
         allow read: if isAuthenticated();
-        allow write: if isClassHost(classId);
+        // Allow students to add their response (append to 'responses' array)
+        allow update: if isAuthenticated() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['responses']);
+        allow create, delete: if isClassHost(classId);
       }
       
       // Sub: TOOLS (Buzzer, etc.)
@@ -194,6 +204,45 @@ service cloud.firestore {
         
       allow delete: if isAuthenticated() && (
         resource.data.userId == request.auth.uid ||
+        get(/databases/$(database)/documents/classes/$(resource.data.classId)).data.hostId == request.auth.uid
+      );
+    }
+    
+    // --- ALBUMS & WORKBOOKS ---
+
+    // 1. Album Templates (Designers)
+    match /album_templates/{templateId} {
+      allow read: if isAuthenticated();
+      // Only create if you set yourself as designer
+      allow create: if isAuthenticated() && request.resource.data.designerId == request.auth.uid;
+      // Only update/delete if you are the designer
+      allow update, delete: if isAuthenticated() && resource.data.designerId == request.auth.uid;
+    }
+
+    // 2. Class Assignments (Trainers)
+    match /class_albums/{assignmentId} {
+      allow read: if isAuthenticated();
+      // Trainers assign albums
+      allow create: if isAuthenticated() && request.resource.data.assignedByUserId == request.auth.uid;
+      // Only the trainer who assigned it (or class host) can manage it
+      allow update, delete: if isAuthenticated() && resource.data.assignedByUserId == request.auth.uid;
+    }
+
+    // 3. Student Progress (Students answering)
+    match /album_progress/{progressId} {
+      allow read: if isAuthenticated() && (
+        resource.data.studentId == request.auth.uid || 
+        // Trainer can read (complicated check efficiently, simplified here to trusting the Class ID check in query usually)
+        // Or if we need strict, we check if requester is host of the classId on this doc
+        get(/databases/$(database)/documents/classes/$(resource.data.classId)).data.hostId == request.auth.uid
+      );
+      
+      // Create: Student creates their progress record
+      allow create: if isAuthenticated() && request.resource.data.studentId == request.auth.uid;
+      
+      // Update: Student saving answers OR Trainer grading
+      allow update: if isAuthenticated() && (
+        resource.data.studentId == request.auth.uid || 
         get(/databases/$(database)/documents/classes/$(resource.data.classId)).data.hostId == request.auth.uid
       );
     }

@@ -26,9 +26,13 @@ export const ImageUpload = ({ onUpload, uploading }: ImageUploadProps) => {
                         const sx = (img.width - size) / 2;
                         const sy = (img.height - size) / 2;
                         ctx.drawImage(img, sx, sy, size, size, 0, 0, 800, 800);
+
+                        // Preserve PNG transparency, otherwise default to JPEG
+                        const outputType = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+
                         canvas.toBlob((blob) => {
                             if (blob) resolve(blob);
-                        }, 'image/jpeg', 0.9);
+                        }, outputType, 0.9);
                     }
                 };
                 img.src = e.target?.result as string;

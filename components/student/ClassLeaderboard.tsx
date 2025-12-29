@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { getClassLeaderboard, ClassMember } from '@/lib/scoring';
 import { getUserProfile } from '@/lib/auth';
+import ProfileModal from '@/components/ProfileModal';
 
 const ClassLeaderboard = ({ classId, userId }: { classId: string; userId: string }) => {
     const [leaderboard, setLeaderboard] = useState<(ClassMember & { lifetimePoints?: number; photoURL?: string })[]>([]);
     const [loading, setLoading] = useState(true);
+    const [selectedUser, setSelectedUser] = useState<{ id: string; name: string; score: number } | null>(null);
+    const [modalOpen, setModalOpen] = useState(false);
 
     useEffect(() => {
         const loadLeaderboard = async () => {
@@ -44,6 +47,7 @@ const ClassLeaderboard = ({ classId, userId }: { classId: string; userId: string
 
     return (
         <div className="flex flex-col gap-3">
+            {/* ... existing header ... */}
             <div className="text-center mb-4">
                 <div className="text-5xl mb-2">🏆</div>
                 <h2 className="text-2xl font-black text-gray-900 dark:text-white mb-1 uppercase tracking-tight">Class Leaders</h2>
@@ -65,9 +69,17 @@ const ClassLeaderboard = ({ classId, userId }: { classId: string; userId: string
                         const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '';
 
                         return (
-                            <div
+                            <button
                                 key={entry.userId}
-                                className={`relative flex flex-col items-center text-center p-4 rounded-xl transition-all border ${isCurrentUser
+                                onClick={() => {
+                                    setSelectedUser({
+                                        id: entry.userId,
+                                        name: entry.nickname,
+                                        score: entry.score
+                                    });
+                                    setModalOpen(true);
+                                }}
+                                className={`relative flex flex-col items-center text-center p-4 rounded-xl transition-all border outline-none focus:ring-2 focus:ring-indigo-500 hover:scale-105 active:scale-95 ${isCurrentUser
                                     ? 'bg-indigo-600/20 border-indigo-500/50 shadow-lg shadow-indigo-500/10'
                                     : isTop3
                                         ? 'bg-yellow-500/10 border-yellow-500/20'
@@ -110,11 +122,22 @@ const ClassLeaderboard = ({ classId, userId }: { classId: string; userId: string
                                         Class Points
                                     </div>
                                 </div>
-                            </div>
+                            </button>
                         );
                     })
                 )}
             </div>
+
+            {/* Profile Modal */}
+            {selectedUser && (
+                <ProfileModal
+                    isOpen={modalOpen}
+                    onClose={() => setModalOpen(false)}
+                    userId={selectedUser.id}
+                    userName={selectedUser.name}
+                    userScore={selectedUser.score}
+                />
+            )}
         </div>
     );
 };

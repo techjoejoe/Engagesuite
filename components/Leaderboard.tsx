@@ -8,7 +8,12 @@ interface LeaderboardProps {
     currentPlayerId?: string;
 }
 
+import ProfileModal from '@/components/ProfileModal';
+
 export default function Leaderboard({ entries, currentPlayerId }: LeaderboardProps) {
+    const [modalOpen, setModalOpen] = React.useState(false);
+    const [selectedUser, setSelectedUser] = React.useState<{ id: string, name: string, score: number } | null>(null);
+
     if (entries.length === 0) {
         return (
             <div className="text-center p-8 text-gray-500">
@@ -32,9 +37,17 @@ export default function Leaderboard({ entries, currentPlayerId }: LeaderboardPro
                     return (
                         <div
                             key={entry.playerId}
-                            className={`flex items-center gap-4 p-5 rounded-xl border-2 transition-all duration-300 ${isCurrentPlayer
-                                    ? 'bg-indigo-50 border-indigo-500 shadow-md'
-                                    : 'bg-white/80 backdrop-blur-md border-gray-200 shadow-sm'
+                            onClick={() => {
+                                setSelectedUser({
+                                    id: entry.playerId,
+                                    name: entry.playerName,
+                                    score: entry.score
+                                });
+                                setModalOpen(true);
+                            }}
+                            className={`flex items-center gap-4 p-5 rounded-xl border-2 transition-all duration-300 cursor-pointer hover:bg-indigo-50 dark:hover:bg-slate-700/50 ${isCurrentPlayer
+                                ? 'bg-indigo-50 border-indigo-500 shadow-md'
+                                : 'bg-white/80 backdrop-blur-md border-gray-200 shadow-sm'
                                 } ${isTop3 ? 'scale-[1.02] shadow-lg' : 'scale-100'}`}
                             style={{ animationDelay: `${index * 0.1}s` }}
                         >
@@ -63,6 +76,16 @@ export default function Leaderboard({ entries, currentPlayerId }: LeaderboardPro
                     );
                 })}
             </div>
+
+            {selectedUser && (
+                <ProfileModal
+                    isOpen={modalOpen}
+                    onClose={() => setModalOpen(false)}
+                    userId={selectedUser.id}
+                    userName={selectedUser.name}
+                    userScore={selectedUser.score}
+                />
+            )}
         </div>
     );
 }

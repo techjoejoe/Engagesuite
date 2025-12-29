@@ -12,6 +12,45 @@ import ReadyCheck from '@/components/ReadyCheck';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import StudentMenu from '@/components/StudentMenu';
 
+import { getStudentAssignments, ClassAlbum } from '@/lib/albums';
+import { useRouter } from 'next/navigation';
+
+const StudentAlbums = ({ classId }: { classId: string }) => {
+    const [assignments, setAssignments] = useState<ClassAlbum[]>([]);
+    const router = useRouter();
+
+    useEffect(() => {
+        getStudentAssignments(classId).then(setAssignments);
+    }, [classId]);
+
+    if (assignments.length === 0) return null;
+
+    return (
+        <div className="mt-8 border-t border-white/10 pt-6">
+            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                <span>📚</span> Workbooks & Albums
+            </h3>
+            <div className="grid gap-3">
+                {assignments.map(a => (
+                    <button
+                        key={a.id}
+                        onClick={() => router.push(`/play/album/${a.id}`)}
+                        className="w-full text-left bg-slate-800/50 hover:bg-slate-700/80 p-4 rounded-xl border border-white/5 hover:border-blue-500/50 transition-all group flex justify-between items-center"
+                    >
+                        <div>
+                            <div className="font-bold text-gray-200 group-hover:text-blue-300 transition-colors">{a.title}</div>
+                            <div className="text-xs text-gray-500 mt-1">{a.totalPointsAvailable} Points Available</div>
+                        </div>
+                        <div className="w-8 h-8 rounded-full bg-slate-700 group-hover:bg-blue-600 flex items-center justify-center transition-colors">
+                            <span className="text-white">→</span>
+                        </div>
+                    </button>
+                ))}
+            </div>
+        </div>
+    );
+};
+
 import StudentWordStorm from '@/components/wordstorm/StudentWordStorm';
 import StudentCommitment from '@/components/commitment/StudentCommitment';
 
@@ -544,6 +583,31 @@ export default function UserDash({ classData, userId, onLeaveClass }: UserDashPr
                     <StudentMenu classId={classData.id} />
                 </div>
 
+                <button
+                    onClick={() => setShowParkingLot(true)}
+                    className="fixed bottom-10 right-6 z-[60] w-14 h-14 bg-slate-800 rounded-full shadow-xl flex items-center justify-center text-2xl border-2 border-indigo-500 text-white transition-transform hover:scale-110 active:scale-90"
+                    title="Parking Lot"
+                >
+                    🚙
+                </button>
+
+                <ParkingLotModal
+                    isOpen={showParkingLot}
+                    onClose={() => setShowParkingLot(false)}
+                    classId={classData.id}
+                    userId={userId}
+                    userName={userProfile?.displayName || 'Student'}
+                />
+
+                {/* Energy Battery Widget (Bottom Left) */}
+                {userProfile && (
+                    <EnergyBattery
+                        classId={classData.id}
+                        userId={userId}
+                        displayName={userProfile.displayName || 'Student'}
+                    />
+                )}
+
                 <div className="relative z-10 w-full max-w-md mx-auto mt-8">
                     <StudentDashboardView
                         classId={classData.id}
@@ -578,7 +642,7 @@ export default function UserDash({ classData, userId, onLeaveClass }: UserDashPr
 
             <button
                 onClick={() => setShowParkingLot(true)}
-                className="fixed bottom-10 right-6 z-50 w-14 h-14 bg-slate-800 rounded-full shadow-xl flex items-center justify-center text-2xl border-2 border-indigo-500 text-white transition-transform hover:scale-110 active:scale-90"
+                className="fixed bottom-10 right-6 z-[60] w-14 h-14 bg-slate-800 rounded-full shadow-xl flex items-center justify-center text-2xl border-2 border-indigo-500 text-white transition-transform hover:scale-110 active:scale-90"
                 title="Parking Lot"
             >
                 🚙
@@ -640,7 +704,7 @@ export default function UserDash({ classData, userId, onLeaveClass }: UserDashPr
             )}
 
             {/* Pulse Check Overlay */}
-            {activePulse && userProfile && activePulse.id !== dismissedPulseId && (
+            {activePulse && activePulse.id !== dismissedPulseId && (
                 <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/95 backdrop-blur-md animate-fade-in p-6">
                     <div className="relative w-full max-w-4xl flex flex-col items-center">
                         <button
@@ -654,7 +718,7 @@ export default function UserDash({ classData, userId, onLeaveClass }: UserDashPr
                             classId={classData.id}
                             sessionId={activePulse.id}
                             userId={userId}
-                            displayName={userProfile.displayName || 'Student'}
+                            displayName={userProfile?.displayName || 'Student'}
                         />
                     </div>
                 </div>
@@ -687,6 +751,8 @@ export default function UserDash({ classData, userId, onLeaveClass }: UserDashPr
                         <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">Lifetime</div>
                     </div>
                 </div>
+
+                <StudentAlbums classId={classData.id} />
             </div>
 
             {/* Debug Info */}

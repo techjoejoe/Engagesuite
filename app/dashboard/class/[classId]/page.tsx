@@ -15,6 +15,7 @@ export default function ClassDashboard() {
 
     const [loading, setLoading] = useState(true);
     const [classData, setClassData] = useState<Class | null>(null);
+    const [showAssignModal, setShowAssignModal] = useState(false);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChange(async (user) => {
@@ -173,11 +174,159 @@ export default function ClassDashboard() {
                         description="Award points to learners by scanning a unique QR code."
                         status="coming-soon"
                     />
+
+                    {/* Workbooks (New!) */}
+                    <ToolCard
+                        icon="📚"
+                        title="Workbooks"
+                        description="Assign self-paced albums and worksheets to the class."
+                        status="active"
+                        action={() => setShowAssignModal(true)}
+                        actionLabel="Assign"
+                        badge="New!"
+                    />
                 </div>
             </div>
+
+            <AssignmentModal
+                isOpen={showAssignModal}
+                onClose={() => setShowAssignModal(false)}
+                classId={classId}
+            />
         </main>
     );
 }
+
+import { getDesignerAlbums, assignAlbumToClass, getStudentAssignments, AlbumTemplate, ClassAlbum } from '@/lib/albums';
+import { getCurrentUser } from '@/lib/auth';
+
+const AssignmentModal = ({ isOpen, onClose, classId }: { isOpen: boolean, onClose: () => void, classId: string }) => {
+    const [tab, setTab] = useState<'assign' | 'manage'>('assign');
+    const [albums, setAlbums] = useState<AlbumTemplate[]>([]);
+    const [activeAssignments, setActiveAssignments] = useState<ClassAlbum[]>([]);
+
+    const [loading, setLoading] = useState(false);
+    const [assigning, setAssigning] = useState<string | null>(null);
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!isOpen) return;
+        setLoading(true);
+        const load = async () => {
+            const user = getCurrentUser();
+            if (user) {
+                // Load Templates
+                const userAlbums = await getDesignerAlbums(user.uid);
+                setAlbums(userAlbums);
+
+                // Load Active Assignments
+                const active = await getStudentAssignments(classId);
+                setActiveAssignments(active);
+            }
+            setLoading(false);
+        };
+        load();
+    }, [isOpen, classId]);
+
+    const handleAssign = async (templateId: string) => {
+        const user = getCurrentUser();
+        if (!user) return;
+        setAssigning(templateId);
+        try {
+            await assignAlbumToClass(templateId, classId, user.uid);
+            // Refresh details
+            const active = await getStudentAssignments(classId);
+            setActiveAssignments(active);
+            alert("Workbook assigned successfully!");
+            setTab('manage'); // Switch tab to see it
+        } catch (e) {
+            console.error("Failed to assign", e);
+            alert("Error assigning workbook");
+        } finally {
+            setAssigning(null);
+        }
+    };
+
+    if (!isOpen) return null;
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <div className="bg-white rounded-2xl p-6 w-full max-w-2xl max-h-[80vh] flex flex-col shadow-2xl animate-fade-in-up">
+
+                <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-xl font-bold text-gray-900">Manage Workbooks</h2>
+                    <button onClick={onClose} className="text-gray-400 hover:text-gray-600">✕</button>
+                </div>
+
+                <div className="flex gap-4 border-b border-gray-100 mb-4 pb-1">
+                    <button
+                        onClick={() => setTab('assign')}
+                        className={`pb-2 text-sm font-bold transition-colors ${tab === 'assign' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-400 hover:text-gray-600'}`}
+                    >
+                        Assign New
+                    </button>
+                    <button
+                        onClick={() => setTab('manage')}
+                        className={`pb-2 text-sm font-bold transition-colors ${tab === 'manage' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-400 hover:text-gray-600'}`}
+                    >
+                        Active Assignments ({activeAssignments.length})
+                    </button>
+                </div>
+
+                <div className="flex-1 overflow-y-auto space-y-3 p-1">
+                    {loading ? (
+                        <div className="text-center py-10 text-gray-400">Loading library...</div>
+                    ) : tab === 'assign' ? (
+                        albums.length === 0 ? (
+                            <div className="text-center py-10">
+                                <p className="text-gray-500 mb-4">You haven't designed any albums yet.</p>
+                                <Button variant="primary" onClick={() => window.location.href = '/host/design'}>Go to Designer</Button>
+                            </div>
+                        ) : (
+                            albums.map(album => (
+                                <div key={album.id} className="border border-gray-100 p-4 rounded-xl flex justify-between items-center hover:bg-gray-50 transition-colors">
+                                    <div>
+                                        <h3 className="font-bold text-gray-800">{album.title}</h3>
+                                        <p className="text-sm text-gray-400">{album.pages?.length || 0} Pages • {album.totalPointsAvailable} Pts</p>
+                                    </div>
+                                    <Button
+                                        variant="primary"
+                                        onClick={() => handleAssign(album.id)}
+                                        disabled={assigning === album.id}
+                                        className="bg-blue-600 text-white"
+                                    >
+                                        {assigning === album.id ? 'Assigning...' : 'Assign'}
+                                    </Button>
+                                </div>
+                            ))
+                        )
+                    ) : (
+                        // Manage View
+                        activeAssignments.length === 0 ? (
+                            <div className="text-center py-10 text-gray-400">No active workbooks for this class.</div>
+                        ) : (
+                            activeAssignments.map(assign => (
+                                <div key={assign.id} className="bg-blue-50 border border-blue-100 p-4 rounded-xl flex justify-between items-center">
+                                    <div>
+                                        <h3 className="font-bold text-gray-800">{assign.title}</h3>
+                                        <p className="text-xs text-blue-500 font-bold uppercase tracking-wider">Active</p>
+                                    </div>
+                                    <Button
+                                        variant="secondary"
+                                        onClick={() => router.push(`/host/class/${classId}/workbook/${assign.id}`)}
+                                        className="bg-white text-blue-600 border border-blue-200 hover:bg-blue-50"
+                                    >
+                                        View Report
+                                    </Button>
+                                </div>
+                            ))
+                        )
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+};
 
 interface ToolCardProps {
     icon: string;

@@ -17,6 +17,8 @@ export interface Timer {
 // Or we can just create a new one every time. The plan said "timers" collection.
 // Let's create a new one for each session to allow history if needed, but for now just one active.
 export const createTimer = async (classId: string, hostId: string) => {
+    if (!classId || !hostId) throw new Error('Missing classId or hostId');
+
     const docRef = await addDoc(collection(db, 'timers'), {
         classId,
         hostId,
@@ -46,6 +48,12 @@ export const updateTimer = async (id: string, data: Partial<Timer>) => {
 
 // Start Timer
 export const startTimer = async (id: string, durationSeconds: number) => {
+    if (!id) throw new Error('Missing timer ID');
+    if (typeof durationSeconds !== 'number' || durationSeconds < 0) {
+        console.warn('Invalid duration for startTimer:', durationSeconds);
+        durationSeconds = 300;
+    }
+
     const docRef = doc(db, 'timers', id);
     // Calculate endTime based on server time
     // We can't easily do "serverTimestamp() + seconds" in one write without a cloud function or client-side calc.
@@ -60,6 +68,7 @@ export const startTimer = async (id: string, durationSeconds: number) => {
     // When running, `endTime = now + remainingSeconds`.
 
     // Let's stick to: Host writes `endTime` as a specific timestamp.
+    // We use client-side time for simplicity. Ideally we'd use server time overlap.
     const endTime = new Date(Date.now() + durationSeconds * 1000);
 
     await updateDoc(docRef, {

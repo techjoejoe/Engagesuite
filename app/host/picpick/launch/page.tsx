@@ -59,10 +59,19 @@ function LaunchPicPickContent() {
         setCreating(true);
 
         try {
+            const uploadMins = parseInt(formData.uploadDurationMinutes);
+            const votingMins = parseInt(formData.votingDurationMinutes);
+
+            if (isNaN(uploadMins) || uploadMins < 1 || isNaN(votingMins) || votingMins < 1) {
+                alert('Please enter valid positive numbers for duration.');
+                setCreating(false);
+                return;
+            }
+
             const now = new Date();
-            const uploadEnd = new Date(now.getTime() + parseInt(formData.uploadDurationMinutes) * 60000);
+            const uploadEnd = new Date(now.getTime() + uploadMins * 60000);
             const votingStart = uploadEnd;
-            const votingEnd = new Date(votingStart.getTime() + parseInt(formData.votingDurationMinutes) * 60000);
+            const votingEnd = new Date(votingStart.getTime() + votingMins * 60000);
 
             // Generate gallery code
             const code = Math.random().toString(36).substring(2, 8).toUpperCase();

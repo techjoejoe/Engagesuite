@@ -48,7 +48,7 @@ export default function EnergyBattery({ classId, userId, displayName }: EnergyBa
             {/* Battery Button */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="fixed bottom-6 left-6 z-50 w-14 h-14 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full shadow-xl flex items-center justify-center text-2xl transition-all hover:scale-110 border-2 border-white/20"
+                className="fixed bottom-10 left-6 z-[60] w-14 h-14 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full shadow-xl flex items-center justify-center text-2xl transition-all hover:scale-110 border-2 border-white/20"
                 title="Energy Level"
             >
                 {getBatteryIcon()}

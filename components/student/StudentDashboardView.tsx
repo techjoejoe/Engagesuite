@@ -15,6 +15,10 @@ interface Props {
     initialTab?: 'class' | 'global';
 }
 
+import { Badge, onBadgeEarned } from '@/lib/badges';
+import BadgeReveal from '@/components/BadgeReveal';
+import ProfileModal from '@/components/ProfileModal';
+
 export default function StudentDashboardView({ classId, className, userId, onJoinActivity, initialTab = 'class' }: Props) {
     const router = useRouter();
     const [member, setMember] = useState<ClassMember | null>(null);
@@ -24,6 +28,9 @@ export default function StudentDashboardView({ classId, className, userId, onJoi
     const [showHistory, setShowHistory] = useState(false);
     const [history, setHistory] = useState<any[]>([]);
     const [tab, setTab] = useState<'class' | 'global'>(initialTab);
+    const [selectedGlobalUser, setSelectedGlobalUser] = useState<{ id: string, name: string, score: number } | null>(null);
+    const [globalModalOpen, setGlobalModalOpen] = useState(false);
+    const [newBadge, setNewBadge] = useState<Badge | null>(null);
 
     const loadStats = async () => {
         if (!userId) return;
@@ -51,10 +58,23 @@ export default function StudentDashboardView({ classId, className, userId, onJoi
     };
 
     useEffect(() => {
+        if (!userId) return;
+
+        // Load initial stats
         loadStats();
+
         // Refresh leaderboard every 10 seconds
         const interval = setInterval(loadStats, 10000);
-        return () => clearInterval(interval);
+
+        // Listen for new badges
+        const unsubscribeBadges = onBadgeEarned(userId, (badge) => {
+            setNewBadge(badge);
+        });
+
+        return () => {
+            clearInterval(interval);
+            unsubscribeBadges();
+        };
     }, [classId, userId]);
 
     return (
@@ -132,9 +152,17 @@ export default function StudentDashboardView({ classId, className, userId, onJoi
                                 const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '';
 
                                 return (
-                                    <div
+                                    <button
                                         key={user.uid}
-                                        className={`relative flex flex-col items-center text-center p-4 rounded-xl transition-all border ${isCurrentUser
+                                        onClick={() => {
+                                            setSelectedGlobalUser({
+                                                id: user.uid,
+                                                name: user.displayName || 'Anonymous',
+                                                score: user.lifetimePoints
+                                            });
+                                            setGlobalModalOpen(true);
+                                        }}
+                                        className={`relative flex flex-col items-center text-center p-4 rounded-xl transition-all border outline-none focus:ring-2 focus:ring-indigo-500 hover:scale-105 active:scale-95 ${isCurrentUser
                                             ? 'bg-indigo-600/20 border-indigo-500/50 shadow-lg shadow-indigo-500/10'
                                             : isTop3
                                                 ? 'bg-yellow-500/10 border-yellow-500/20'
@@ -177,7 +205,7 @@ export default function StudentDashboardView({ classId, className, userId, onJoi
                                                 Lifetime
                                             </div>
                                         </div>
-                                    </div>
+                                    </button>
                                 );
                             })
                         )}
@@ -225,6 +253,25 @@ export default function StudentDashboardView({ classId, className, userId, onJoi
                         </div>
                     </div>
                 </div>
+            )}
+
+            {/* Global User Profile Modal */}
+            {selectedGlobalUser && (
+                <ProfileModal
+                    isOpen={globalModalOpen}
+                    onClose={() => setGlobalModalOpen(false)}
+                    userId={selectedGlobalUser.id}
+                    userName={selectedGlobalUser.name}
+                    userScore={selectedGlobalUser.score}
+                />
+            )}
+
+            {/* Badge Reveal Celebration */}
+            {newBadge && (
+                <BadgeReveal
+                    badge={newBadge}
+                    onClose={() => setNewBadge(null)}
+                />
             )}
         </div>
     );
