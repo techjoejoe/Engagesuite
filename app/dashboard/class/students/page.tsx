@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Button from '@/components/Button';
 import { onAuthStateChange } from '@/lib/auth';
 import { getClass, Class } from '@/lib/classes';
-import { getClassLeaderboard, ClassMember, removeStudentFromClass, adjustStudentPoints, bulkAdjustClassPoints, getStudentHistory, PointHistory } from '@/lib/scoring';
+import { getClassLeaderboard, ClassMember, removeStudentFromClass, adjustStudentPoints, bulkAdjustClassPoints, getStudentHistory, PointHistory, ensureLifetimePointsAtLeast } from '@/lib/scoring';
 import { getUserProfile, UserProfile } from '@/lib/auth';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { User } from 'firebase/auth';
@@ -89,9 +89,22 @@ function StudentsManagementContent() {
             const studentsWithData = await Promise.all(
                 members.map(async (member) => {
                     const profile = await getUserProfile(member.userId);
+                    const lifetimePoints = profile?.lifetimePoints || 0;
+                    const classPoints = member.score || 0;
+
+                    // Auto-repair if lifetime points are less than class points
+                    if (lifetimePoints < classPoints) {
+                        try {
+                            // Don't await this to keep UI fast, it repairs in background
+                            ensureLifetimePointsAtLeast(member.userId, classPoints);
+                        } catch (err) {
+                            console.error('Error triggering auto-repair:', err);
+                        }
+                    }
+
                     return {
                         ...member,
-                        lifetimePoints: profile?.lifetimePoints || 0,
+                        lifetimePoints: Math.max(lifetimePoints, classPoints), // Display corrected value immediately
                         email: profile?.email || 'Unknown'
                     };
                 })
@@ -536,7 +549,6 @@ function StudentsManagementContent() {
                                                                 size="sm"
                                                                 onClick={() => handleRemoveStudent(student.userId)}
                                                                 disabled={processing}
-                                                                className="!text-black !bg-red-500 hover:!bg-red-600 text-white"
                                                             >
                                                                 Remove
                                                             </Button>

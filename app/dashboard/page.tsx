@@ -199,7 +199,7 @@ export default function Dashboard() {
                             </div>
                             <h3 className="text-xl font-bold text-white mb-2">Designer Studio</h3>
                             <p className="text-gray-400 text-sm">
-                                Build interactive workbooks, albums, and study materials.
+                                Build interactive workbooks and study materials.
                             </p>
                             <div className="mt-4 text-blue-400 font-bold text-sm bg-blue-500/10 px-3 py-1 rounded-full">
                                 Open Studio →

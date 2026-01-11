@@ -88,16 +88,7 @@ export default function StudentMenu({ currentPage = '', className = '', classId 
                             <span className="font-medium">My Profile</span>
                         </Link>
 
-                        {classId && (
-                            <Link
-                                href={`/play/class/${classId}?view=leaderboard&tab=class`}
-                                onClick={() => setIsOpen(false)}
-                                className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 text-gray-300 hover:text-white transition-all"
-                            >
-                                <span className="text-xl">🏆</span>
-                                <span className="font-medium">Leaderboards</span>
-                            </Link>
-                        )}
+
                     </div>
 
                     <div className="mb-4">
@@ -113,6 +104,37 @@ export default function StudentMenu({ currentPage = '', className = '', classId 
                             <span className="font-medium">Join Class</span>
                         </Link>
                     </div>
+
+                    {/* Class Resources - Only show if user has a classId */}
+                    {classId && (
+                        <div className="mb-4">
+                            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                                Class Resources
+                            </h3>
+                            <Link
+                                href="/student/workbooks"
+                                onClick={() => setIsOpen(false)}
+                                className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all ${currentPage === 'Workbooks'
+                                    ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30'
+                                    : 'hover:bg-white/10 text-gray-300 hover:text-white'
+                                    }`}
+                            >
+                                <span className="text-xl">📚</span>
+                                <span className="font-medium">Workbooks</span>
+                            </Link>
+                            <Link
+                                href="/picpick"
+                                onClick={() => setIsOpen(false)}
+                                className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all ${currentPage === 'PicPick'
+                                    ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30'
+                                    : 'hover:bg-white/10 text-gray-300 hover:text-white'
+                                    }`}
+                            >
+                                <span className="text-xl">📸</span>
+                                <span className="font-medium">PicPick</span>
+                            </Link>
+                        </div>
+                    )}
                 </div>
 
                 {/* Footer */}

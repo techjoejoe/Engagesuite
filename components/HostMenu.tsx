@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { signOutUser } from '@/lib/auth';
-import { onEnergyChange, StudentEnergy, launchPulseCheck, getActivePulseCheck, closePulseCheck, onPulseCheckChange, PulseCheck } from '@/lib/energy';
+import { onEnergyChange, StudentEnergy, launchPulseCheck, getActivePulseCheck, closePulseCheck, onPulseCheckChange, PulseCheck, resetAllEnergy } from '@/lib/energy';
 import { onUnansweredCountChange } from '@/lib/parkinglot';
 
 interface HostMenuProps {
@@ -181,9 +181,23 @@ export default function HostMenu({ currentPage = '', classId, className = '' }: 
                         {!activePulse && (
                             <button
                                 onClick={handleLaunchPulse}
-                                className="w-full p-4 rounded-xl font-bold bg-indigo-500 hover:bg-indigo-600 text-white transition-all mb-4"
+                                className="w-full p-4 rounded-xl font-bold bg-indigo-500 hover:bg-indigo-600 text-white transition-all mb-2"
                             >
                                 📊 Launch Pulse Check
+                            </button>
+                        )}
+
+                        {/* Reset Energy Button */}
+                        {!activePulse && (
+                            <button
+                                onClick={async () => {
+                                    if (classId && confirm('Reset all student energy levels to 100%?')) {
+                                        await resetAllEnergy(classId);
+                                    }
+                                }}
+                                className="w-full p-3 rounded-xl font-bold bg-green-500/20 hover:bg-green-500/30 text-green-400 border border-green-500/30 transition-all mb-4 text-sm"
+                            >
+                                🔋 Reset All Energy to 100%
                             </button>
                         )}
 
@@ -376,6 +390,17 @@ export default function HostMenu({ currentPage = '', classId, className = '' }: 
                             >
                                 <span className="text-xl">📽️</span>
                                 <span className="font-medium">Projector View</span>
+                            </Link>
+                            <Link
+                                href={`/host/class/${classId}/grades`}
+                                onClick={() => setIsOpen(false)}
+                                className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all ${currentPage === 'grades'
+                                    ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30'
+                                    : 'hover:bg-white/10 text-gray-300 hover:text-white'
+                                    }`}
+                            >
+                                <span className="text-xl">📊</span>
+                                <span className="font-medium">Gradebook</span>
                             </Link>
                         </div>
                     )}

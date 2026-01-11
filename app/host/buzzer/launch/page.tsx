@@ -142,9 +142,21 @@ function BuzzerLaunchContent() {
                                             style={{ animationDelay: `${index * 0.1}s` }}
                                         >
                                             <div className="flex items-center gap-4">
-                                                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-lg ${index === 0 ? 'bg-yellow-500 text-black' : 'bg-white/10 text-white'
+                                                {/* Rank */}
+                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-sm shadow-sm ${index === 0 ? 'bg-yellow-500 text-black' : 'bg-slate-700 text-white border border-slate-600'
                                                     }`}>
                                                     {index + 1}
+                                                </div>
+
+                                                {/* Avatar */}
+                                                <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/20 shadow-md relative bg-slate-800">
+                                                    {buzz.photoURL ? (
+                                                        <img src={buzz.photoURL} alt={buzz.displayName} className="w-full h-full object-cover" />
+                                                    ) : (
+                                                        <div className="w-full h-full flex items-center justify-center text-xs font-bold text-slate-400">
+                                                            {(buzz.displayName || '?').charAt(0).toUpperCase()}
+                                                        </div>
+                                                    )}
                                                 </div>
                                                 <div>
                                                     <div className={`font-bold text-lg ${index === 0 ? 'text-yellow-400' : 'text-white'}`}>

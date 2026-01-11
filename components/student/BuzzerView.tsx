@@ -35,20 +35,30 @@ export default function BuzzerView({ classId, userProfile }: Props) {
     const handleBuzz = async () => {
         if (state.status !== 'open' || myBuzz) return;
 
-        // Optimistic UI? Maybe not needed for buzzer, accuracy is key.
-        // But we can vibrate
         if (navigator.vibrate) navigator.vibrate(200);
-
-        await buzzIn(classId, userProfile.uid, userProfile.displayName || 'Student');
+        await buzzIn(classId, userProfile.uid, userProfile.displayName || 'Student', userProfile.photoURL || undefined);
     };
 
     // Render Logic
     if (myBuzz) {
         return (
             <div className="flex flex-col items-center justify-center h-[60vh] animate-fade-in">
-                <div className="text-6xl mb-6 animate-bounce">
-                    {myBuzz.rank === 1 ? '🏆' : '✅'}
-                </div>
+                {userProfile.photoURL ? (
+                    <div className="relative mb-6">
+                        <img
+                            src={userProfile.photoURL}
+                            alt={userProfile.displayName || 'User'}
+                            className="w-32 h-32 rounded-full border-4 border-white shadow-xl object-cover animate-bounce-in"
+                        />
+                        <div className="absolute -bottom-2 -right-2 text-5xl animate-bounce delay-100">
+                            {myBuzz.rank === 1 ? '🏆' : '✅'}
+                        </div>
+                    </div>
+                ) : (
+                    <div className="text-6xl mb-6 animate-bounce">
+                        {myBuzz.rank === 1 ? '🏆' : '✅'}
+                    </div>
+                )}
                 <h2 className="text-3xl font-bold text-white mb-2">You Buzzed In!</h2>
                 <div className="text-xl text-gray-300 mb-8">
                     Rank: <span className="text-4xl font-black text-yellow-400">#{myBuzz.rank}</span>

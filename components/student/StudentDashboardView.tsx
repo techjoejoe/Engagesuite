@@ -13,13 +13,14 @@ interface Props {
     userId: string;
     onJoinActivity: (type: string) => void;
     initialTab?: 'class' | 'global';
+    hideHeader?: boolean;
 }
 
 import { Badge, onBadgeEarned } from '@/lib/badges';
 import BadgeReveal from '@/components/BadgeReveal';
 import ProfileModal from '@/components/ProfileModal';
 
-export default function StudentDashboardView({ classId, className, userId, onJoinActivity, initialTab = 'class' }: Props) {
+export default function StudentDashboardView({ classId, className, userId, onJoinActivity, initialTab = 'class', hideHeader = false }: Props) {
     const router = useRouter();
     const [member, setMember] = useState<ClassMember | null>(null);
     const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -79,28 +80,30 @@ export default function StudentDashboardView({ classId, className, userId, onJoi
 
     return (
         <div className="flex flex-col gap-6 w-full animate-fade-in max-w-lg mx-auto pb-20">
-            {/* Header & Stats */}
-            <div className="flex items-center justify-between px-2 pt-2">
-                <div>
-                    <h2 className="text-2xl font-black text-white tracking-tight flex items-center gap-2">
-                        Hi, {userProfile?.displayName?.split(' ')[0] || 'Student'}
-                    </h2>
-                    <p className="text-slate-400 text-xs font-bold uppercase tracking-wider truncate max-w-[150px]">
-                        {className}
-                    </p>
-                </div>
-                <div className="flex gap-4 bg-slate-800/50 p-2 rounded-xl border border-white/5 backdrop-blur-md">
-                    <div className="text-center px-2">
-                        <div className="text-lg font-black text-blue-400 leading-none">{member?.score || 0}</div>
-                        <div className="text-[9px] font-bold text-slate-500 uppercase mt-1">Score</div>
+            {/* Header & Stats - Only show if not hidden */}
+            {!hideHeader && (
+                <div className="flex items-center justify-between px-2 pt-2">
+                    <div>
+                        <h2 className="text-2xl font-black text-white tracking-tight flex items-center gap-2">
+                            Hi, {userProfile?.displayName?.split(' ')[0] || 'Student'}
+                        </h2>
+                        <p className="text-slate-400 text-xs font-bold uppercase tracking-wider truncate max-w-[150px]">
+                            {className}
+                        </p>
                     </div>
-                    <div className="w-px bg-white/10" />
-                    <div className="text-center px-2">
-                        <div className="text-lg font-black text-green-400 leading-none">{userProfile?.lifetimePoints || 0}</div>
-                        <div className="text-[9px] font-bold text-slate-500 uppercase mt-1">Lifetime</div>
+                    <div className="flex gap-4 bg-slate-800/50 p-2 rounded-xl border border-white/5 backdrop-blur-md">
+                        <div className="text-center px-2">
+                            <div className="text-lg font-black text-blue-400 leading-none">{member?.score || 0}</div>
+                            <div className="text-[9px] font-bold text-slate-500 uppercase mt-1">Score</div>
+                        </div>
+                        <div className="w-px bg-white/10" />
+                        <div className="text-center px-2">
+                            <div className="text-lg font-black text-green-400 leading-none">{userProfile?.lifetimePoints || 0}</div>
+                            <div className="text-[9px] font-bold text-slate-500 uppercase mt-1">Lifetime</div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            )}
 
             {/* Tabs */}
             <div className="flex p-1 bg-slate-800/50 rounded-xl mx-2">

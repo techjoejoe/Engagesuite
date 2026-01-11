@@ -20,6 +20,8 @@ export interface Poll {
 
 export interface Vote {
     id: string; // userId
+    displayName?: string;
+    photoURL?: string;
     optionId: string;
     createdAt: any;
 }
@@ -68,10 +70,12 @@ export const onPollChange = (pollId: string, callback: (poll: Poll | null) => vo
 };
 
 // Cast a Vote
-export const votePoll = async (pollId: string, userId: string, optionId: string) => {
+export const votePoll = async (pollId: string, userId: string, optionId: string, displayName: string, photoURL?: string) => {
     const voteRef = doc(db, 'polls', pollId, 'votes', userId);
     await setDoc(voteRef, {
         optionId,
+        displayName,
+        photoURL: photoURL || null,
         createdAt: serverTimestamp(),
     });
 };

@@ -1,13 +1,14 @@
 'use client';
 
-import React, { useState, useEffect, use } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation';
 import { onClassChange, getClassByCode, Class } from '@/lib/classes';
 import { onAuthStateChange } from '@/lib/auth';
 import UserDash from '@/components/student/UserDash';
 
-export default function StudentClassDashboard({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = use(params);
+export default function StudentClassDashboard() {
+    const params = useParams();
+    const id = params.id as string;
     const router = useRouter();
     const [classData, setClassData] = useState<Class | null>(null);
     const [loading, setLoading] = useState(true);

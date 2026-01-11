@@ -12,37 +12,56 @@ import ReadyCheck from '@/components/ReadyCheck';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import StudentMenu from '@/components/StudentMenu';
 
-import { getStudentAssignments, ClassAlbum } from '@/lib/albums';
-import { useRouter } from 'next/navigation';
+import { getStudentAssignments, onStudentAssignmentsChange, ClassAlbum } from '@/lib/albums';
+import { onGalleriesChange, Gallery } from '@/lib/picpick';
+import { useRouter, useSearchParams } from 'next/navigation';
+import StudentWordStorm from '@/components/wordstorm/StudentWordStorm';
+import StudentCommitment from '@/components/commitment/StudentCommitment';
+import { onTimerChange } from '@/lib/tickr';
+import Button from '@/components/Button';
+import { getClassMembers } from '@/lib/classes';
+import Confetti from '@/components/Confetti';
+import { getClassMember, ClassMember, getClassLeaderboard, joinClassMember } from '@/lib/scoring';
+import { getUserProfile, UserProfile } from '@/lib/auth';
+import { onActivePulseCheck, PulseCheck, initStudentEnergy } from '@/lib/energy';
+import { onToolChange, ToolState } from '@/lib/tools';
+import Dice3D from '@/components/Dice3D';
+import Coin3D from '@/components/Coin3D';
+import ClassLeaderboard from '@/components/student/ClassLeaderboard';
+import { addParkingLotQuestion, onParkingLotChange, ParkingLotItem } from '@/lib/parkinglot';
 
 const StudentAlbums = ({ classId }: { classId: string }) => {
     const [assignments, setAssignments] = useState<ClassAlbum[]>([]);
     const router = useRouter();
 
     useEffect(() => {
-        getStudentAssignments(classId).then(setAssignments);
+        // Subscribe to real-time updates
+        const unsubscribe = onStudentAssignmentsChange(classId, (updated) => {
+            setAssignments(updated);
+        });
+        return () => unsubscribe();
     }, [classId]);
 
     if (assignments.length === 0) return null;
 
     return (
-        <div className="mt-8 border-t border-white/10 pt-6">
-            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                <span>📚</span> Workbooks & Albums
+        <div id="workbooks">
+            <h3 className="text-sm font-bold text-white mb-2 flex items-center gap-2 opacity-80">
+                <span>📚</span> Workbooks
             </h3>
-            <div className="grid gap-3">
+            <div className="grid gap-2">
                 {assignments.map(a => (
                     <button
                         key={a.id}
-                        onClick={() => router.push(`/play/album/${a.id}`)}
-                        className="w-full text-left bg-slate-800/50 hover:bg-slate-700/80 p-4 rounded-xl border border-white/5 hover:border-blue-500/50 transition-all group flex justify-between items-center"
+                        onClick={() => router.push(`/play/workbook?id=${a.id}`)}
+                        className="w-full text-left bg-slate-800/50 hover:bg-slate-700/80 p-3 rounded-lg border border-white/5 hover:border-blue-500/50 transition-all group flex justify-between items-center"
                     >
                         <div>
-                            <div className="font-bold text-gray-200 group-hover:text-blue-300 transition-colors">{a.title}</div>
-                            <div className="text-xs text-gray-500 mt-1">{a.totalPointsAvailable} Points Available</div>
+                            <div className="font-bold text-sm text-gray-200 group-hover:text-blue-300 transition-colors">{a.title}</div>
+                            <div className="text-xs text-gray-500 mt-0.5">{a.totalPointsAvailable} Points Available</div>
                         </div>
-                        <div className="w-8 h-8 rounded-full bg-slate-700 group-hover:bg-blue-600 flex items-center justify-center transition-colors">
-                            <span className="text-white">→</span>
+                        <div className="w-7 h-7 rounded-full bg-slate-700 group-hover:bg-blue-600 flex items-center justify-center transition-colors">
+                            <span className="text-white text-sm">→</span>
                         </div>
                     </button>
                 ))}
@@ -51,26 +70,73 @@ const StudentAlbums = ({ classId }: { classId: string }) => {
     );
 };
 
-import StudentWordStorm from '@/components/wordstorm/StudentWordStorm';
-import StudentCommitment from '@/components/commitment/StudentCommitment';
+const StudentGalleries = ({ classId }: { classId: string }) => {
+    const [galleries, setGalleries] = useState<Gallery[]>([]);
+    const router = useRouter();
 
-import { onTimerChange } from '@/lib/tickr';
-import Button from '@/components/Button';
+    useEffect(() => {
+        // Subscribe to real-time updates
+        const unsubscribe = onGalleriesChange(classId, (updated) => {
+            setGalleries(updated);
+        });
+        return () => unsubscribe();
+    }, [classId]);
+
+    if (galleries.length === 0) return null;
+
+    // Helper to check if gallery is currently active (voting or upload window)
+    const isGalleryActive = (gallery: Gallery) => {
+        const now = new Date();
+        const uploadEnd = gallery.uploadEnd instanceof Date ? gallery.uploadEnd : gallery.uploadEnd.toDate();
+        const votingEnd = gallery.votingEnd instanceof Date ? gallery.votingEnd : gallery.votingEnd.toDate();
+        return now <= votingEnd;
+    };
+
+    return (
+        <div id="galleries">
+            <h3 className="text-sm font-bold text-white mb-2 flex items-center gap-2 opacity-80">
+                <span>📸</span> PicPick Gallery
+            </h3>
+            <div className="grid gap-2">
+                {galleries.filter(isGalleryActive).map(g => (
+                    <button
+                        key={g.id}
+                        onClick={() => router.push(`/picpick/gallery/${g.id}`)}
+                        className="w-full text-left bg-slate-800/50 hover:bg-slate-700/80 p-3 rounded-lg border border-white/5 hover:border-purple-500/50 transition-all group flex justify-between items-center"
+                    >
+                        <div>
+                            <div className="font-bold text-sm text-gray-200 group-hover:text-purple-300 transition-colors">{g.name}</div>
+                            <div className="text-xs text-gray-500 mt-0.5">{g.description}</div>
+                        </div>
+                        <div className="w-7 h-7 rounded-full bg-slate-700 group-hover:bg-purple-600 flex items-center justify-center transition-colors">
+                            <span className="text-white text-sm">📷</span>
+                        </div>
+                    </button>
+                ))}
+            </div>
+        </div>
+    );
+};
+
+
 
 const ActivityContainer = ({ children, title, icon, color = 'indigo' }: { children: React.ReactNode; title: string; icon: string; color?: string }) => (
     <div className="flex flex-col h-full items-center justify-center text-center animate-fade-in w-full">
-        <div className={`w-24 h-24 rounded-3xl bg-${color}-50 dark:bg-${color}-900/30 text-${color}-600 dark:text-${color}-400 flex items-center justify-center text-5xl mb-6 shadow-sm border border-${color}-100 dark:border-${color}-800`}>
-            {icon}
+        <div className={`relative group`}>
+            <div className={`absolute inset-0 bg-${color}-500 blur-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-500 rounded-full`} />
+            <div className={`relative w-28 h-28 rounded-3xl bg-slate-800/80 text-${color}-400 flex items-center justify-center text-6xl mb-6 shadow-xl border border-${color}-500/30 backdrop-blur-md ring-1 ring-${color}-500/20 group-hover:scale-105 transition-transform duration-300`}>
+                <div className="animate-bounce-slow filter drop-shadow-md">{icon}</div>
+            </div>
         </div>
-        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">{title}</h2>
+        <h2 className="text-4xl font-black text-white mb-2 tracking-tight drop-shadow-lg">{title}</h2>
+        <div className={`h-1 w-20 bg-${color}-500 rounded-full mb-8 opacity-50 mx-auto`} />
         <div className="w-full max-w-lg mx-auto">
             {children}
         </div>
     </div>
 );
 
-import { getClassMembers } from '@/lib/classes';
-import Confetti from '@/components/Confetti';
+
 
 const StudentRandomizer = ({ state, classId }: { state: any, classId: string }) => {
     const [members, setMembers] = useState<any[]>([]);
@@ -134,13 +200,27 @@ const StudentRandomizer = ({ state, classId }: { state: any, classId: string }) 
         <ActivityContainer title="Randomizer" icon="🎡" color="pink">
             <div className="relative w-full h-[500px] bg-slate-900 rounded-3xl overflow-hidden flex flex-col border border-slate-700 shadow-2xl">
                 {/* Winner Overlay */}
+                {/* Winner Overlay */}
                 {state?.winner && (
                     <div className="absolute inset-0 z-50 flex items-center justify-center bg-slate-900/95 backdrop-blur-md animate-fade-in">
                         <Confetti />
-                        <div className="text-center p-8 animate-bounce-in w-full">
-                            <div className="text-8xl mb-6">👑</div>
+                        <div className="text-center p-8 animate-bounce-in w-full flex flex-col items-center">
+                            {typeof state.winner === 'object' && state.winner.photoURL ? (
+                                <div className="relative mb-6">
+                                    <div className="absolute inset-0 bg-white blur-md opacity-20 rounded-full animate-pulse"></div>
+                                    <img
+                                        src={state.winner.photoURL}
+                                        className="relative w-40 h-40 rounded-full border-4 border-white shadow-2xl object-cover animate-bounce-in"
+                                    />
+                                    <div className="absolute -bottom-2 -right-2 text-5xl animate-bounce delay-100">👑</div>
+                                </div>
+                            ) : (
+                                <div className="text-8xl mb-6 animate-bounce">👑</div>
+                            )}
                             <div className="text-3xl font-black text-green-400 uppercase tracking-widest mb-4 drop-shadow-md">Winner!</div>
-                            <div className="text-4xl sm:text-6xl font-black text-white mb-8 break-words drop-shadow-2xl px-4">{state.winner}</div>
+                            <div className="text-4xl sm:text-6xl font-black text-white mb-8 break-words drop-shadow-2xl px-4">
+                                {typeof state.winner === 'object' ? state.winner.displayName : state.winner}
+                            </div>
                         </div>
                     </div>
                 )}
@@ -151,26 +231,46 @@ const StudentRandomizer = ({ state, classId }: { state: any, classId: string }) 
                         <div
                             key={member.uid}
                             className={`
-                                p-4 rounded-xl text-center transition-all duration-100 flex items-center justify-center min-h-[70px]
+                                p-3 rounded-xl text-center transition-all duration-100 flex flex-col items-center justify-center min-h-[110px] aspect-square
                                 ${highlightedIndex === index
                                     ? 'bg-gradient-to-br from-indigo-500 to-purple-600 scale-105 shadow-[0_0_20px_rgba(139,92,246,0.6)] z-10 text-white font-black ring-2 ring-white transform'
                                     : 'bg-slate-800 text-slate-200 border border-slate-700 hover:bg-slate-750'
                                 }
                             `}
                         >
-                            <span className={`truncate ${highlightedIndex === index ? 'text-lg' : 'text-sm font-medium'}`}>{member.displayName}</span>
+                            <div className={`
+                                w-14 h-14 rounded-full overflow-hidden mb-2 border-2 shadow-sm
+                                ${highlightedIndex === index ? 'border-white' : 'border-slate-600'}
+                            `}>
+                                {member.photoURL ? (
+                                    <img src={member.photoURL} alt={member.displayName} className="w-full h-full object-cover" />
+                                ) : (
+                                    <div className={`w-full h-full flex items-center justify-center text-xl font-bold ${highlightedIndex === index ? 'bg-white/20' : 'bg-slate-700 text-slate-400'}`}>
+                                        {(member.displayName || '?').charAt(0).toUpperCase()}
+                                    </div>
+                                )}
+                            </div>
+                            <span className={`truncate w-full leading-tight ${highlightedIndex === index ? 'text-sm' : 'text-xs font-medium'}`}>{member.displayName}</span>
                         </div>
                     ))}
                 </div>
 
                 {/* Status Bar */}
-                <div className="p-5 bg-slate-800 text-center border-t border-slate-700/50 shadow-[0_-5px_20px_rgba(0,0,0,0.3)] z-10">
+                <div className="p-5 bg-slate-800 text-center border-t border-slate-700/50 shadow-[0_-5px_20px_rgba(0,0,0,0.3)] z-10 relative overflow-hidden">
+                    {/* Background sheen */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent skew-x-12 translate-x-[-100%] animate-shimmer" />
+
                     {isSpinning ? (
-                        <div className="text-indigo-400 font-bold animate-pulse text-lg tracking-widest">SPINNING...</div>
+                        <div className="text-indigo-400 font-bold animate-pulse text-lg tracking-widest flex items-center justify-center gap-2">
+                            <span className="animate-spin text-xl">🎡</span> SPINNING...
+                        </div>
                     ) : state?.winner ? (
-                        <div className="text-green-400 font-bold text-lg tracking-widest">WINNER SELECTED</div>
+                        <div className="text-green-400 font-bold text-lg tracking-widest animate-pulse">WINNER SELECTED</div>
                     ) : (
-                        <div className="text-slate-400 font-medium italic">Waiting for host to spin...</div>
+                        <div className="text-slate-400 font-medium italic flex items-center justify-center gap-2 opacity-80">
+                            <span className="w-2 h-2 bg-pink-500 rounded-full animate-ping" />
+                            Waiting for host to spin...
+                        </div>
                     )}
                 </div>
             </div>
@@ -221,7 +321,7 @@ const StudentTickr = ({ timerId }: { timerId: string }) => {
                     <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="6" className="text-gray-100 dark:text-slate-700" />
                     <circle cx="50" cy="50" r="45" fill="none" stroke={timeLeft <= 5 ? '#EF4444' : '#6366F1'} strokeWidth="6" strokeDasharray="283" strokeDashoffset={283 - (283 * progress) / 100} strokeLinecap="round" className="transition-all duration-1000 ease-linear" />
                 </svg>
-                <div className={`text-7xl font-black tabular-nums tracking-tighter ${timeLeft <= 5 ? 'text-red-500 animate-pulse' : 'text-gray-900 dark:text-white'}`}>
+                <div className={`text-7xl font-black tabular-nums tracking-tighter drop-shadow-lg ${timeLeft <= 5 ? 'text-red-500 animate-pulse' : 'text-white'}`}>
                     {formatTime(timeLeft)}
                 </div>
             </div>
@@ -241,14 +341,22 @@ const StudentPicPick = ({ galleryId }: { galleryId: string }) => (
     </ActivityContainer>
 );
 
-const StudentPoll = ({ pollId }: { pollId: string }) => (
-    <ActivityContainer title="LiveVote" icon="📊" color="green">
-        <p className="text-gray-500 dark:text-gray-400 text-lg mb-8">A new poll is active!</p>
-        <Button variant="primary" onClick={() => window.location.href = `/play/poll/${pollId}`} className="w-full py-5 text-xl rounded-2xl shadow-xl bg-green-600 text-white hover:bg-green-700 transition-all hover:-translate-y-1">
-            Join Vote
-        </Button>
-    </ActivityContainer>
-);
+const StudentPoll = ({ pollId }: { pollId: string }) => {
+    const router = useRouter();
+
+    useEffect(() => {
+        router.push(`/play/poll/${pollId}`);
+    }, [pollId, router]);
+
+    return (
+        <ActivityContainer title="LiveVote" icon="📊" color="green">
+            <div className="flex flex-col items-center justify-center p-8">
+                <div className="animate-spin text-4xl mb-4">⏳</div>
+                <p className="text-xl font-bold animate-pulse">Joining LiveVote...</p>
+            </div>
+        </ActivityContainer>
+    );
+};
 
 interface UserDashProps {
     classData: Class;
@@ -256,16 +364,7 @@ interface UserDashProps {
     onLeaveClass?: () => void;
 }
 
-import { getClassMember, ClassMember, getClassLeaderboard, joinClassMember } from '@/lib/scoring';
-import { getUserProfile, UserProfile } from '@/lib/auth';
-import { onActivePulseCheck, PulseCheck } from '@/lib/energy';
-import { onToolChange, ToolState } from '@/lib/tools';
-import Dice3D from '@/components/Dice3D';
-import Coin3D from '@/components/Coin3D';
 
-import ClassLeaderboard from '@/components/student/ClassLeaderboard';
-
-import { addParkingLotQuestion, onParkingLotChange, ParkingLotItem } from '@/lib/parkinglot';
 
 const ParkingLotModal = ({ isOpen, onClose, classId, userId, userName }: { isOpen: boolean; onClose: () => void; classId: string; userId: string; userName: string }) => {
     const [question, setQuestion] = useState('');
@@ -387,13 +486,13 @@ const Background = () => (
     </div>
 );
 
-import { useSearchParams } from 'next/navigation';
+
 
 // ... (existing imports)
 
 export default function UserDash({ classData, userId, onLeaveClass }: UserDashProps) {
     const searchParams = useSearchParams();
-    const viewParam = searchParams.get('view');
+
     const tabParam = searchParams.get('tab') as 'class' | 'global' | null;
 
     const [showReadyCheck, setShowReadyCheck] = useState(false);
@@ -404,6 +503,7 @@ export default function UserDash({ classData, userId, onLeaveClass }: UserDashPr
     const [showParkingLot, setShowParkingLot] = useState(false);
     const [activePulse, setActivePulse] = useState<PulseCheck | null>(null);
     const [activeTool, setActiveTool] = useState<ToolState | null>(null);
+    const [classRank, setClassRank] = useState<number | null>(null);
 
     useEffect(() => {
         const loadStats = async () => {
@@ -416,11 +516,22 @@ export default function UserDash({ classData, userId, onLeaveClass }: UserDashPr
             // Ensure member is registered in class
             if (u?.displayName) {
                 await joinClassMember(classData.id, userId, u.displayName);
+                // Initialize energy level only if not already set (default to 100 - Energized)
+                await initStudentEnergy(classData.id, userId, u.displayName, 100);
             }
 
             // Get member stats
             const m = await getClassMember(classData.id, userId);
             setMember(m);
+
+            // Compute class rank from leaderboard
+            try {
+                const leaderboard = await getClassLeaderboard(classData.id, 100);
+                const rank = leaderboard.findIndex(member => member.userId === userId);
+                setClassRank(rank >= 0 ? rank + 1 : null);
+            } catch (err) {
+                console.error('Error computing class rank:', err);
+            }
         };
 
         loadStats();
@@ -436,36 +547,45 @@ export default function UserDash({ classData, userId, onLeaveClass }: UserDashPr
         return () => unsubscribe();
     }, [classData.id]);
 
-    const activeToolRef = useRef<ToolState | null>(null);
 
-    // Keep ref in sync with state
-    useEffect(() => {
-        activeToolRef.current = activeTool;
-    }, [activeTool]);
 
-    // Clear tool if main activity changes (safeguard)
-    useEffect(() => {
-        if (classData.currentActivity?.type && classData.currentActivity.type !== 'none') {
-            setActiveTool(null);
-        }
-    }, [classData.currentActivity?.type]);
+    // Note: Tools (dice/coin) are separate from main activities and shouldn't be cleared
+    // when the main activity changes. They are only cleared when the host deactivates them.
 
     // Listen for tools (Dice/Coin)
     useEffect(() => {
         const unsubDice = onToolChange(classData.id, 'dice', (state) => {
-            if (state && state.active) {
-                setActiveTool(state);
-            } else if (activeToolRef.current?.type === 'dice') {
-                setActiveTool(null);
-            }
+            console.log('[Tool] Dice state update:', state);
+            setActiveTool(prev => {
+                // 1. If new state is active, switch to it immediately
+                if (state && state.active) {
+                    return state;
+                }
+                // 2. If new state is Inactive/Null, AND we are currently looking at Dice, clear it
+                if (prev && prev.type === 'dice') {
+                    // Only clear if we were watching Dice
+                    return null;
+                }
+                // 3. Otherwise (e.g. we are watching Coin), don't touch it
+                return prev;
+            });
         });
 
         const unsubCoin = onToolChange(classData.id, 'coin', (state) => {
-            if (state && state.active) {
-                setActiveTool(state);
-            } else if (activeToolRef.current?.type === 'coin') {
-                setActiveTool(null);
-            }
+            console.log('[Tool] Coin state update:', state);
+            setActiveTool(prev => {
+                // 1. If new state is active, switch to it immediately
+                if (state && state.active) {
+                    return state;
+                }
+                // 2. If new state is Inactive/Null, AND we are currently looking at Coin, clear it
+                if (prev && prev.type === 'coin') {
+                    // Only clear if we were watching Coin
+                    return null;
+                }
+                // 3. Otherwise (e.g. we are watching Dice), don't touch it
+                return prev;
+            });
         });
 
         return () => {
@@ -492,22 +612,11 @@ export default function UserDash({ classData, userId, onLeaveClass }: UserDashPr
         }
     }, [activePulse?.id]);
 
-    // Check if idle (no active activity AND (no pulse check OR pulse check dismissed) AND no manual activity)
-    const isIdle = !manualActivityType && (!classData.currentActivity || classData.currentActivity.type === 'none') && (!activePulse || activePulse.id === dismissedPulseId);
+    // Check if idle (no active tool AND no active activity AND (no pulse check OR pulse check dismissed) AND no manual activity)
+    const isIdle = !activeTool && !manualActivityType && (!classData.currentActivity || classData.currentActivity.type === 'none') && (!activePulse || activePulse.id === dismissedPulseId);
 
-    const [longIdle, setLongIdle] = useState(false);
-
-    useEffect(() => {
-        let timer: NodeJS.Timeout;
-        if (isIdle) {
-            timer = setTimeout(() => {
-                setLongIdle(true);
-            }, 30000);
-        } else {
-            setLongIdle(false);
-        }
-        return () => clearTimeout(timer);
-    }, [isIdle]);
+    // REMOVED: longIdle timer that was switching view after 30 seconds
+    // Users should always see the full dashboard with Workbooks & Galleries
 
     // Render Active Component
     const renderContent = () => {
@@ -550,7 +659,7 @@ export default function UserDash({ classData, userId, onLeaveClass }: UserDashPr
                 case 'wordstorm': return <StudentWordStorm wordStormId={activity.id || ''} />;
                 case 'commitment':
                     if (!userProfile) return <div className="animate-pulse text-white">Loading...</div>;
-                    return <StudentCommitment classId={classData.id} userId={userId} userName={userProfile.displayName || 'Anonymous'} />;
+                    return <StudentCommitment classId={classData.id} userId={userId} userName={userProfile.displayName || 'Anonymous'} userPhoto={userProfile.photoURL || undefined} />;
                 case 'buzzer':
                     if (!userProfile) return <div className="animate-pulse text-white">Loading...</div>;
                     return <BuzzerView classId={classData.id} userProfile={userProfile} />;
@@ -560,70 +669,20 @@ export default function UserDash({ classData, userId, onLeaveClass }: UserDashPr
 
 
 
-        // 3. Fallback: Leaderboard (Should rarely be reached if isIdle logic handles Dashboard)
-        return <ClassLeaderboard classId={classData.id} userId={userId} />;
+        // 3. Fallback: Full Dashboard View (Class + Global tabs)
+        return (
+            <StudentDashboardView
+                classId={classData.id}
+                className={classData.name}
+                userId={userId}
+                onJoinActivity={(type) => setManualActivityType(type)}
+                initialTab="class"
+                hideHeader={true}
+            />
+        );
     };
 
-    // Only show separate leaderboard view if explicitly requested OR idle, AND no active activity is forcing a takeover
-    const hasActiveActivity = classData.currentActivity && classData.currentActivity.type !== 'none';
 
-    if (((isIdle && longIdle) || viewParam === 'leaderboard') && !hasActiveActivity) {
-        return (
-            <div className="min-h-screen bg-slate-900 p-6 relative overflow-hidden flex flex-col items-center">
-                <Background />
-
-                <div className="absolute top-4 left-4 z-50">
-                    {onLeaveClass && (
-                        <Button variant="glass" size="sm" onClick={onLeaveClass} className="text-slate-300 hover:text-white">
-                            ← Leave
-                        </Button>
-                    )}
-                </div>
-                <div className="absolute top-4 right-4 z-50">
-                    <StudentMenu classId={classData.id} />
-                </div>
-
-                <button
-                    onClick={() => setShowParkingLot(true)}
-                    className="fixed bottom-10 right-6 z-[60] w-14 h-14 bg-slate-800 rounded-full shadow-xl flex items-center justify-center text-2xl border-2 border-indigo-500 text-white transition-transform hover:scale-110 active:scale-90"
-                    title="Parking Lot"
-                >
-                    🚙
-                </button>
-
-                <ParkingLotModal
-                    isOpen={showParkingLot}
-                    onClose={() => setShowParkingLot(false)}
-                    classId={classData.id}
-                    userId={userId}
-                    userName={userProfile?.displayName || 'Student'}
-                />
-
-                {/* Energy Battery Widget (Bottom Left) */}
-                {userProfile && (
-                    <EnergyBattery
-                        classId={classData.id}
-                        userId={userId}
-                        displayName={userProfile.displayName || 'Student'}
-                    />
-                )}
-
-                <div className="relative z-10 w-full max-w-md mx-auto mt-8">
-                    <StudentDashboardView
-                        classId={classData.id}
-                        className={classData.name}
-                        userId={userId}
-                        onJoinActivity={(type) => setManualActivityType(type)}
-                        initialTab={tabParam || 'class'}
-                    />
-                </div>
-                {/* Debug Info */}
-                <div className="fixed bottom-1 left-1 text-[10px] text-gray-500 opacity-50 pointer-events-none z-[100]">
-                    Activity: {classData.currentActivity?.type || 'none'} | ID: {classData.currentActivity?.id || '-'} | v: 1.2
-                </div>
-            </div>
-        );
-    }
 
     return (
         <div className="min-h-screen bg-slate-900 p-6 flex flex-col items-center justify-center font-sans transition-colors duration-300 relative overflow-hidden">
@@ -727,32 +786,53 @@ export default function UserDash({ classData, userId, onLeaveClass }: UserDashPr
             <div className="w-full max-w-[500px] flex flex-col gap-6 relative z-10">
 
                 {/* Header */}
-                <div className="text-center text-white">
-                    <h1 className="text-4xl font-black mb-2 tracking-tight">{classData.name}</h1>
-                    <div className="flex items-center justify-center gap-2 text-indigo-300 text-sm font-bold uppercase tracking-widest">
-                        <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                        Live Session
+                <div className="flex items-center justify-between bg-slate-800/80 backdrop-blur-md p-4 rounded-2xl border border-white/10 shadow-lg mb-2">
+                    <div>
+                        <h1 className="text-xl font-black text-white tracking-tight flex items-center gap-2">
+                            Hi, {userProfile?.displayName?.split(' ')[0] || 'Student'}
+                        </h1>
+                        <div className="flex items-center gap-2 text-indigo-300 text-xs font-bold uppercase tracking-widest mt-1">
+                            <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
+                            {classData.name}
+                        </div>
+                    </div>
+
+                    <div className="flex gap-4">
+                        {classRank && (
+                            <>
+                                <div className="text-center px-2">
+                                    <div className="text-lg font-black text-yellow-400 leading-none">
+                                        {classRank}{classRank === 1 ? 'st' : classRank === 2 ? 'nd' : classRank === 3 ? 'rd' : 'th'}
+                                    </div>
+                                    <div className="text-[9px] font-bold text-slate-500 uppercase mt-1">Rank</div>
+                                </div>
+                                <div className="w-px bg-white/10" />
+                            </>
+                        )}
+                        <div className="text-center px-2">
+                            <div className="text-lg font-black text-blue-400 leading-none">{member?.score || 0}</div>
+                            <div className="text-[9px] font-bold text-slate-500 uppercase mt-1">Score</div>
+                        </div>
+                        <div className="w-px bg-white/10" />
+                        <div className="text-center px-2">
+                            <div className="text-lg font-black text-green-400 leading-none">{userProfile?.lifetimePoints || 0}</div>
+                            <div className="text-[9px] font-bold text-slate-500 uppercase mt-1">Lifetime</div>
+                        </div>
                     </div>
                 </div>
 
-                {/* Main Card */}
+                {/* Workbooks & Galleries - Side by side in two columns */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <StudentAlbums classId={classData.id} />
+                    <StudentGalleries classId={classData.id} />
+                </div>
+
                 <div className="glass-card p-8 w-full animate-fade-in-up">
                     {renderContent()}
                 </div>
 
                 {/* Stats Row */}
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="glass-card p-4 text-center">
-                        <div className="text-3xl font-black text-blue-400">{member?.score || 0}</div>
-                        <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">Class Points</div>
-                    </div>
-                    <div className="glass-card p-4 text-center">
-                        <div className="text-3xl font-black text-green-400">{userProfile?.lifetimePoints || 0}</div>
-                        <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">Lifetime</div>
-                    </div>
-                </div>
 
-                <StudentAlbums classId={classData.id} />
             </div>
 
             {/* Debug Info */}

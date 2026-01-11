@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/Button';
 import Card from '@/components/Card';
-import { getCurrentUser, getUserProfile, signOutUser, updateUserProfile, onAuthStateChange, resetPassword } from '@/lib/auth';
+import { getCurrentUser, getUserProfile, signOutUser, updateUserProfile, onAuthStateChange, resetPassword, updateUserEmail } from '@/lib/auth';
 import { UserProfile } from '@/lib/auth';
 import { getUserBadges, UserBadgeEnriched } from '@/lib/badges';
 import { Icons } from '@/components/picpick/Icons';
@@ -24,6 +24,7 @@ export default function ProfilePage() {
     // Editing State
     const [isEditing, setIsEditing] = useState(false);
     const [editName, setEditName] = useState('');
+    const [editEmail, setEditEmail] = useState('');
     const [resetSent, setResetSent] = useState(false);
 
     useEffect(() => {
@@ -60,6 +61,7 @@ export default function ProfilePage() {
             if (data) {
                 setProfile(data);
                 setEditName(data.displayName || '');
+                setEditEmail(data.email || '');
                 setBadges(userBadges);
             } else {
                 setError('Profile document not found.');
@@ -113,14 +115,43 @@ export default function ProfilePage() {
     const handleSaveProfile = async () => {
         if (!profile) return;
         if (!editName.trim()) return alert("Name cannot be empty");
+        if (!editEmail.trim()) return alert("Email cannot be empty");
 
         try {
-            await updateUserProfile(profile.uid, { displayName: editName });
-            setProfile({ ...profile, displayName: editName });
+            let emailMessage = '';
+
+            // Handle Email Update
+            if (editEmail !== profile.email) {
+                try {
+                    await updateUserEmail(editEmail);
+                    emailMessage = "\nVerification email sent to new address. Please verify to update login.";
+                } catch (e: any) {
+                    if (e.code === 'auth/requires-recent-login') {
+                        alert("To update your email, please logout and login again, then try immediately.");
+                        return;
+                    }
+                    throw e; // Rethrow other errors
+                }
+            }
+
+            // Update Firestore Profile
+            await updateUserProfile(profile.uid, {
+                displayName: editName,
+                email: editEmail // Update in Firestore so UI reflects intention (Auth will catch up on verify)
+            });
+
+            setProfile({
+                ...profile,
+                displayName: editName,
+                email: editEmail
+            });
+
             setIsEditing(false);
-        } catch (e) {
+            if (emailMessage) alert("Profile Updated!" + emailMessage);
+
+        } catch (e: any) {
             console.error("Error updating profile:", e);
-            alert("Failed to update profile");
+            alert("Failed to update profile: " + e.message);
         }
     };
 
@@ -223,6 +254,15 @@ export default function ProfilePage() {
                                                 type="text"
                                                 value={editName}
                                                 onChange={(e) => setEditName(e.target.value)}
+                                                className="w-full p-2 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded text-center text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 mb-2"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="text-xs text-gray-500 uppercase font-bold self-start">Email</label>
+                                            <input
+                                                type="email"
+                                                value={editEmail}
+                                                onChange={(e) => setEditEmail(e.target.value)}
                                                 className="w-full p-2 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded text-center text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500"
                                             />
                                         </div>

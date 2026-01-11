@@ -38,7 +38,7 @@ export default function LeaderboardPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-slate-900 text-white">
+            <div className="min-h-screen flex items-center justify-center text-white">
                 <div className="animate-pulse">Loading Leaderboard...</div>
             </div>
         );
@@ -49,14 +49,14 @@ export default function LeaderboardPage() {
         : 0;
 
     return (
-        <main className="min-h-screen bg-slate-900 text-white p-8 overflow-y-auto">
+        <main className="min-h-screen text-white p-8 overflow-y-auto">
             <div className="max-w-3xl mx-auto pb-16">
                 <div className="animate-fade-in space-y-6">
                     {/* Header */}
                     <div className="flex items-center justify-between mb-8">
                         <div className="flex items-center gap-3">
                             <span className="text-4xl">🌍</span>
-                            <h1 className="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
+                            <h1 className="text-3xl font-black text-gradient-rainbow">
                                 Lifetime Leaderboard
                             </h1>
                         </div>
@@ -67,14 +67,14 @@ export default function LeaderboardPage() {
 
                     {/* Current User Rank (if logged in) */}
                     {currentUser && currentUserRank > 0 && (
-                        <div className="glass-card p-6 text-center border border-indigo-500/30 bg-indigo-500/10">
-                            <div className="text-sm text-indigo-300 font-bold uppercase tracking-wider mb-2">
+                        <div className="glass-card-strong p-6 text-center">
+                            <div className="text-sm text-[#A78BFA] font-bold uppercase tracking-wider mb-2">
                                 Your Global Rank
                             </div>
                             <div className="text-5xl font-black mb-2 text-white drop-shadow-lg">
                                 #{currentUserRank}
                             </div>
-                            <div className="text-xl text-slate-300">
+                            <div className="text-xl text-[#94A3B8]">
                                 <span className="text-green-400 font-bold">{currentUser.lifetimePoints.toLocaleString()}</span> lifetime points
                             </div>
                         </div>
@@ -86,7 +86,7 @@ export default function LeaderboardPage() {
                             <div className="glass-card p-12 text-center">
                                 <div className="text-6xl mb-4">🏆</div>
                                 <h2 className="text-2xl font-bold mb-2">No Players Yet</h2>
-                                <p className="text-slate-400 mb-6">
+                                <p className="text-[#94A3B8] mb-6">
                                     Be the first to earn lifetime points!
                                 </p>
                                 <Button variant="primary" onClick={() => router.push('/join')}>
@@ -105,8 +105,8 @@ export default function LeaderboardPage() {
                                         className={`
                                             flex items-center gap-4 p-4 rounded-xl transition-all duration-300
                                             ${isCurrentUser
-                                                ? 'bg-indigo-600/20 border border-indigo-500/50 shadow-lg shadow-indigo-500/10'
-                                                : 'bg-slate-800/40 border border-white/5 hover:bg-slate-800/60'
+                                                ? 'bg-[#7C3AED]/20 border border-[#A78BFA]/50 shadow-lg shadow-[#7C3AED]/10'
+                                                : 'bg-[#0F0A1E]/40 border border-white/5 hover:bg-[#7C3AED]/10'
                                             }
                                             ${isTop3 ? 'scale-[1.02]' : ''}
                                         `}
@@ -114,7 +114,7 @@ export default function LeaderboardPage() {
                                     >
                                         <div className={`
                                             w-12 text-center font-black text-xl
-                                            ${isTop3 ? 'text-yellow-400' : 'text-slate-500'}
+                                            ${isTop3 ? 'text-[#FBBF24]' : 'text-[#94A3B8]'}
                                         `}>
                                             {medal || `#${index + 1}`}
                                         </div>
@@ -124,10 +124,10 @@ export default function LeaderboardPage() {
                                                 <img
                                                     src={user.photoURL}
                                                     alt={user.displayName}
-                                                    className={`w-12 h-12 rounded-full object-cover border-2 ${isTop3 ? 'border-yellow-500' : 'border-slate-700'}`}
+                                                    className={`w-12 h-12 rounded-full object-cover border-2 ${isTop3 ? 'border-[#FBBF24]' : 'border-[#7C3AED]'}`}
                                                 />
                                             ) : (
-                                                <div className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold ${isTop3 ? 'bg-yellow-900/30 text-yellow-500 border-2 border-yellow-500/30' : 'bg-slate-700 text-slate-400'}`}>
+                                                <div className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold ${isTop3 ? 'bg-[#FBBF24]/20 text-[#FBBF24] border-2 border-[#FBBF24]/30' : 'bg-[#7C3AED]/30 text-[#A78BFA]'}`}>
                                                     {user.displayName?.charAt(0).toUpperCase() || '?'}
                                                 </div>
                                             )}
@@ -135,25 +135,25 @@ export default function LeaderboardPage() {
 
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center gap-2 mb-0.5">
-                                                <span className={`font-bold truncate ${isCurrentUser ? 'text-indigo-300' : 'text-white'}`}>
+                                                <span className={`font-bold truncate ${isCurrentUser ? 'text-white' : 'text-white'}`}>
                                                     {user.displayName || 'Anonymous'}
                                                 </span>
                                                 {isCurrentUser && (
-                                                    <span className="text-[10px] bg-indigo-500 text-white px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wider">
+                                                    <span className="text-[10px] bg-[#7C3AED] text-white px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wider">
                                                         You
                                                     </span>
                                                 )}
                                             </div>
-                                            <div className="text-xs text-slate-400 font-medium">
+                                            <div className="text-xs text-[#94A3B8] font-medium">
                                                 {user.gamesPlayed || 0} games • {user.gamesWon || 0} wins
                                             </div>
                                         </div>
 
                                         <div className="text-right">
-                                            <div className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 tabular-nums">
+                                            <div className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#A78BFA] to-[#22D3EE] tabular-nums">
                                                 {user.lifetimePoints.toLocaleString()}
                                             </div>
-                                            <div className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">
+                                            <div className="text-[9px] font-bold text-[#94A3B8] uppercase tracking-wider">
                                                 Points
                                             </div>
                                         </div>
@@ -164,8 +164,8 @@ export default function LeaderboardPage() {
                     </div>
 
                     {!currentUser && (
-                        <div className="mt-8 p-8 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 border border-white/5 text-center">
-                            <p className="text-slate-400 mb-4">
+                        <div className="mt-8 p-8 rounded-2xl glass-card text-center">
+                            <p className="text-[#94A3B8] mb-4">
                                 Want to see your name here?
                             </p>
                             <div className="flex justify-center gap-4">

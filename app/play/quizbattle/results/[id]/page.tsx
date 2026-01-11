@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useState, useEffect, use } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation';
 import { getGame, getLeaderboard } from '@/lib/quizbattle';
 import Button from '@/components/Button';
 
-export default function StudentQuizResultsPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = use(params);
+export default function StudentQuizResultsPage() {
+    const params = useParams();
+    const id = params.id as string;
     const router = useRouter();
     const [game, setGame] = useState<any>(null);
     const [leaderboard, setLeaderboard] = useState<any[]>([]);

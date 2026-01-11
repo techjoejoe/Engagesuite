@@ -1,0 +1,10 @@
+
+> quiz-battle@0.1.0 prebuild
+> bash scripts/check-routes.sh
+
+🔍 Checking for route parameter conflicts...
+✅ No route conflicts detected
+
+> quiz-battle@0.1.0 build
+> next build
+

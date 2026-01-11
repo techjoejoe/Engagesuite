@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, use } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation';
 import { QRCodeSVG } from 'qrcode.react';
 import { getWordStorm, onWordsChange, clearWordStorm } from '@/lib/wordstorm';
 import WordCloud from '@/components/wordstorm/WordCloud';
@@ -10,11 +10,13 @@ import HostMenu from '@/components/HostMenu';
 
 import { Icons } from '@/components/picpick/Icons';
 
-export default function WordStormHostPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = use(params);
+export default function WordStormHostPage() {
+    const params = useParams();
+    const id = params.id as string;
     const router = useRouter();
     const [words, setWords] = useState<any[]>([]);
     const [aggregatedWords, setAggregatedWords] = useState<{ text: string; count: number }[]>([]);
+    const [uniqueWordCount, setUniqueWordCount] = useState(0);
     const [loading, setLoading] = useState(true);
     const [joinUrl, setJoinUrl] = useState('');
 
@@ -40,26 +42,40 @@ export default function WordStormHostPage({ params }: { params: Promise<{ id: st
 
             let agg = Object.entries(counts).map(([text, count]) => ({ text, count }));
 
+            // Store actual unique word count BEFORE adding duplicates for visual density
+            const realUniqueCount = agg.length;
+            setUniqueWordCount(realUniqueCount);
+
             // Dynamic Filling: Use duplicate words to fill the cloud
-            // As more words are submitted, we use fewer duplicates
-            const TARGET_COUNT = 50;
-            if (agg.length > 0 && agg.length < TARGET_COUNT) {
-                const original = [...agg];
+            // BUT: Words with 5+ submissions should only appear ONCE (they're popular enough)
+            // Increased target to fill the space better
+            const TARGET_COUNT = 45;
+
+            // Separate words into popular (5+) and less popular (<5)
+            const popularWords = agg.filter(w => w.count >= 5);
+            const lessPopularWords = agg.filter(w => w.count < 5);
+
+            // Only duplicate less popular words for visual density
+            if (lessPopularWords.length > 0 && agg.length < TARGET_COUNT) {
+                let duplicatedWords = [...lessPopularWords];
                 let currentCount = agg.length;
                 let suffixCount = 1;
 
-                while (currentCount < TARGET_COUNT) {
+                while (currentCount < TARGET_COUNT && lessPopularWords.length > 0) {
                     // Add invisible suffix to make text unique for d3-cloud while looking identical
                     const suffix = '\u200B'.repeat(suffixCount);
-                    const nextBatch = original.map(w => ({
+                    const nextBatch = lessPopularWords.map(w => ({
                         text: w.text + suffix,
                         count: w.count
                     }));
 
-                    agg = [...agg, ...nextBatch];
+                    duplicatedWords = [...duplicatedWords, ...nextBatch];
                     currentCount += nextBatch.length;
                     suffixCount++;
                 }
+
+                // Final array: popular words (once) + duplicated less popular words
+                agg = [...popularWords, ...duplicatedWords];
             }
 
             setAggregatedWords(agg);
@@ -172,7 +188,7 @@ export default function WordStormHostPage({ params }: { params: Promise<{ id: st
                         {/* Unique Words Card */}
                         <div className="bg-emerald-500 dark:bg-emerald-600 rounded-xl p-6 shadow-sm text-white text-center">
                             <div className="text-5xl font-bold mb-1">
-                                {aggregatedWords.length}
+                                {uniqueWordCount}
                             </div>
                             <div className="text-sm opacity-90">
                                 Unique Words

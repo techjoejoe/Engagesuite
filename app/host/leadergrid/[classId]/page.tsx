@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, use } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation';
 import { QRCodeCanvas } from 'qrcode.react';
 import { createLeaderGridCode, getLeaderGridCodes, deleteLeaderGridCode, LeaderGridCode } from '@/lib/leadergrid';
 import { onAuthStateChange } from '@/lib/auth';
@@ -17,8 +17,9 @@ interface StudentData extends ClassMember {
     photoURL?: string | null;
 }
 
-export default function HostLeaderGridPage({ params }: { params: Promise<{ classId: string }> }) {
-    const { classId } = use(params);
+export default function HostLeaderGridPage() {
+    const params = useParams();
+    const classId = params.classId as string;
     const router = useRouter();
     const [activeTab, setActiveTab] = useState<'codes' | 'points'>('codes');
     const [codes, setCodes] = useState<LeaderGridCode[]>([]);

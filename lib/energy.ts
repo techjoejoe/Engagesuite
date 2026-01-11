@@ -1,5 +1,5 @@
 import { db } from './firebase';
-import { doc, setDoc, getDoc, collection, query, onSnapshot, getDocs, deleteDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, getDoc, updateDoc, collection, query, onSnapshot, getDocs, deleteDoc, serverTimestamp } from 'firebase/firestore';
 
 export type EnergyLevel = 0 | 25 | 50 | 75 | 100;
 export type PulseFeeling = 'energized' | 'good' | 'ok' | 'tired' | 'needBreak';
@@ -42,6 +42,27 @@ export const setStudentEnergy = async (
     });
 };
 
+// Initialize student energy only if they don't have an existing record
+export const initStudentEnergy = async (
+    classId: string,
+    userId: string,
+    displayName: string,
+    defaultLevel: EnergyLevel = 100
+) => {
+    const energyRef = doc(db, `classes/${classId}/energy/${userId}`);
+    const snap = await getDoc(energyRef);
+
+    // Only set if doesn't exist
+    if (!snap.exists()) {
+        await setDoc(energyRef, {
+            userId,
+            displayName,
+            level: defaultLevel,
+            timestamp: Date.now()
+        });
+    }
+};
+
 // Get all class energy levels
 export const getClassEnergy = async (classId: string): Promise<StudentEnergy[]> => {
     const energyCol = collection(db, `classes/${classId}/energy`);
@@ -60,6 +81,17 @@ export const onEnergyChange = (classId: string, callback: (energy: StudentEnergy
 
 // Launch pulse check
 export const launchPulseCheck = async (classId: string): Promise<string> => {
+    // First, deactivate any existing active pulse checks
+    const pulseCol = collection(db, `classes/${classId}/pulseChecks`);
+    const existingPulses = await getDocs(pulseCol);
+    for (const pulseDoc of existingPulses.docs) {
+        const data = pulseDoc.data();
+        if (data.active) {
+            await updateDoc(doc(db, `classes/${classId}/pulseChecks/${pulseDoc.id}`), { active: false });
+        }
+    }
+
+    // Now create the new pulse check
     const sessionId = `pulse_${Date.now()}`;
     const pulseRef = doc(db, `classes/${classId}/pulseChecks/${sessionId}`);
     await setDoc(pulseRef, {
@@ -75,9 +107,18 @@ export const launchPulseCheck = async (classId: string): Promise<string> => {
 // Close pulse check
 export const closePulseCheck = async (classId: string, sessionId: string) => {
     const pulseRef = doc(db, `classes/${classId}/pulseChecks/${sessionId}`);
-    const snap = await getDoc(pulseRef);
-    if (snap.exists()) {
-        await setDoc(pulseRef, { ...snap.data(), active: false }, { merge: true });
+    await updateDoc(pulseRef, { active: false });
+};
+
+// Deactivate all pulse checks for a class (cleanup function)
+export const deactivateAllPulseChecks = async (classId: string) => {
+    const pulseCol = collection(db, `classes/${classId}/pulseChecks`);
+    const snapshot = await getDocs(pulseCol);
+    for (const pulseDoc of snapshot.docs) {
+        const data = pulseDoc.data();
+        if (data.active) {
+            await updateDoc(doc(db, `classes/${classId}/pulseChecks/${pulseDoc.id}`), { active: false });
+        }
     }
 };
 
@@ -89,6 +130,17 @@ export const submitPulseResponse = async (
     displayName: string,
     feeling: PulseFeeling
 ) => {
+    // Map feeling to energy level
+    const feelingToEnergy: Record<PulseFeeling, EnergyLevel> = {
+        'energized': 100,
+        'good': 75,
+        'ok': 50,
+        'tired': 25,
+        'needBreak': 0
+    };
+    const energyLevel = feelingToEnergy[feeling];
+
+    // Update the pulse check response
     const pulseRef = doc(db, `classes/${classId}/pulseChecks/${sessionId}`);
     const snap = await getDoc(pulseRef);
 
@@ -110,8 +162,11 @@ export const submitPulseResponse = async (
             responses.push(newResponse);
         }
 
-        await setDoc(pulseRef, { ...data, responses }, { merge: true });
+        await updateDoc(pulseRef, { responses });
     }
+
+    // Also update the student's energy level
+    await setStudentEnergy(classId, userId, displayName, energyLevel);
 };
 
 // Get active pulse check

@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { onAuthStateChange } from '@/lib/auth';
 import { Icons } from '@/components/picpick/Icons';
 import { Spinner, Toast } from '@/components/picpick/UI';
 import Button from '@/components/Button';
@@ -13,7 +14,30 @@ export default function PicPickHome() {
     const router = useRouter();
     const [code, setCode] = useState('');
     const [joining, setJoining] = useState(false);
+    const [checkingAuth, setCheckingAuth] = useState(true);
     const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
+
+    // Redirect enrolled students to their dashboard
+    useEffect(() => {
+        const unsubscribe = onAuthStateChange(async (user) => {
+            if (user) {
+                // Check if user is enrolled in any class
+                const membersQuery = query(
+                    collection(db, 'classes'),
+                    where('memberIds', 'array-contains', user.uid)
+                );
+                const classesSnap = await getDocs(membersQuery);
+
+                if (!classesSnap.empty) {
+                    // User is enrolled, redirect to dashboard
+                    router.push('/student/dashboard');
+                    return;
+                }
+            }
+            setCheckingAuth(false);
+        });
+        return () => unsubscribe();
+    }, [router]);
 
     const handleJoin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -41,6 +65,14 @@ export default function PicPickHome() {
             setJoining(false);
         }
     };
+
+    if (checkingAuth) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-[#0a0a0f] text-white">
+                <Spinner size="lg" />
+            </div>
+        );
+    }
 
     return (
         <main className="full-height flex-center" style={{

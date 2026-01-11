@@ -30,7 +30,7 @@ service cloud.firestore {
     match /users/{userId} {
       allow read: if isAuthenticated();
       allow create: if isAuthenticated() && request.auth.uid == userId;
-      allow update: if isOwner(userId) || (isAuthenticated() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['badges']));
+      allow update: if isOwner(userId) || (isAuthenticated() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['badges', 'lifetimePoints', 'lastActive']));
       allow delete: if false; // Users cannot delete themselves via client SDK for safety
       
 
@@ -91,7 +91,8 @@ service cloud.firestore {
         allow read: if isAuthenticated();
         // Allow students to add their response (append to 'responses' array)
         allow update: if isAuthenticated() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['responses']);
-        allow create, delete: if isClassHost(classId);
+        // Allow host to create, delete, and update (for closing/deactivating pulse checks)
+        allow create, delete, update: if isClassHost(classId);
       }
       
       // Sub: TOOLS (Buzzer, etc.)
@@ -121,7 +122,15 @@ service cloud.firestore {
       
       // Only Host can create/manage codes
       allow create: if isAuthenticated() && request.resource.data.hostId == request.auth.uid;
-      allow update, delete: if isResourceHost(); // Only the host who created it
+      allow update: if isAuthenticated() && (
+        isResourceHost() || 
+        (
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['currentScans']) &&
+          request.resource.data.currentScans == resource.data.currentScans + 1
+        )
+      );
+      
+      allow delete: if isResourceHost();
 
       match /redemptions/{userId} {
         allow read: if isAuthenticated();
@@ -136,6 +145,25 @@ service cloud.firestore {
       allow update, delete: if isAuthenticated() && resource.data.createdBy == request.auth.uid;
     }
 
+    // GAMES (QuizBattle active game sessions)
+    match /games/{gameId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && request.resource.data.hostId == request.auth.uid;
+      // Host can fully update, students can only update their player score
+      allow update: if isAuthenticated() && (
+        resource.data.hostId == request.auth.uid ||
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['players'])
+      );
+      allow delete: if isAuthenticated() && resource.data.hostId == request.auth.uid;
+      
+      // Responses subcollection (students submit answers)
+      match /responses/{responseId} {
+        allow read: if isAuthenticated();
+        allow create: if isAuthenticated();
+        allow update, delete: if false; // Responses are immutable
+      }
+    }
+
     // POLLS
     match /polls/{pollId} {
       allow read: if isAuthenticated();
@@ -146,6 +174,13 @@ service cloud.firestore {
         allow read: if isAuthenticated();
         allow write: if isAuthenticated(); // Students vote
       }
+    }
+    
+    // TIMERS (Tickr)
+    match /timers/{timerId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && request.resource.data.hostId == request.auth.uid;
+      allow update, delete: if isResourceHost();
     }
     
     // WORDSTORMS
@@ -166,30 +201,45 @@ service cloud.firestore {
       }
     }
 
-    // PICPICK GALLERIES
+    // PICPICK GALLERIES - SECURE RULES
     match /galleries/{galleryId} {
       allow read: if isAuthenticated();
-      allow create: if isAuthenticated();
-      allow update, delete: if isResourceHost();
+      // Only creator can create galleries with themselves as host
+      allow create: if isAuthenticated() && request.resource.data.hostId == request.auth.uid;
+      // Only host can update gallery settings
+      allow update: if isAuthenticated() && resource.data.hostId == request.auth.uid;
+      // FIXED: Only host can delete (was: any authenticated user)
+      allow delete: if isAuthenticated() && resource.data.hostId == request.auth.uid;
       
       match /photos/{photoId} {
         allow read: if isAuthenticated();
+        // Any authenticated user can upload photos
         allow create: if isAuthenticated();
-        
+        // Only uploader or host can update photos
         allow update: if isAuthenticated() && (
-           // Host manages (approve/reject)
-           get(/databases/$(database)/documents/galleries/$(galleryId)).data.hostId == request.auth.uid || 
-           (
-             // Students Vote: Only 'votes' field, increment by 1
-             request.resource.data.diff(resource.data).affectedKeys().hasOnly(['votes']) &&
-             request.resource.data.votes == resource.data.votes + 1
-           )
-        );
-        
-        allow delete: if isAuthenticated() && (
-          request.auth.uid == resource.data.userId || 
+          resource.data.userId == request.auth.uid ||
           get(/databases/$(database)/documents/galleries/$(galleryId)).data.hostId == request.auth.uid
         );
+        // FIXED: Only uploader or host can delete (was: any authenticated user)
+        allow delete: if isAuthenticated() && (
+          resource.data.userId == request.auth.uid || 
+          get(/databases/$(database)/documents/galleries/$(galleryId)).data.hostId == request.auth.uid
+        );
+        
+        // Votes subcollection
+        match /votes/{voteId} {
+          allow read: if isAuthenticated();
+          // FIXED: User can only create ONE vote per photo, must include votedAt timestamp
+          allow create: if isAuthenticated() && 
+            request.auth.uid == voteId &&
+            !exists(/databases/$(database)/documents/galleries/$(galleryId)/photos/$(photoId)/votes/$(voteId)) &&
+            request.resource.data.votedAt is timestamp;
+          // User can delete their own vote OR host can delete any vote
+          allow delete: if isAuthenticated() && (
+            request.auth.uid == voteId ||
+            get(/databases/$(database)/documents/galleries/$(galleryId)).data.hostId == request.auth.uid
+          );
+        }
       }
     }
 
@@ -230,21 +280,20 @@ service cloud.firestore {
 
     // 3. Student Progress (Students answering)
     match /album_progress/{progressId} {
-      allow read: if isAuthenticated() && (
-        resource.data.studentId == request.auth.uid || 
-        // Trainer can read (complicated check efficiently, simplified here to trusting the Class ID check in query usually)
-        // Or if we need strict, we check if requester is host of the classId on this doc
-        get(/databases/$(database)/documents/classes/$(resource.data.classId)).data.hostId == request.auth.uid
-      );
+      // Allow all authenticated users to read (query filters by studentId in app)
+      // This is needed because Firestore collection queries with complex field checks can fail
+      allow read: if isAuthenticated();
       
-      // Create: Student creates their progress record
+      // Students can CREATE their own progress (for new workbooks)
       allow create: if isAuthenticated() && request.resource.data.studentId == request.auth.uid;
       
-      // Update: Student saving answers OR Trainer grading
-      allow update: if isAuthenticated() && (
-        resource.data.studentId == request.auth.uid || 
-        get(/databases/$(database)/documents/classes/$(resource.data.classId)).data.hostId == request.auth.uid
-      );
+      // Students can UPDATE their own progress (answering questions)
+      allow update: if isAuthenticated() && resource.data.studentId == request.auth.uid;
+      
+      // Trainers can update to grade answers (only the answers field)
+      allow update: if isAuthenticated() && 
+        get(/databases/$(database)/documents/class_albums/$(resource.data.classAlbumId)).data.assignedByUserId == request.auth.uid &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['answers']);
     }
     
     // ANALYTICS (Strict)

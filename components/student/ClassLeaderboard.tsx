@@ -50,7 +50,7 @@ const ClassLeaderboard = ({ classId, userId }: { classId: string; userId: string
             {/* ... existing header ... */}
             <div className="text-center mb-4">
                 <div className="text-5xl mb-2">🏆</div>
-                <h2 className="text-2xl font-black text-gray-900 dark:text-white mb-1 uppercase tracking-tight">Class Leaders</h2>
+                <h2 className="text-2xl font-black text-white mb-1 uppercase tracking-tight">Class Leaders</h2>
                 <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
                     {leaderboard.length} student{leaderboard.length !== 1 ? 's' : ''} competing
                 </p>

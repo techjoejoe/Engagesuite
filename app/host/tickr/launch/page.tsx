@@ -44,14 +44,14 @@ function LaunchContent() {
 
     if (error) {
         return (
-            <div className="min-h-screen bg-[#0a0a0f] flex flex-col items-center justify-center text-white p-6 text-center">
+            <div className="min-h-screen flex flex-col items-center justify-center text-white p-6 text-center">
                 <HamburgerMenu currentPage="Tickr" />
-                <div className="text-red-500 text-6xl mb-4">⚠️</div>
-                <h1 className="text-2xl font-bold mb-2">Launch Failed</h1>
-                <p className="text-gray-400 mb-6">{error}</p>
+                <div className="text-[#F472B6] text-6xl mb-4">⚠️</div>
+                <h1 className="text-2xl font-bold mb-2 text-gradient-rainbow">Launch Failed</h1>
+                <p className="text-[#94A3B8] mb-6">{error}</p>
                 <button
                     onClick={() => router.push('/dashboard')}
-                    className="px-6 py-3 bg-indigo-600 rounded-lg font-bold hover:bg-indigo-700 transition-colors"
+                    className="px-6 py-3 bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] rounded-xl font-bold hover:opacity-90 transition-all shadow-lg shadow-[#7C3AED]/30"
                 >
                     Return to Dashboard
                 </button>
@@ -60,17 +60,20 @@ function LaunchContent() {
     }
 
     return (
-        <div className="min-h-screen bg-[#0a0a0f] flex flex-col items-center justify-center text-white">
+        <div className="min-h-screen flex flex-col items-center justify-center text-white">
             <HamburgerMenu currentPage="Tickr" />
-            <div className="animate-spin text-4xl mb-4">⏳</div>
-            <div className="animate-pulse text-xl">Starting Tickr...</div>
+            <div className="flex flex-col items-center gap-4">
+                <div className="text-6xl animate-bounce">⏰</div>
+                <div className="text-2xl text-gradient-rainbow font-bold animate-pulse">Starting Tickr...</div>
+                <div className="text-[#94A3B8]">Get ready to manage time!</div>
+            </div>
         </div>
     );
 }
 
 export default function TickrLaunchPage() {
     return (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-white"><div className="animate-spin text-4xl">⏰</div></div>}>
             <LaunchContent />
         </Suspense>
     );

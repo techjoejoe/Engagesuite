@@ -90,7 +90,7 @@ function CoinContent() {
                     className="mt-4 w-full bg-slate-800 hover:bg-slate-700 text-white border-slate-700"
                     onClick={() => {
                         // Cleanup is handled by useEffect on unmount
-                        router.push(`/dashboard/class?id=${classId}`);
+                        router.push(classId ? `/dashboard/class?id=${classId}` : '/dashboard/class');
                     }}
                 >
                     ← Back to Class

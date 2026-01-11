@@ -1,13 +1,14 @@
 'use client';
 
-import React, { useState, useEffect, use } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation';
 import { getGame, getQuiz, onGameChange, nextQuestion, endGame, onResponsesChange, revealAnswer } from '@/lib/quizbattle';
 import Button from '@/components/Button';
 import HamburgerMenu from '@/components/HamburgerMenu';
 
-export default function HostPlayPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = use(params);
+export default function HostPlayPage() {
+    const params = useParams();
+    const id = params.id as string;
     const router = useRouter();
     const [game, setGame] = useState<any>(null);
     const [quiz, setQuiz] = useState<any>(null);
@@ -103,7 +104,7 @@ export default function HostPlayPage({ params }: { params: Promise<{ id: string 
     };
 
     if (!game || !quiz) return (
-        <div style={{ minHeight: '100vh', backgroundColor: '#f5f5f5', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#666' }}>
+        <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex items-center justify-center text-gray-600 dark:text-gray-400">
             Loading...
         </div>
     );
@@ -152,42 +153,24 @@ export default function HostPlayPage({ params }: { params: Promise<{ id: string 
     const answerLabels = ['A', 'B', 'C', 'D'];
 
     return (
-        <main style={{
-            minHeight: '100vh',
-            backgroundColor: '#f5f5f5',
-            fontFamily: 'sans-serif',
-            display: 'flex',
-            flexDirection: 'column',
-            padding: '24px'
-        }}>
+        <main className="min-h-screen bg-gray-50 dark:bg-slate-900 font-sans flex flex-col p-6 transition-colors duration-300">
             <HamburgerMenu currentPage="QuizBattle" />
 
             {/* Header */}
-            <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: '40px',
-                padding: '0 20px'
-            }}>
+            <div className="flex justify-between items-center mb-10 px-5">
                 <div>
-                    <div style={{ color: '#666', fontSize: '14px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                    <div className="text-gray-500 dark:text-gray-400 text-sm font-semibold uppercase tracking-widest">
                         Question {game.currentQuestionIndex + 1} of {quiz.questions.length}
                     </div>
-                    <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#1a1d21' }}>{quiz.title}</div>
+                    <div className="text-2xl font-bold text-gray-900 dark:text-white">{quiz.title}</div>
                 </div>
-                <div style={{ textAlign: 'center' }}>
-                    <div style={{
-                        fontSize: '48px',
-                        fontWeight: 'bold',
-                        color: timeLeft <= 5 ? '#E44446' : '#1a1d21',
-                        fontVariantNumeric: 'tabular-nums'
-                    }}>
+                <div className="text-center">
+                    <div className={`text-5xl font-bold tabular-nums ${timeLeft <= 5 ? 'text-red-500' : 'text-gray-900 dark:text-white'}`}>
                         {timeLeft}
                     </div>
-                    <div style={{ fontSize: '14px', color: '#666', fontWeight: '600' }}>SECONDS</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400 font-semibold">SECONDS</div>
                 </div>
-                <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '10px' }}>
+                <div className="text-right flex flex-col items-end gap-2.5">
                     <Button
                         variant="secondary"
                         className="bg-slate-800 hover:bg-slate-700 text-white border-slate-700"
@@ -196,52 +179,33 @@ export default function HostPlayPage({ params }: { params: Promise<{ id: string 
                         ← Back to Class
                     </Button>
                     <div>
-                        <div style={{ color: '#666', fontSize: '14px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '1px' }}>Players</div>
-                        <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#1a1d21' }}>{playerCount}</div>
+                        <div className="text-gray-500 dark:text-gray-400 text-sm font-semibold uppercase tracking-widest">Players</div>
+                        <div className="text-2xl font-bold text-gray-900 dark:text-white">{playerCount}</div>
                     </div>
                 </div>
             </div>
 
             {/* Main Content */}
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
+            <div className="flex-1 flex flex-col items-center max-w-[1200px] mx-auto w-full">
 
                 {/* Question Card */}
-                <div style={{
-                    backgroundColor: 'white',
-                    borderRadius: '24px',
-                    padding: '40px',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-                    width: '100%',
-                    textAlign: 'center',
-                    marginBottom: '40px',
-                    minHeight: '200px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                }}>
+                <div className="bg-white dark:bg-slate-800 rounded-3xl p-10 shadow-sm w-full text-center mb-10 min-h-[200px] flex flex-col items-center justify-center border border-gray-100 dark:border-slate-700">
                     {currentQuestion?.mediaUrl && (
-                        <div style={{ marginBottom: '24px', maxHeight: '400px', width: '100%', display: 'flex', justifyContent: 'center' }}>
+                        <div className="mb-6 max-h-[400px] w-full flex justify-center">
                             <img
                                 src={currentQuestion.mediaUrl}
                                 alt="Question Media"
-                                style={{ maxHeight: '400px', maxWidth: '100%', borderRadius: '12px', objectFit: 'contain' }}
+                                className="max-h-[400px] max-w-full rounded-xl object-contain"
                             />
                         </div>
                     )}
-                    <h2 style={{ fontSize: '36px', fontWeight: 'bold', color: '#1a1d21', lineHeight: '1.3' }}>
+                    <h2 className="text-4xl font-bold text-gray-900 dark:text-white leading-tight">
                         {currentQuestion?.text}
                     </h2>
                 </div>
 
                 {/* Answer Grid */}
-                <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: '1fr 1fr',
-                    gap: '20px',
-                    width: '100%',
-                    flex: 1
-                }}>
+                <div className="grid grid-cols-2 gap-5 w-full flex-1">
                     {currentQuestion?.answers.map((answer: any, index: number) => {
                         const count = answerDistribution[index] || 0;
                         const color = answerColors[index % answerColors.length];
@@ -326,39 +290,17 @@ export default function HostPlayPage({ params }: { params: Promise<{ id: string 
             </div>
 
             {/* Footer Controls */}
-            <div style={{
-                marginTop: '40px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                padding: '20px',
-                backgroundColor: 'white',
-                borderRadius: '16px',
-                boxShadow: '0 -4px 12px rgba(0,0,0,0.05)'
-            }}>
-                <div style={{ fontSize: '16px', color: '#666' }}>
-                    <span style={{ fontWeight: 'bold', color: '#1a1d21' }}>{responseCount}</span> of <span style={{ fontWeight: 'bold', color: '#1a1d21' }}>{playerCount}</span> answered
+            <div className="mt-10 flex justify-between items-center p-5 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700">
+                <div className="text-base text-gray-600 dark:text-gray-400">
+                    <span className="font-bold text-gray-900 dark:text-white">{responseCount}</span> of <span className="font-bold text-gray-900 dark:text-white">{playerCount}</span> answered
                 </div>
                 <button
                     onClick={handleNext}
-                    style={{
-                        backgroundColor: '#4A90E2',
-                        color: 'white',
-                        border: 'none',
-                        padding: '16px 48px',
-                        borderRadius: '12px',
-                        fontSize: '20px',
-                        fontWeight: 'bold',
-                        cursor: 'pointer',
-                        boxShadow: '0 4px 12px rgba(74, 144, 226, 0.3)',
-                        transition: 'transform 0.2s'
-                    }}
-                    onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
-                    onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-12 py-4 rounded-xl text-xl font-bold shadow-lg shadow-blue-500/30 hover:-translate-y-0.5 transition-transform"
                 >
                     {game.phase === 'question' ? 'Reveal Answer' : (game.currentQuestionIndex >= quiz.questions.length - 1 ? 'Finish Quiz' : 'Next Question')}
                 </button>
             </div>
-        </main >
+        </main>
     );
 }

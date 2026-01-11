@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState, useEffect, use } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { doc, collection, onSnapshot, deleteDoc, getDoc, orderBy, query, addDoc, serverTimestamp, writeBatch, getDocs } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '@/lib/firebase';
+import { toggleVoting, toggleVoteCounts, toggleUploads } from '@/lib/picpick';
 import { Icons } from '@/components/picpick/Icons';
 import { Spinner, Toast } from '@/components/picpick/UI';
 import { ImageUpload } from '@/components/picpick/ImageUpload';
@@ -33,8 +34,9 @@ const isWithinWindow = (start: any, end: any) => {
     return now >= startDate && now <= endDate;
 };
 
-export default function AdminGalleryPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = use(params);
+export default function AdminGalleryPage() {
+    const params = useParams();
+    const id = params.id as string;
     const router = useRouter();
     const [currentGallery, setCurrentGallery] = useState<any>(null);
     const [photos, setPhotos] = useState<any[]>([]);
@@ -43,20 +45,19 @@ export default function AdminGalleryPage({ params }: { params: Promise<{ id: str
     const [uploading, setUploading] = useState(false);
     const [loading, setLoading] = useState(true);
 
-    // Load gallery
+    // Load gallery with real-time updates
     useEffect(() => {
-        const fetchGallery = async () => {
-            const docRef = doc(db, 'galleries', id);
-            const docSnap = await getDoc(docRef);
+        const galleryRef = doc(db, 'galleries', id);
+        const unsubscribe = onSnapshot(galleryRef, (docSnap) => {
             if (docSnap.exists()) {
                 setCurrentGallery({ id: docSnap.id, ...docSnap.data() });
+                setLoading(false);
             } else {
                 setToast({ message: 'Gallery not found', type: 'error' });
                 setTimeout(() => router.push('/picpick/admin'), 2000);
             }
-            setLoading(false);
-        };
-        fetchGallery();
+        });
+        return () => unsubscribe();
     }, [id, router]);
 
     // Real-time photos listener
@@ -72,11 +73,49 @@ export default function AdminGalleryPage({ params }: { params: Promise<{ id: str
         return () => unsubscribe();
     }, [currentGallery?.id]);
 
+    const handleToggleVoting = async () => {
+        try {
+            await toggleVoting(currentGallery.id, !currentGallery.votingOpen);
+            setToast({
+                message: currentGallery.votingOpen ? 'Voting closed' : 'Voting opened!',
+                type: 'success'
+            });
+        } catch (err) {
+            setToast({ message: 'Failed to update voting status', type: 'error' });
+        }
+    };
+
+    const handleToggleVoteCounts = async () => {
+        try {
+            await toggleVoteCounts(currentGallery.id, !currentGallery.showVoteCounts);
+            setToast({
+                message: currentGallery.showVoteCounts ? 'Vote counts hidden' : 'Vote counts visible!',
+                type: 'success'
+            });
+        } catch (err) {
+            setToast({ message: 'Failed to update vote visibility', type: 'error' });
+        }
+    };
+
+    const handleToggleUploads = async () => {
+        try {
+            await toggleUploads(currentGallery.id, !currentGallery.uploadOpen);
+            setToast({
+                message: currentGallery.uploadOpen ? 'Uploads closed' : 'Uploads opened!',
+                type: 'success'
+            });
+        } catch (err) {
+            setToast({ message: 'Failed to update upload status', type: 'error' });
+        }
+    };
+
     const handleUpload = async (blob: Blob) => {
         setUploading(true);
         try {
             const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.jpg`;
             const storageRef = ref(storage, `galleries/${currentGallery.id}/${fileName}`);
+
+            // Upload blob directly
             await uploadBytes(storageRef, blob);
             const imageUrl = await getDownloadURL(storageRef);
 
@@ -188,6 +227,62 @@ export default function AdminGalleryPage({ params }: { params: Promise<{ id: str
                             <div className="text-xs">{formatDateTime(currentGallery.votingStart)}</div>
                             <div className="text-xs">to {formatDateTime(currentGallery.votingEnd)}</div>
                         </Card>
+                    </div>
+
+                    {/* Control Buttons */}
+                    <div className="grid grid-cols-3 gap-3 mb-4">
+                        <Button
+                            variant={currentGallery.uploadOpen ? "danger" : "primary"}
+                            onClick={handleToggleUploads}
+                            className="gap-2"
+                        >
+                            {currentGallery.uploadOpen ? (
+                                <>
+                                    <Icons.X style={{ width: '16px', height: '16px' }} />
+                                    Close Uploads
+                                </>
+                            ) : (
+                                <>
+                                    <Icons.Upload style={{ width: '16px', height: '16px' }} />
+                                    Open Uploads
+                                </>
+                            )}
+                        </Button>
+                        <Button
+                            variant={currentGallery.votingOpen ? "danger" : "primary"}
+                            onClick={handleToggleVoting}
+                            className="gap-2"
+                        >
+                            {currentGallery.votingOpen ? (
+                                <>
+                                    <Icons.X style={{ width: '16px', height: '16px' }} />
+                                    Close Voting
+                                </>
+                            ) : (
+                                <>
+                                    <Icons.Check style={{ width: '16px', height: '16px' }} />
+                                    Open Voting
+                                </>
+                            )}
+                        </Button>
+
+                        <Button
+                            variant={currentGallery.showVoteCounts ? "secondary" : "glass"}
+                            onClick={handleToggleVoteCounts}
+                            className="gap-2"
+                        >
+                            {currentGallery.showVoteCounts ? (
+                                <>
+                                    <Icons.EyeOff style={{ width: '16px', height: '16px' }} />
+                                    Hide Votes
+                                </>
+                            ) : (
+                                <>
+                                    <Icons.Eye style={{ width: '16px', height: '16px' }} />
+                                    Show Votes
+                                </>
+                            )}
+                        </Button>
                     </div>
 
                     <Button

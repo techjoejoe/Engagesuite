@@ -1,14 +1,15 @@
 'use client';
 
-import React, { useState, useEffect, use } from 'react';
-import { useRouter } from 'next/navigation';
-import { onAuthStateChange } from '@/lib/auth';
+import React, { useState, useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation';
+import { onAuthStateChange, getUserProfile } from '@/lib/auth';
 import { getPoll, onPollChange, votePoll, onVotesChange, Poll, Vote } from '@/lib/poll';
 import { onClassChange } from '@/lib/classes';
 import { Icons } from '@/components/picpick/Icons';
 
-export default function PollPlayPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = use(params);
+export default function PollPlayPage() {
+    const params = useParams();
+    const id = params.id as string;
     const router = useRouter();
     const [user, setUser] = useState<any>(null);
     const [poll, setPoll] = useState<Poll | null>(null);
@@ -17,10 +18,18 @@ export default function PollPlayPage({ params }: { params: Promise<{ id: string 
     const [loading, setLoading] = useState(true);
     const [voting, setVoting] = useState(false);
 
-    // Auth
+    // Auth & Profile
     useEffect(() => {
-        const unsubscribe = onAuthStateChange((u) => {
+        const unsubscribe = onAuthStateChange(async (u) => {
             setUser(u);
+            if (u) {
+                // Fetch latest profile from Firestore to ensure current photo/name
+                const profile = await getUserProfile(u.uid);
+                if (profile) {
+                    // Merge auth user with firestore profile for display purposes
+                    setUser((prev: any) => ({ ...prev, ...profile }));
+                }
+            }
         });
         return () => unsubscribe();
     }, []);
@@ -64,7 +73,7 @@ export default function PollPlayPage({ params }: { params: Promise<{ id: string 
 
         setVoting(true);
         try {
-            await votePoll(id, user.uid, optionId);
+            await votePoll(id, user.uid, optionId, user.displayName || 'Anonymous', user.photoURL || undefined);
             // Vibrate for feedback
             if (navigator.vibrate) navigator.vibrate(50);
         } catch (error) {
@@ -127,16 +136,39 @@ export default function PollPlayPage({ params }: { params: Promise<{ id: string 
                                 key={option.id}
                                 onClick={() => handleVote(option.id)}
                                 disabled={voting}
-                                className={`w-full p-5 rounded-2xl border-2 border-white/5 bg-white/5 hover:bg-white/10 active:scale-[0.98] transition-all flex items-center gap-5 group relative overflow-hidden ${option.color.replace('bg-', 'hover:border-')}`}
+                                className={`
+                                    w-full p-5 rounded-2xl
+                                    bg-gradient-to-br from-white/10 via-white/5 to-transparent
+                                    backdrop-blur-xl
+                                    border border-white/10
+                                    shadow-lg shadow-black/20
+                                    hover:shadow-xl hover:shadow-purple-500/20
+                                    hover:border-purple-400/50
+                                    hover:scale-[1.02]
+                                    active:scale-[0.98]
+                                    transition-all duration-200 ease-out
+                                    flex items-center gap-5 group relative overflow-hidden
+                                    before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/5 before:to-transparent
+                                    before:translate-x-[-100%] hover:before:translate-x-[100%] before:transition-transform before:duration-500
+                                `}
                             >
-                                <div className={`w-14 h-14 rounded-xl flex items-center justify-center text-2xl font-black text-white shadow-lg ${option.color} group-hover:scale-110 transition-transform`}>
+                                {/* Glow effect on hover */}
+                                <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-500/0 via-purple-500/10 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-xl" />
+
+                                <div className={`
+                                    relative z-10 w-14 h-14 rounded-xl flex items-center justify-center text-2xl font-black text-white shadow-lg ${option.color}
+                                    group-hover:scale-110 group-hover:rotate-3
+                                    group-active:scale-95
+                                    transition-all duration-200 ease-out
+                                    ring-2 ring-white/20 group-hover:ring-white/40
+                                `}>
                                     {String.fromCharCode(65 + index)}
                                 </div>
-                                <span className="text-lg font-bold text-left flex-1 text-slate-200 group-hover:text-white transition-colors">
+                                <span className="relative z-10 text-lg font-bold text-left flex-1 text-slate-200 group-hover:text-white transition-colors">
                                     {option.text}
                                 </span>
-                                <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-white/20 transition-colors">
-                                    <Icons.ChevronRight className="w-5 h-5 opacity-50 group-hover:opacity-100 transition-opacity" />
+                                <div className="relative z-10 w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-white/20 group-hover:scale-110 transition-all duration-200">
+                                    <Icons.ChevronRight className="w-5 h-5 opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
                                 </div>
                             </button>
                         ))}

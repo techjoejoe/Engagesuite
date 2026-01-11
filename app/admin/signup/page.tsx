@@ -71,29 +71,38 @@ export default function AdminSignUpPage() {
     };
 
     return (
-        <main className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-900 p-6 transition-colors duration-300 relative">
+        <main className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
+            {/* Animated Background - Vibrant */}
+            <div className="absolute inset-0 z-0">
+                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#7C3AED]/40 rounded-full blur-[120px] animate-blob" />
+                <div className="absolute top-[20%] right-[-10%] w-[40%] h-[40%] bg-[#06B6D4]/35 rounded-full blur-[120px] animate-blob animation-delay-2000" />
+                <div className="absolute bottom-[-10%] left-[20%] w-[40%] h-[40%] bg-[#F472B6]/30 rounded-full blur-[120px] animate-blob animation-delay-4000" />
+            </div>
+
             <div className="absolute top-6 right-6 z-10">
                 <ThemeToggle />
             </div>
 
-            <div className="w-full max-w-md">
-                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-8 md:p-12 border border-gray-100 dark:border-slate-700 animate-fade-in">
+            <div className="w-full max-w-md relative z-10">
+                <div className="glass-card p-8 md:p-12 animate-fade-in-up">
                     <div className="text-center mb-8">
-                        <div className="text-6xl mb-4">👨‍🏫</div>
-                        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Create Host Account</h1>
-                        <p className="text-gray-500 dark:text-gray-400">
+                        <div className="text-6xl mb-4 animate-float">👨‍🏫</div>
+                        <h1 className="text-3xl font-black text-white mb-2 tracking-tight">
+                            Create <span className="text-gradient">Host Account</span>
+                        </h1>
+                        <p className="text-[#94A3B8]">
                             Start creating interactive classes
                         </p>
                     </div>
 
                     <form onSubmit={handleSignUp} className="flex flex-col gap-4">
                         <div>
-                            <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                            <label className="block mb-2 text-sm font-bold text-[#6a6e79]">
                                 Display Name
                             </label>
                             <input
                                 type="text"
-                                className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+                                className="w-full px-4 py-3 input-glass placeholder-[#6a6e79]/60"
                                 placeholder="Your Name"
                                 value={displayName}
                                 onChange={(e) => setDisplayName(e.target.value)}
@@ -102,12 +111,12 @@ export default function AdminSignUpPage() {
                         </div>
 
                         <div>
-                            <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                            <label className="block mb-2 text-sm font-bold text-[#6a6e79]">
                                 Email
                             </label>
                             <input
                                 type="email"
-                                className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+                                className="w-full px-4 py-3 input-glass placeholder-[#6a6e79]/60"
                                 placeholder="your@email.com"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
@@ -116,12 +125,12 @@ export default function AdminSignUpPage() {
                         </div>
 
                         <div>
-                            <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                            <label className="block mb-2 text-sm font-bold text-[#6a6e79]">
                                 Password
                             </label>
                             <input
                                 type="password"
-                                className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+                                className="w-full px-4 py-3 input-glass placeholder-[#6a6e79]/60"
                                 placeholder="At least 6 characters"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
@@ -130,12 +139,12 @@ export default function AdminSignUpPage() {
                         </div>
 
                         <div>
-                            <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                            <label className="block mb-2 text-sm font-bold text-[#6a6e79]">
                                 Confirm Password
                             </label>
                             <input
                                 type="password"
-                                className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+                                className="w-full px-4 py-3 input-glass placeholder-[#6a6e79]/60"
                                 placeholder="••••••••"
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
@@ -144,7 +153,7 @@ export default function AdminSignUpPage() {
                         </div>
 
                         {error && (
-                            <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-500 text-sm text-center">
+                            <div className="p-3 bg-red-500/20 border border-red-500/30 rounded-xl text-red-200 text-sm text-center backdrop-blur-sm">
                                 {error}
                             </div>
                         )}
@@ -160,26 +169,24 @@ export default function AdminSignUpPage() {
                         </Button>
                     </form>
 
-                    <div className="my-6 text-center text-gray-400 dark:text-gray-500 text-sm">
+                    <div className="my-6 text-center text-[#94A3B8] text-sm font-medium">
                         or
                     </div>
 
-                    <Button
-                        variant="secondary"
-                        size="lg"
-                        className="w-full bg-white dark:bg-slate-700 border-gray-200 dark:border-slate-600 text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-slate-600"
+                    <button
+                        className="w-full py-3.5 btn-glass font-bold text-white flex items-center justify-center gap-2"
                         onClick={handleGoogleSignUp}
                         disabled={loading}
                     >
-                        <span className="mr-2">🔍</span>
+                        <span className="text-xl">🔍</span>
                         Sign Up with Google
-                    </Button>
+                    </button>
 
                     <div className="mt-8 text-center text-sm">
-                        <span className="text-gray-500 dark:text-gray-400">Already have a host account? </span>
+                        <span className="text-[#94A3B8]">Already have a host account? </span>
                         <button
                             onClick={() => router.push('/admin/login')}
-                            className="text-indigo-600 dark:text-indigo-400 font-semibold hover:underline"
+                            className="text-[#22D3EE] font-bold hover:text-[#06B6D4] transition-colors"
                         >
                             Login
                         </button>

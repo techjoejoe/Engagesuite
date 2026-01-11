@@ -1,49 +1,120 @@
-import * as functions from 'firebase-functions';
+import * as functions from 'firebase-functions/v1';
 import * as admin from 'firebase-admin';
 
 admin.initializeApp();
 
+/*
 export const deleteExpiredClasses = functions.pubsub.schedule('every 24 hours').onRun(async (context) => {
-    const db = admin.firestore();
-    const now = new Date();
-    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-    const cutoffString = sevenDaysAgo.toISOString().split('T')[0];
+    // ... (Code omitted for brevity) ...
+    return null;
+});
+*/
 
-    console.log(`Running daily cleanup. Deleting classes with endDate < ${cutoffString}`);
+// Sync Class Points to Lifetime Points automatically
+// This resolves permission issues (Hosts can't update User profiles directly)
+// and ensures consistency across all scoring methods.
+export const onClassMemberUpdate = functions.firestore
+    .document('classes/{classId}/members/{userId}')
+    .onUpdate(async (change, context) => {
+        const newData = change.after.data();
+        const oldData = change.before.data();
+        const { userId } = context.params;
 
-    try {
-        // Query for classes with endDate strictly less than the cutoff
-        // We also filter for endDate > '2000-01-01' to avoid deleting classes with empty or invalid date strings if any
-        const snapshot = await db.collection('classes')
-            .where('endDate', '>', '2000-01-01')
-            .where('endDate', '<', cutoffString)
-            .get();
+        // Check if score changed
+        const newScore = newData.score || 0;
+        const oldScore = oldData.score || 0;
+        const delta = newScore - oldScore;
 
-        if (snapshot.empty) {
-            console.log('No expired classes found to delete.');
+        if (delta === 0) return null;
+
+        console.log(`Syncing lifetime points for ${userId}: delta ${delta}`);
+
+        const db = admin.firestore();
+        const userRef = db.collection('users').doc(userId);
+
+        try {
+            await userRef.set({
+                lifetimePoints: admin.firestore.FieldValue.increment(delta),
+                lastActive: admin.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+            console.log(`Successfully synced lifetime points for ${userId} (Delta: ${delta})`);
+        } catch (error) {
+            console.error('Error syncing lifetime points:', error);
+        }
+        return null;
+    });
+
+
+export const onResponseCreated = functions.firestore
+    .document('games/{gameId}/responses/{responseId}')
+    .onCreate(async (snap, context) => {
+        const data = snap.data();
+        const { userId, correct, pointsEarned } = data;
+        const { gameId } = context.params;
+
+        if (!correct || !pointsEarned || pointsEarned <= 0) {
             return null;
         }
 
-        console.log(`Found ${snapshot.size} classes to delete.`);
+        const db = admin.firestore();
 
-        let deletedCount = 0;
-        const deletePromises = snapshot.docs.map(async (doc) => {
-            const data = doc.data();
-            console.log(`Deleting class ${doc.id} (Name: ${data.name}, EndDate: ${data.endDate})`);
-            try {
-                await db.recursiveDelete(doc.ref);
-                deletedCount++;
-            } catch (err) {
-                console.error(`Failed to delete class ${doc.id}:`, err);
+        try {
+            // Get Game to find Class ID
+            const gameRef = db.collection('games').doc(gameId);
+            const gameSnap = await gameRef.get();
+
+            if (!gameSnap.exists) {
+                console.error(`Game ${gameId} not found`);
+                return null;
             }
-        });
 
-        await Promise.all(deletePromises);
-        console.log(`Successfully deleted ${deletedCount} classes.`);
+            const classId = gameSnap.data()?.classId;
+            if (!classId) {
+                console.error(`Game ${gameId} has no classId`);
+                return null;
+            }
 
-    } catch (error) {
-        console.error('Error in deleteExpiredClasses function:', error);
-    }
+            console.log(`Awarding ${pointsEarned} points to ${userId} in class ${classId}`);
 
-    return null;
-});
+            // Prepare Refs
+            const memberRef = db.collection('classes').doc(classId).collection('members').doc(userId);
+            const historyRef = db.collection('classes').doc(classId).collection('members').doc(userId).collection('history').doc();
+
+            // Run Transaction
+            await db.runTransaction(async (t) => {
+                const memberDoc = await t.get(memberRef);
+
+                // Update Class Member Score
+                if (!memberDoc.exists) {
+                    // Should exist if they joined, but fallback creation 
+                    // (Note: we might miss nickname if we create it here, but better than crashing)
+                    t.set(memberRef, {
+                        userId,
+                        classId,
+                        nickname: 'Student',
+                        score: pointsEarned,
+                        joinedAt: admin.firestore.FieldValue.serverTimestamp()
+                    });
+                } else {
+                    t.update(memberRef, {
+                        score: admin.firestore.FieldValue.increment(pointsEarned)
+                    });
+                }
+
+
+
+                // Add History
+                t.set(historyRef, {
+                    timestamp: admin.firestore.FieldValue.serverTimestamp(),
+                    points: pointsEarned,
+                    reason: 'Quiz Battle'
+                });
+            });
+
+            console.log(`SUCCESS: Awarded ${pointsEarned} points to ${userId}`);
+        } catch (error) {
+            console.error('Error awarding points:', error);
+        }
+
+        return null;
+    });

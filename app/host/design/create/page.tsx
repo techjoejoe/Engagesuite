@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { AlbumTemplate, AlbumPage, AlbumBlock, updateAlbumTemplate } from '@/lib/albums';
-import { Save, Plus, Type, Image as ImageIcon, HelpCircle, GripVertical, Trash, ArrowLeft, MoreVertical, Layout } from 'lucide-react';
+import { Save, Plus, Type, Image as ImageIcon, HelpCircle, GripVertical, Trash, ArrowLeft, MoreVertical, Layout, Globe, Lock } from 'lucide-react';
 
 export default function AlbumEditorPage() {
     return (
@@ -39,14 +39,20 @@ function EditorContent() {
             const snap = await getDoc(doc(db, 'album_templates', id));
             if (snap.exists()) {
                 const data = snap.data() as AlbumTemplate;
+                // Initialize draftPages if missing
+                if (!data.draftPages) {
+                    data.draftPages = data.pages;
+                }
                 setAlbum(data);
-                if (data.pages.length > 0) setActivePageId(data.pages[0].id);
+                if ((data.draftPages || []).length > 0) setActivePageId((data.draftPages || [])[0].id);
             }
         };
         load();
     }, [id]);
 
-    const activePage = album?.pages.find(p => p.id === activePageId);
+    // Use draftPages for editing interface
+    const renderedPages = album?.draftPages || album?.pages || [];
+    const activePage = renderedPages.find(p => p.id === activePageId);
 
     // --- Actions ---
 
@@ -66,13 +72,23 @@ function EditorContent() {
             return;
         }
 
+        // --- PUBLISH LOGIC ---
+        // If Published: Update BOTH draftPages and pages (Live)
+        // If Draft: Update ONLY draftPages (Live pages remain untouched)
+        if (updatedAlbum.isPublished) {
+            updatedAlbum.pages = updatedAlbum.draftPages || updatedAlbum.pages;
+        }
+
+        // Sanitize payload to remove undefined values (firebase rejects them)
+        const sanitized = JSON.parse(JSON.stringify(updatedAlbum));
+
         setAlbum(updatedAlbum);
         setSaving(true);
         try {
-            await updateAlbumTemplate(updatedAlbum.id, updatedAlbum);
+            await updateAlbumTemplate(updatedAlbum.id, sanitized);
         } catch (e) {
             console.error("Save failed", e);
-            alert("Failed to save due to backend permissions. Ensure you are the owner.");
+            alert("Failed to save due to backend permissions or invalid data.");
         } finally {
             setTimeout(() => setSaving(false), 500);
         }
@@ -86,12 +102,12 @@ function EditorContent() {
             order: album.pages.length,
             blocks: []
         };
-        const updated = { ...album, pages: [...album.pages, newPage] };
+        const updated = { ...album, draftPages: [...renderedPages, newPage] };
         handleSave(updated);
         setActivePageId(newPage.id);
     };
 
-    const addBlock = (type: 'text' | 'image' | 'question') => {
+    const addBlock = (type: 'text' | 'image' | 'question', questionSubtype?: 'short_answer' | 'essay' | 'multiple_choice') => {
         if (!album || !activePage) return;
 
         const newBlock: AlbumBlock = {
@@ -99,23 +115,28 @@ function EditorContent() {
             type,
             content: '',
             points: type === 'question' ? 10 : 0,
-            questionType: type === 'question' ? 'short_answer' : undefined
+            questionType: (type === 'question' && questionSubtype) ? questionSubtype : (type === 'question' ? 'short_answer' : null as any),
+            mediaUrl: null as any // Firebase hates undefined
         };
 
-        const updatedPages = album.pages.map(p => {
+        // Clean up
+        if (type !== 'question') delete (newBlock as any).questionType;
+        if (type !== 'image') delete (newBlock as any).mediaUrl;
+
+        const updatedPages = renderedPages.map(p => {
             if (p.id === activePage.id) {
                 return { ...p, blocks: [...p.blocks, newBlock] };
             }
             return p;
         });
 
-        handleSave({ ...album, pages: updatedPages });
+        handleSave({ ...album, draftPages: updatedPages });
     };
 
     const updateBlock = (blockId: string, updates: Partial<AlbumBlock>) => {
         if (!album || !activePage) return;
 
-        const updatedPages = album.pages.map(p => {
+        const updatedPages = renderedPages.map(p => {
             if (p.id === activePage.id) {
                 const newBlocks = p.blocks.map(b => (b.id === blockId ? { ...b, ...updates } : b));
                 return { ...p, blocks: newBlocks };
@@ -123,18 +144,18 @@ function EditorContent() {
             return p;
         });
 
-        handleSave({ ...album, pages: updatedPages });
+        handleSave({ ...album, draftPages: updatedPages });
     };
 
     const deleteBlock = (blockId: string) => {
         if (!album || !activePage) return;
-        const updatedPages = album.pages.map(p => {
+        const updatedPages = renderedPages.map(p => {
             if (p.id === activePage.id) {
                 return { ...p, blocks: p.blocks.filter(b => b.id !== blockId) };
             }
             return p;
         });
-        handleSave({ ...album, pages: updatedPages });
+        handleSave({ ...album, draftPages: updatedPages });
     };
 
     if (!album) return <div className="p-10 text-center">Loading Editor...</div>;
@@ -184,18 +205,56 @@ function EditorContent() {
 
                     {/* Album Meta */}
                     <div className="mb-12 border-b border-gray-200 pb-8">
-                        <input
-                            value={album.title}
-                            onChange={(e) => handleSave({ ...album, title: e.target.value })}
-                            className="text-4xl font-extrabold text-gray-900 w-full bg-transparent border-none focus:ring-0 placeholder-gray-300"
-                            placeholder="Untitled Album"
-                        />
-                        <input
-                            value={album.description}
-                            onChange={(e) => handleSave({ ...album, description: e.target.value })}
-                            className="text-lg text-gray-500 w-full bg-transparent border-none focus:ring-0 mt-2 placeholder-gray-300"
-                            placeholder="Add a description for your students..."
-                        />
+                        <div className="flex justify-between items-start mb-4">
+                            <input
+                                value={album.title}
+                                onChange={(e) => handleSave({ ...album, title: e.target.value })}
+                                className="text-4xl font-extrabold text-gray-900 w-full bg-transparent border-none focus:ring-0 placeholder-gray-300"
+                                placeholder="Untitled Workbook"
+                            />
+
+                            <button
+                                onClick={() => {
+                                    const newStatus = !album.isPublished;
+                                    const updates: any = { isPublished: newStatus };
+                                    if (newStatus) {
+                                        // Publishing: Sync draft to live
+                                        updates.pages = album.draftPages;
+                                    }
+                                    handleSave({ ...album, ...updates });
+                                }}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all ${album.isPublished
+                                    ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                                    : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                                    }`}
+                                title={album.isPublished ? "Published: Edits are Live" : "Draft: Edits are Hidden"}
+                            >
+                                {album.isPublished ? <Globe className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
+                                {album.isPublished ? "Published" : "Draft"}
+                            </button>
+                        </div>
+                        <div className="flex gap-4 items-start mt-2">
+                            <input
+                                value={album.description}
+                                onChange={(e) => handleSave({ ...album, description: e.target.value })}
+                                className="text-lg text-gray-500 w-full bg-transparent border-none focus:ring-0 placeholder-gray-300 flex-1"
+                                placeholder="Add a description for your students..."
+                            />
+                            <div className="bg-green-50 rounded-lg px-3 py-1 flex flex-col items-center border border-green-100 min-w-[120px]">
+                                <span className="text-[10px] font-bold text-green-600 uppercase tracking-wider mb-1">Finish Bonus</span>
+                                <div className="flex items-center gap-1">
+                                    <span className="text-sm font-bold text-green-700">+</span>
+                                    <input
+                                        type="number"
+                                        value={album.completionPoints || 0}
+                                        onChange={(e) => handleSave({ ...album, completionPoints: parseInt(e.target.value) || 0 })}
+                                        className="w-12 text-center font-bold text-green-700 bg-transparent border-none focus:ring-0 p-0 text-sm"
+                                        placeholder="0"
+                                    />
+                                    <span className="text-xs font-bold text-green-700">pts</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     {/* Active Page Content */}
@@ -205,10 +264,10 @@ function EditorContent() {
                                 <input
                                     value={activePage.title}
                                     onChange={(e) => {
-                                        const updatedPages = album.pages.map(p =>
+                                        const updatedPages = renderedPages.map(p =>
                                             p.id === activePage.id ? { ...p, title: e.target.value } : p
                                         );
-                                        handleSave({ ...album, pages: updatedPages });
+                                        handleSave({ ...album, draftPages: updatedPages });
                                     }}
                                     className="text-2xl font-bold text-gray-800 bg-transparent border-none focus:ring-0 w-full"
                                 />
@@ -241,10 +300,13 @@ function EditorContent() {
                             ))}
 
                             {/* Add Block Menu */}
-                            <div className="mt-8 flex justify-center gap-3">
+                            <div className="mt-8 flex justify-center gap-3 flex-wrap">
                                 <FloatingActionButton icon={<Type className="w-5 h-5" />} label="Text" onClick={() => addBlock('text')} />
                                 <FloatingActionButton icon={<ImageIcon className="w-5 h-5" />} label="Image" onClick={() => addBlock('image')} />
-                                <FloatingActionButton icon={<HelpCircle className="w-5 h-5" />} label="Question" onClick={() => addBlock('question')} />
+                                <div className="w-px bg-gray-300 h-8 mx-2 self-center"></div>
+                                <FloatingActionButton icon={<HelpCircle className="w-5 h-5" />} label="Fill-in-Blank" onClick={() => addBlock('question', 'short_answer')} />
+                                <FloatingActionButton icon={<Layout className="w-5 h-5" />} label="Essay" onClick={() => addBlock('question', 'essay')} />
+                                <FloatingActionButton icon={<GripVertical className="w-5 h-5" />} label="Multiple Choice" onClick={() => addBlock('question', 'multiple_choice')} />
                             </div>
                         </div>
                     ) : (
@@ -273,12 +335,24 @@ function FloatingActionButton({ icon, label, onClick }: { icon: any, label: stri
 function BlockEditor({ block, updateBlock }: { block: AlbumBlock, updateBlock: (id: string, data: Partial<AlbumBlock>) => void }) {
     if (block.type === 'text') {
         return (
-            <textarea
-                value={block.content}
-                onChange={(e) => updateBlock(block.id, { content: e.target.value })}
-                placeholder="Type your content here..."
-                className="w-full min-h-[100px] p-4 rounded-lg border-none focus:ring-0 resize-none text-gray-700 leading-relaxed bg-transparent"
-            />
+            <div className="relative group p-2 hover:bg-gray-50 rounded-xl transition-colors">
+                <div className="flex justify-between items-center mb-2 opacity-0 group-hover:opacity-100 transition-opacity absolute -top-3 right-0 bg-white shadow-sm border border-gray-100 rounded-lg px-2 py-1 z-10">
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mr-2">Points</span>
+                    <input
+                        type="number"
+                        value={block.points || 0}
+                        onChange={(e) => updateBlock(block.id, { points: parseInt(e.target.value) || 0 })}
+                        className="w-12 text-right text-xs border-none p-0 focus:ring-0 font-bold text-gray-600 bg-transparent"
+                        placeholder="0"
+                    />
+                </div>
+                <textarea
+                    value={block.content}
+                    onChange={(e) => updateBlock(block.id, { content: e.target.value })}
+                    placeholder="Type your content here..."
+                    className="w-full min-h-[100px] p-2 rounded-lg border-none focus:ring-0 resize-none text-gray-700 leading-relaxed bg-transparent"
+                />
+            </div>
         );
     }
 
@@ -289,13 +363,16 @@ function BlockEditor({ block, updateBlock }: { block: AlbumBlock, updateBlock: (
                     <span className="text-xs font-bold text-blue-600 uppercase tracking-wider bg-blue-100 px-2 py-1 rounded">
                         Question
                     </span>
-                    <input
-                        type="number"
-                        value={block.points}
-                        onChange={(e) => updateBlock(block.id, { points: parseInt(e.target.value) || 0 })}
-                        className="w-20 text-right text-sm border-gray-200 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Points"
-                    />
+                    <div className="flex items-center gap-2">
+                        <span className="text-xs text-blue-400 font-bold uppercase">Points</span>
+                        <input
+                            type="number"
+                            value={block.points}
+                            onChange={(e) => updateBlock(block.id, { points: parseInt(e.target.value) || 0 })}
+                            className="w-16 text-right text-sm border-gray-200 rounded-md focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+                            placeholder="Points"
+                        />
+                    </div>
                 </div>
 
                 <input
@@ -317,14 +394,78 @@ function BlockEditor({ block, updateBlock }: { block: AlbumBlock, updateBlock: (
                     </select>
                 </div>
 
-                {/* Specific UI for Multiple Choice could go here in v2 */}
+                {/* Multiple Choice Editor */}
+                {block.questionType === 'multiple_choice' && (
+                    <div className="mt-6 space-y-3">
+                        <label className="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-2">Answer Options & Correct Answer</label>
+                        {(block.options || ['Option 1', 'Option 2', 'Option 3', 'Option 4']).map((opt, idx) => (
+                            <div key={idx} className="flex items-center gap-3">
+                                <input
+                                    type="radio"
+                                    name={`correct_${block.id}`}
+                                    checked={block.correctAnswerHash === opt}
+                                    onChange={() => updateBlock(block.id, { correctAnswerHash: opt })} // Storing plain text answer for now
+                                    className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 cursor-pointer"
+                                />
+                                <input
+                                    type="text"
+                                    value={opt}
+                                    onChange={(e) => {
+                                        const newOptions = [...(block.options || ['Option 1', 'Option 2', 'Option 3', 'Option 4'])];
+                                        newOptions[idx] = e.target.value;
+                                        // If this was the correct answer, update the correct answer field too if we want to track by value
+                                        // But if we track by value, changing text breaks the selection if we don't update it.
+                                        // Better to track selection separate? 
+                                        // For simplicity: If tracked by value (string), we update it.
+                                        let updates: any = { options: newOptions };
+                                        if (block.correctAnswerHash === opt) {
+                                            updates.correctAnswerHash = e.target.value;
+                                        }
+                                        updateBlock(block.id, updates);
+                                    }}
+                                    className="flex-1 text-sm border-gray-200 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+                                    placeholder={`Option ${idx + 1}`}
+                                />
+                                <button
+                                    onClick={() => {
+                                        const newOptions = (block.options || []).filter((_, i) => i !== idx);
+                                        updateBlock(block.id, { options: newOptions });
+                                    }}
+                                    className="text-gray-400 hover:text-red-500"
+                                    title="Remove Option"
+                                >
+                                    ✕
+                                </button>
+                            </div>
+                        ))}
+                        <button
+                            onClick={() => {
+                                const newOptions = [...(block.options || ['Option 1', 'Option 2', 'Option 3', 'Option 4']), `Option ${(block.options?.length || 4) + 1}`];
+                                updateBlock(block.id, { options: newOptions });
+                            }}
+                            className="text-xs font-bold text-blue-600 hover:text-blue-700 mt-2"
+                        >
+                            + Add Option
+                        </button>
+                    </div>
+                )}
             </div>
         );
     }
 
     if (block.type === 'image') {
         return (
-            <div className="p-4 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+            <div className="p-4 bg-gray-50 rounded-xl border border-dashed border-gray-200 relative group">
+                <div className="flex justify-between items-center mb-2 opacity-0 group-hover:opacity-100 transition-opacity absolute -top-3 right-4 bg-white shadow-sm border border-gray-100 rounded-lg px-2 py-1 z-10">
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mr-2">Points</span>
+                    <input
+                        type="number"
+                        value={block.points || 0}
+                        onChange={(e) => updateBlock(block.id, { points: parseInt(e.target.value) || 0 })}
+                        className="w-12 text-right text-xs border-none p-0 focus:ring-0 font-bold text-gray-600 bg-transparent"
+                        placeholder="0"
+                    />
+                </div>
                 <input
                     value={block.mediaUrl || ''}
                     onChange={(e) => updateBlock(block.id, { mediaUrl: e.target.value })}
@@ -332,7 +473,9 @@ function BlockEditor({ block, updateBlock }: { block: AlbumBlock, updateBlock: (
                     className="w-full text-sm bg-transparent border-none focus:ring-0 text-blue-600 underline"
                 />
                 {(block.mediaUrl) && (
-                    <img src={block.mediaUrl} alt="Preview" className="mt-4 rounded-lg shadow-sm max-h-64 object-cover" />
+                    <div className="mt-4 rounded-lg overflow-hidden shadow-sm max-h-64 bg-gray-200 flex items-center justify-center">
+                        <img src={block.mediaUrl} alt="Preview" className="w-full h-full object-contain" />
+                    </div>
                 )}
             </div>
         );

@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, use } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation';
 import { QRCodeSVG } from 'qrcode.react';
 import { getTimer, onTimerChange, startTimer, pauseTimer, updateTimer } from '@/lib/tickr';
 import { updateClassActivity } from '@/lib/classes';
@@ -9,8 +9,9 @@ import Button from '@/components/Button';
 import { Icons } from '@/components/picpick/Icons';
 import TimerSettingsModal from '@/components/tickr/TimerSettingsModal';
 
-export default function TickrHostPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = use(params);
+export default function TickrHostPage() {
+    const params = useParams();
+    const id = params.id as string;
     const router = useRouter();
     const [timer, setTimer] = useState<any>(null);
     const [timeLeft, setTimeLeft] = useState(0);
@@ -157,23 +158,42 @@ export default function TickrHostPage({ params }: { params: Promise<{ id: string
         return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
     };
 
-    // Dynamic Color Logic
+    // Dynamic Color Logic - VIBRANT
     const getTimerColor = () => {
-        if (isFinished) return 'text-red-500 animate-pulse';
+        if (isFinished) return 'text-[#F472B6] animate-pulse';
         if (!timer || timer.status === 'stopped') return 'text-white';
 
         const totalDuration = timer.duration || 1;
         const percentage = timeLeft / totalDuration;
 
-        if (percentage > 0.5) return 'text-emerald-400';
-        if (percentage > 0.2) return 'text-amber-400';
-        return 'text-rose-500';
+        if (percentage > 0.5) return 'text-[#22D3EE]'; // Cyan - plenty of time
+        if (percentage > 0.2) return 'text-[#FBBF24]'; // Gold - warning
+        return 'text-[#F472B6]'; // Coral - urgent
     };
 
-    if (!timer) return <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center text-white">Loading...</div>;
+    const getTimerGlow = () => {
+        if (isFinished) return 'drop-shadow-[0_0_60px_rgba(244,114,182,0.6)]';
+        if (!timer || timer.status === 'stopped') return 'drop-shadow-[0_0_40px_rgba(167,139,250,0.3)]';
+
+        const totalDuration = timer.duration || 1;
+        const percentage = timeLeft / totalDuration;
+
+        if (percentage > 0.5) return 'drop-shadow-[0_0_60px_rgba(34,211,238,0.5)]';
+        if (percentage > 0.2) return 'drop-shadow-[0_0_60px_rgba(251,191,36,0.5)]';
+        return 'drop-shadow-[0_0_60px_rgba(244,114,182,0.6)]';
+    };
+
+    if (!timer) return (
+        <div className="min-h-screen flex items-center justify-center text-white">
+            <div className="flex flex-col items-center gap-4">
+                <div className="animate-spin text-6xl">⏰</div>
+                <div className="text-xl text-[#A78BFA] animate-pulse">Loading Tickr...</div>
+            </div>
+        </div>
+    );
 
     return (
-        <main className="min-h-screen bg-[#0a0a0f] text-white font-display overflow-hidden relative flex flex-col">
+        <main className="min-h-screen text-white font-display overflow-hidden relative flex flex-col">
             <TimerSettingsModal
                 isOpen={isSettingsOpen}
                 onClose={() => setIsSettingsOpen(false)}
@@ -181,29 +201,29 @@ export default function TickrHostPage({ params }: { params: Promise<{ id: string
                 initialDuration={timeLeft}
             />
 
-            {/* Background Effects */}
+            {/* Background Effects - Vibrant & Fun */}
             <div className="fixed inset-0 pointer-events-none">
-                <div className={`absolute top-[-20%] left-[-10%] w-[60%] h-[60%] rounded-full blur-[150px] transition-colors duration-1000 ${isFinished ? 'bg-red-600/20' : 'bg-indigo-600/10'}`}></div>
-                <div className={`absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] rounded-full blur-[150px] transition-colors duration-1000 ${isFinished ? 'bg-red-600/20' : 'bg-purple-600/10'}`}></div>
+                <div className={`absolute top-[-20%] left-[-10%] w-[60%] h-[60%] rounded-full blur-[150px] transition-all duration-1000 ${isFinished ? 'bg-[#F472B6]/30 animate-pulse' : 'bg-[#7C3AED]/25'}`}></div>
+                <div className={`absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] rounded-full blur-[150px] transition-all duration-1000 ${isFinished ? 'bg-[#FBBF24]/20 animate-pulse' : 'bg-[#06B6D4]/20'}`}></div>
+                <div className="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-[40%] h-[40%] rounded-full blur-[200px] bg-[#F472B6]/10"></div>
             </div>
 
             {/* Header */}
             <div className="p-6 flex justify-between items-start z-10 w-full">
                 <div className="flex items-center gap-4">
                     <Button
-                        variant="secondary"
+                        variant="glass"
                         size="sm"
-                        className="bg-slate-800 hover:bg-slate-700 text-white border-slate-700"
                         onClick={() => {
                             if (timer?.classId) updateClassActivity(timer.classId, { type: 'none' });
-                            router.push('/dashboard/class?id=' + timer.classId);
+                            router.push(timer?.classId ? `/dashboard/class?id=${timer.classId}` : '/dashboard/class');
                         }}
                     >
                         ← Back to Class
                     </Button>
                     <div>
-                        <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">
-                            Tickr
+                        <h1 className="text-2xl font-bold text-gradient-rainbow">
+                            ⏰ Tickr
                         </h1>
                     </div>
                 </div>
@@ -216,16 +236,22 @@ export default function TickrHostPage({ params }: { params: Promise<{ id: string
             {/* Main Timer Display */}
             <div className="flex-1 flex flex-col items-center justify-center relative z-0 w-full min-h-[50vh]">
                 <div
-                    className={`font-mono font-bold tracking-tighter tabular-nums leading-none transition-all duration-300 ${getTimerColor()} drop-shadow-2xl cursor-pointer hover:scale-105 active:scale-95`}
+                    className={`font-mono font-bold tracking-tighter tabular-nums leading-none transition-all duration-300 ${getTimerColor()} ${getTimerGlow()} cursor-pointer hover:scale-105 active:scale-95`}
                     style={{ fontSize: '25vw', textShadow: '0 0 100px rgba(0,0,0,0.5)' }}
                     onClick={() => timer.status === 'stopped' && setIsSettingsOpen(true)}
                     title={timer.status === 'stopped' ? "Click to Edit Time" : ""}
                 >
                     {formatTime(timeLeft)}
                 </div>
-                <div className="text-xl sm:text-3xl text-white/40 mt-4 uppercase tracking-[0.2em] font-bold animate-fade-in flex items-center gap-3">
-                    {isFinished ? 'TIME IS UP!' : timer.status === 'running' ? 'Time Remaining' : timer.status === 'paused' ? 'Timer Paused' : (
-                        <button onClick={() => setIsSettingsOpen(true)} className="hover:text-white transition-colors flex items-center gap-2">
+                <div className="text-xl sm:text-3xl text-[#94A3B8] mt-4 uppercase tracking-[0.2em] font-bold animate-fade-in flex items-center gap-3">
+                    {isFinished ? (
+                        <span className="text-[#F472B6] animate-bounce">⏰ TIME IS UP! ⏰</span>
+                    ) : timer.status === 'running' ? (
+                        <span className="text-[#22D3EE]">⚡ Time Remaining</span>
+                    ) : timer.status === 'paused' ? (
+                        <span className="text-[#FBBF24]">⏸️ Timer Paused</span>
+                    ) : (
+                        <button onClick={() => setIsSettingsOpen(true)} className="hover:text-white transition-colors flex items-center gap-2 text-[#A78BFA]">
                             <Icons.Settings className="w-6 h-6" />
                             <span>Click Time to Edit</span>
                         </button>
@@ -241,52 +267,48 @@ export default function TickrHostPage({ params }: { params: Promise<{ id: string
                         className="w-full flex justify-center pb-2 cursor-pointer group"
                         onClick={() => setShowControls(!showControls)}
                     >
-                        <div className="w-12 h-1.5 bg-white/20 rounded-full group-hover:bg-white/40 transition-colors shadow-lg"></div>
+                        <div className="w-12 h-1.5 bg-[#7C3AED]/40 rounded-full group-hover:bg-[#A78BFA]/60 transition-colors shadow-lg"></div>
                     </div>
 
                     <div className="flex flex-col gap-8">
                         {/* Main Actions */}
                         <div className="flex justify-center items-center gap-6">
-                            <Button
-                                variant="glass"
-                                size="lg"
+                            <button
                                 onClick={handleReset}
-                                className="h-20 w-20 !rounded-full !p-0 flex flex-col items-center justify-center gap-1 bg-white/5 hover:bg-white/10 border border-white/10 backdrop-blur-md shadow-xl transition-all hover:scale-105 active:scale-95"
+                                className="h-20 w-20 rounded-full flex flex-col items-center justify-center gap-1 bg-[#7C3AED]/10 hover:bg-[#7C3AED]/20 border border-[#A78BFA]/30 backdrop-blur-md shadow-xl transition-all hover:scale-110 active:scale-95"
                                 title="Reset"
                             >
-                                <Icons.Refresh className="w-6 h-6" />
-                                <span className="text-[10px] uppercase tracking-wider font-bold opacity-60">Reset</span>
-                            </Button>
+                                <Icons.Refresh className="w-6 h-6 text-[#A78BFA]" />
+                                <span className="text-[10px] uppercase tracking-wider font-bold text-[#A78BFA]/80">Reset</span>
+                            </button>
 
                             {timer.status === 'running' ? (
                                 <button
                                     onClick={handlePause}
-                                    className="h-24 w-24 bg-rose-500/20 hover:bg-rose-500/30 backdrop-blur-md rounded-full flex flex-col items-center justify-center gap-1 text-white shadow-lg shadow-rose-500/10 hover:scale-105 active:scale-95 transition-all border border-rose-500/30"
+                                    className="h-28 w-28 bg-gradient-to-br from-[#F472B6] to-[#DB2777] hover:from-[#F9A8D4] hover:to-[#F472B6] rounded-full flex flex-col items-center justify-center gap-1 text-white shadow-lg shadow-[#F472B6]/30 hover:scale-105 active:scale-95 transition-all border-2 border-[#F472B6]/50"
                                 >
-                                    <Icons.Pause className="w-8 h-8" />
-                                    <span className="text-xs font-bold uppercase tracking-wider">Pause</span>
+                                    <Icons.Pause className="w-10 h-10" />
+                                    <span className="text-sm font-bold uppercase tracking-wider">Pause</span>
                                 </button>
                             ) : (
                                 <button
                                     onClick={handleStart}
-                                    className="h-24 w-24 bg-emerald-500/20 hover:bg-emerald-500/30 backdrop-blur-md rounded-full flex flex-col items-center justify-center gap-1 text-white shadow-lg shadow-emerald-500/10 hover:scale-105 active:scale-95 transition-all border border-emerald-500/30"
+                                    className="h-28 w-28 bg-gradient-to-br from-[#22D3EE] to-[#06B6D4] hover:from-[#67E8F9] hover:to-[#22D3EE] rounded-full flex flex-col items-center justify-center gap-1 text-[#0F172A] shadow-lg shadow-[#06B6D4]/30 hover:scale-105 active:scale-95 transition-all border-2 border-[#22D3EE]/50"
                                 >
-                                    <Icons.Play className="w-8 h-8 ml-1" />
-                                    <span className="text-xs font-bold uppercase tracking-wider">Start</span>
+                                    <Icons.Play className="w-10 h-10 ml-1" />
+                                    <span className="text-sm font-bold uppercase tracking-wider">Start</span>
                                 </button>
                             )}
 
-                            <Button
-                                variant="glass"
-                                size="lg"
+                            <button
                                 onClick={() => setIsSettingsOpen(true)}
-                                className="h-20 w-20 !rounded-full !p-0 flex flex-col items-center justify-center gap-1 bg-white/5 hover:bg-white/10 border border-white/10 backdrop-blur-md shadow-xl transition-all hover:scale-105 active:scale-95"
+                                className="h-20 w-20 rounded-full flex flex-col items-center justify-center gap-1 bg-[#FBBF24]/10 hover:bg-[#FBBF24]/20 border border-[#FBBF24]/30 backdrop-blur-md shadow-xl transition-all hover:scale-110 active:scale-95 disabled:opacity-50"
                                 title="Edit"
                                 disabled={timer.status === 'running'}
                             >
-                                <Icons.Settings className="w-6 h-6" />
-                                <span className="text-[10px] uppercase tracking-wider font-bold opacity-60">Edit</span>
-                            </Button>
+                                <Icons.Settings className="w-6 h-6 text-[#FBBF24]" />
+                                <span className="text-[10px] uppercase tracking-wider font-bold text-[#FBBF24]/80">Edit</span>
+                            </button>
                         </div>
                     </div>
                 </div>

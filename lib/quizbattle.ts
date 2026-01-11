@@ -272,32 +272,7 @@ export const submitAnswer = async (
 
     // Award persistent points only if this was a new submission
     if (shouldAwardPoints && correct && pointsEarned > 0) {
-        try {
-            let targetClassId = classId;
-
-            // If classId not provided, fetch from game
-            if (!targetClassId) {
-                console.log('[submitAnswer] ClassId not provided, fetching from game');
-                const gameRef = doc(db, 'games', gameId);
-                const gameSnap = await getDoc(gameRef);
-                if (gameSnap.exists()) {
-                    targetClassId = gameSnap.data().classId;
-                    console.log('[submitAnswer] Fetched classId:', targetClassId);
-                }
-            } else {
-                console.log('[submitAnswer] Using provided classId:', targetClassId);
-            }
-
-            if (targetClassId) {
-                console.log('[submitAnswer] CALLING awardPoints with:', { targetClassId, userId, pointsEarned });
-                await awardPoints(targetClassId, userId, pointsEarned);
-                console.log('[submitAnswer] awardPoints completed successfully');
-            } else {
-                console.error('[submitAnswer] NO classId available, cannot award points!');
-            }
-        } catch (err) {
-            console.error('[submitAnswer] Failed to award persistent points:', err);
-        }
+        console.log('[submitAnswer] Answer submitted correctly. Points handled by Cloud Function.');
     } else {
         console.log('[submitAnswer] NOT awarding points. shouldAwardPoints:', shouldAwardPoints, 'correct:', correct, 'pointsEarned:', pointsEarned);
     }

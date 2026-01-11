@@ -2,9 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { addDoc, collection, serverTimestamp, getDocs, writeBatch, doc, deleteDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { onGalleriesChange, generateGalleryCode, deleteGallery } from '@/lib/picpick';
+import { onAuthStateChange } from '@/lib/auth';
 import { Icons } from '@/components/picpick/Icons';
 import { Spinner, Toast } from '@/components/picpick/UI';
 import Button from '@/components/Button';
@@ -24,27 +26,54 @@ const isWithinWindow = (start: any, end: any) => {
     return now >= startDate && now <= endDate;
 };
 
-const generateGalleryCode = () => {
-    return Math.random().toString(36).substring(2, 8).toUpperCase();
-};
 
 export default function AdminDashboard() {
+    return (
+        <React.Suspense fallback={<div>Loading...</div>}>
+            <AdminDashboardContent />
+        </React.Suspense>
+    );
+}
+
+function AdminDashboardContent() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const classId = searchParams.get('classId');
+    const backLink = classId ? `/dashboard/class?id=${classId}` : '/dashboard/class';
+
+    const [user, setUser] = useState<any>(null);
     const [galleries, setGalleries] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
 
+    // Require authentication
     useEffect(() => {
-        const q = query(collection(db, 'galleries'), orderBy('createdAt', 'desc'));
-        const unsubscribe = onSnapshot(q, (snapshot) => {
-            const galleriesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const unsubscribe = onAuthStateChange((currentUser) => {
+            if (!currentUser) {
+                router.push('/login');
+            } else {
+                setUser(currentUser);
+            }
+        });
+        return () => unsubscribe();
+    }, [router]);
+
+    // Load galleries for this class
+    useEffect(() => {
+        if (!classId) {
+            setToast({ message: 'Class ID required', type: 'error' });
+            setLoading(false);
+            return;
+        }
+
+        const unsubscribe = onGalleriesChange(classId, (galleriesData) => {
             setGalleries(galleriesData);
             setLoading(false);
         });
 
         return () => unsubscribe();
-    }, []);
+    }, [classId]);
 
     return (
         <main className="full-height" style={{
@@ -56,7 +85,7 @@ export default function AdminDashboard() {
                 {/* Header */}
                 <div className="flex-between mb-5">
                     <div className="flex align-center gap-3">
-                        <Link href="/dashboard/class">
+                        <Link href={backLink}>
                             <Button variant="glass" size="sm" style={{ padding: '0.5rem' }}>
                                 <Icons.Back style={{ width: '20px', height: '20px' }} />
                             </Button>
@@ -125,6 +154,7 @@ export default function AdminDashboard() {
                                     key={gallery.id}
                                     gallery={gallery}
                                     onClick={() => router.push(`/picpick/admin/gallery/${gallery.id}`)}
+                                    setToast={setToast}
                                 />
                             ))}
                         </div>
@@ -132,13 +162,13 @@ export default function AdminDashboard() {
                 </div>
             </div>
 
-            {showCreateModal && <CreateGalleryModal onClose={() => setShowCreateModal(false)} setToast={setToast} />}
+            {showCreateModal && user && classId && <CreateGalleryModal onClose={() => setShowCreateModal(false)} setToast={setToast} classId={classId} hostId={user.uid} />}
             {toast && <Toast {...toast} onClose={() => setToast(null)} />}
         </main>
     );
 }
 
-const GalleryCard = ({ gallery, onClick }: { gallery: any, onClick: () => void }) => {
+const GalleryCard = ({ gallery, onClick, setToast }: { gallery: any, onClick: () => void, setToast: (t: any) => void }) => {
     const [copied, setCopied] = useState(false);
     const votingOpen = isWithinWindow(gallery.votingStart, gallery.votingEnd);
 
@@ -240,18 +270,43 @@ const GalleryCard = ({ gallery, onClick }: { gallery: any, onClick: () => void }
                 borderTop: '1px solid rgba(255, 255, 255, 0.05)',
                 display: 'flex',
                 justifyContent: 'space-between',
-                fontSize: '0.75rem',
-                color: 'rgba(255, 255, 255, 0.4)',
-                fontFamily: 'monospace'
+                alignItems: 'center',
+                gap: '0.5rem'
             }}>
-                <span>Created {formatDate(gallery.createdAt)}</span>
-                <span>Ends {formatDate(gallery.votingEnd)}</span>
+                <div style={{
+                    fontSize: '0.75rem',
+                    color: 'rgba(255, 255, 255, 0.4)',
+                    fontFamily: 'monospace',
+                    flex: 1
+                }}>
+                    <div>Created {formatDate(gallery.createdAt)}</div>
+                    <div>Ends {formatDate(gallery.votingEnd)}</div>
+                </div>
+                <Button
+                    variant="danger"
+                    size="sm"
+                    onClick={async (e) => {
+                        e.stopPropagation();
+                        if (confirm(`Delete "${gallery.name}"? This cannot be undone.`)) {
+                            try {
+                                await deleteGallery(gallery.id);
+                                setToast({ message: 'Gallery deleted', type: 'success' });
+                            } catch (err: any) {
+                                console.error('Delete error:', err);
+                                setToast({ message: `Failed to delete: ${err.message || 'Unknown error'}`, type: 'error' });
+                            }
+                        }
+                    }}
+                    style={{ padding: '0.5rem', minWidth: 'auto' }}
+                >
+                    <Icons.Trash style={{ width: '16px', height: '16px' }} />
+                </Button>
             </div>
         </div>
     );
 };
 
-const CreateGalleryModal = ({ onClose, setToast }: { onClose: () => void, setToast: (t: any) => void }) => {
+const CreateGalleryModal = ({ onClose, setToast, classId, hostId }: { onClose: () => void, setToast: (t: any) => void, classId: string, hostId: string }) => {
     const [formData, setFormData] = useState({
         name: '',
         description: '',
@@ -299,10 +354,14 @@ const CreateGalleryModal = ({ onClose, setToast }: { onClose: () => void, setToa
             await addDoc(collection(db, 'galleries'), {
                 ...formData,
                 code,
+                classId,
+                hostId,
                 uploadStart,
                 uploadEnd,
                 votingStart,
                 votingEnd,
+                votingOpen: false, // Trainer controls manually
+                showVoteCounts: false, // Hidden by default
                 createdAt: serverTimestamp()
             });
 

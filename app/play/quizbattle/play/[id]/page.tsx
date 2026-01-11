@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState, useEffect, use } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation';
 import { getGame, getQuiz, onGameChange, submitAnswer, calculateScore, updatePlayerScore } from '@/lib/quizbattle';
 
-export default function StudentPlayPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = use(params);
+export default function StudentPlayPage() {
+    const params = useParams();
+    const id = params.id as string;
     const router = useRouter();
     const [game, setGame] = useState<any>(null);
     const [quiz, setQuiz] = useState<any>(null);
@@ -216,7 +217,7 @@ export default function StudentPlayPage({ params }: { params: Promise<{ id: stri
                     padding: '24px',
                     textAlign: 'center',
                     boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
-                    animation: 'slideUp 0.3s ease-out'
+                    animation: 'var(--animate-slide-up)'
                 }}>
                     <div style={{ fontSize: '40px', marginBottom: '8px' }}>
                         {feedback?.correct ? '✓' : '✗'}
@@ -233,12 +234,7 @@ export default function StudentPlayPage({ params }: { params: Promise<{ id: stri
                 </div>
             )}
 
-            <style>{`
-                @keyframes slideUp {
-                    from { transform: translateY(20px); opacity: 0; }
-                    to { transform: translateY(0); opacity: 1; }
-                }
-            `}</style>
+
         </main>
     );
 }

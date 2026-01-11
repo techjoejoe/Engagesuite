@@ -4,7 +4,6 @@ import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Button from '@/components/Button';
 import { signInWithEmail, signInWithGoogle } from '@/lib/auth';
-import { ThemeToggle } from '@/components/ThemeToggle';
 
 function LoginContent() {
     const router = useRouter();
@@ -59,24 +58,24 @@ function LoginContent() {
     };
 
     return (
-        <div className="w-full max-w-md">
-            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-8 md:p-12 border border-gray-100 dark:border-slate-700 animate-fade-in">
+        <div className="w-full max-w-md relative z-10">
+            <div className="glass-card-strong p-8 md:p-12 animate-fade-in">
                 <div className="text-center mb-8">
                     <div className="text-6xl mb-4">🔐</div>
-                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Welcome Back</h1>
-                    <p className="text-gray-500 dark:text-gray-400">
+                    <h1 className="text-3xl font-bold text-white mb-2">Welcome Back</h1>
+                    <p className="text-[#94A3B8]">
                         Login to play and track your points
                     </p>
                 </div>
 
                 <form onSubmit={handleEmailLogin} className="flex flex-col gap-4">
                     <div>
-                        <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        <label className="block mb-2 text-sm font-medium text-[#94A3B8]">
                             Email
                         </label>
                         <input
                             type="email"
-                            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+                            className="w-full px-4 py-3 input-glass"
                             placeholder="your@email.com"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
@@ -85,12 +84,12 @@ function LoginContent() {
                     </div>
 
                     <div>
-                        <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                        <label className="block mb-2 text-sm font-medium text-[#94A3B8]">
                             Password
                         </label>
                         <input
                             type="password"
-                            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+                            className="w-full px-4 py-3 input-glass"
                             placeholder="••••••••"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
@@ -99,7 +98,7 @@ function LoginContent() {
                     </div>
 
                     {error && (
-                        <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-500 text-sm text-center">
+                        <div className="p-3 bg-red-500/20 border border-red-500/30 rounded-lg text-red-300 text-sm text-center backdrop-blur-sm">
                             {error}
                         </div>
                     )}
@@ -111,18 +110,18 @@ function LoginContent() {
                         type="submit"
                         disabled={loading}
                     >
-                        {loading ? 'Logging in...' : 'Login'}
+                        {loading ? 'Logging in...' : '🚀 Login'}
                     </Button>
                 </form>
 
-                <div className="my-6 text-center text-gray-400 dark:text-gray-500 text-sm">
+                <div className="my-6 text-center text-[#94A3B8] text-sm">
                     or
                 </div>
 
                 <Button
-                    variant="secondary"
+                    variant="glass"
                     size="lg"
-                    className="w-full bg-white dark:bg-slate-700 border-gray-200 dark:border-slate-600 text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-slate-600"
+                    className="w-full"
                     onClick={handleGoogleLogin}
                     disabled={loading}
                 >
@@ -131,10 +130,10 @@ function LoginContent() {
                 </Button>
 
                 <div className="mt-8 text-center text-sm">
-                    <span className="text-gray-500 dark:text-gray-400">Don't have an account? </span>
+                    <span className="text-[#94A3B8]">Don't have an account? </span>
                     <button
                         onClick={() => router.push('/signup')}
-                        className="text-indigo-600 dark:text-indigo-400 font-semibold hover:underline"
+                        className="text-[#22D3EE] font-semibold hover:text-[#06B6D4] transition-colors"
                     >
                         Sign Up
                     </button>
@@ -143,7 +142,7 @@ function LoginContent() {
                 <div className="mt-4 text-center text-sm">
                     <button
                         onClick={() => router.push('/')}
-                        className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 underline"
+                        className="text-[#94A3B8] hover:text-white underline transition-colors"
                     >
                         Back to Home
                     </button>
@@ -155,11 +154,15 @@ function LoginContent() {
 
 export default function LoginPage() {
     return (
-        <main className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-900 p-6 transition-colors duration-300 relative">
-            <div className="absolute top-6 right-6 z-10">
-                <ThemeToggle />
+        <main className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
+            {/* Background Blobs - Vibrant */}
+            <div className="absolute inset-0 z-0 overflow-hidden">
+                <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-[#7C3AED]/40 rounded-full blur-[150px] animate-blob" />
+                <div className="absolute top-[30%] right-[-15%] w-[45%] h-[45%] bg-[#06B6D4]/35 rounded-full blur-[130px] animate-blob animation-delay-2000" />
+                <div className="absolute bottom-[-15%] left-[25%] w-[50%] h-[50%] bg-[#F472B6]/30 rounded-full blur-[140px] animate-blob animation-delay-4000" />
             </div>
-            <Suspense fallback={<div className="text-center">Loading...</div>}>
+
+            <Suspense fallback={<div className="text-center text-white">Loading...</div>}>
                 <LoginContent />
             </Suspense>
         </main>

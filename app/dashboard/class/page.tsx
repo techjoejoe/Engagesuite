@@ -10,6 +10,7 @@ import { getClass, onClassChange, Class, updateClassActivity } from '@/lib/class
 import { User } from 'firebase/auth';
 import { logEvent } from '@/lib/analytics';
 import HostMenu from '@/components/HostMenu';
+import { getStudentAssignments, ClassAlbum } from '@/lib/albums';
 
 function ClassDashboardContent() {
     const router = useRouter();
@@ -19,6 +20,8 @@ function ClassDashboardContent() {
     const [loading, setLoading] = useState(true);
     const [classData, setClassData] = useState<Class | null>(null);
     const [user, setUser] = useState<User | null>(null);
+    const [showAssignModal, setShowAssignModal] = useState(false);
+    const [activeAssignments, setActiveAssignments] = useState<ClassAlbum[]>([]);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChange((currentUser) => {
@@ -46,15 +49,24 @@ function ClassDashboardContent() {
         return () => unsubscribe();
     }, [classId, user, router]);
 
-    // Clear active tools when dashboard loads to prevent stuck states
+    // Clear active tools and reset activity when dashboard loads
     useEffect(() => {
         if (classId) {
             import('@/lib/tools').then(({ updateToolState }) => {
                 updateToolState(classId, 'dice', { active: false });
                 updateToolState(classId, 'coin', { active: false });
             });
+
+            // Reset current activity so students return to dashboard
+            updateClassActivity(classId, { type: 'none' });
         }
     }, [classId]);
+
+    // Fetch active workbook assignments
+    useEffect(() => {
+        if (!classId) return;
+        getStudentAssignments(classId).then(setActiveAssignments);
+    }, [classId, showAssignModal]); // Refetch when modal closes
 
     const handleStopActivity = async () => {
         if (!classId) return;
@@ -108,8 +120,38 @@ function ClassDashboardContent() {
                     </div>
                 </div>
 
+                {/* Active Workbooks Section */}
+                {activeAssignments.length > 0 && (
+                    <div className="mb-8">
+                        <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                            <span className="text-2xl">📚</span> Active Workbooks
+                        </h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {activeAssignments.map(assign => (
+                                <div key={assign.id} className="bg-white/10 backdrop-blur-sm border border-white/10 rounded-xl p-4 hover:bg-white/15 transition-all">
+                                    <div className="flex justify-between items-start mb-2">
+                                        <h3 className="font-bold text-white text-lg truncate pr-2">{assign.title}</h3>
+                                        <span className="bg-green-500/20 text-green-300 text-xs px-2 py-1 rounded font-bold uppercase tracking-wider">
+                                            Active
+                                        </span>
+                                    </div>
+                                    <div className="text-gray-400 text-sm mb-4">
+                                        {assign.totalPointsAvailable} Points Available
+                                    </div>
+                                    <button
+                                        onClick={() => router.push(`/host/class/${classId}/workbook/${assign.id}`)}
+                                        className="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium transition-colors text-sm flex items-center justify-center gap-2"
+                                    >
+                                        View Gradebook →
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
                 {/* Tools Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6">
 
                     {/* PicPick */}
                     <ToolCard
@@ -246,15 +288,6 @@ function ClassDashboardContent() {
                         color="bg-yellow-500"
                     />
 
-                    {/* AI Activity Maker */}
-                    <ToolCard
-                        icon="🤖"
-                        title="AI Activity Maker"
-                        description="Generate quizzes and activities instantly with AI."
-                        status="coming-soon"
-                        color="bg-purple-600"
-                    />
-
                     {/* Badge Library */}
                     <ToolCard
                         icon="🏅"
@@ -266,19 +299,227 @@ function ClassDashboardContent() {
                         color="bg-yellow-600"
                     />
 
-                    {/* Share */}
+                    {/* Workbooks (New!) */}
                     <ToolCard
-                        icon="📤"
-                        title="Share"
-                        description="Share an image, or document to your learners mobile device"
-                        status="coming-soon"
-                        color="bg-teal-500"
+                        icon="📚"
+                        title="Workbooks"
+                        description="Assign self-paced workbooks and worksheets to the class."
+                        status="active"
+                        action={() => setShowAssignModal(true)}
+                        actionLabel="Assign"
+                        color="bg-indigo-600"
+                        badge="New!"
                     />
                 </div>
             </div>
+
+            {classId && (
+                <AssignmentModal
+                    isOpen={showAssignModal}
+                    onClose={() => setShowAssignModal(false)}
+                    classId={classId}
+                />
+            )}
         </main>
     );
 }
+
+// Assignment Modal Component
+import { getDesignerAlbums, assignAlbumToClass, AlbumTemplate, unassignWorkbook } from '@/lib/albums';
+import { getCurrentUser } from '@/lib/auth';
+
+const AssignmentModal = ({ isOpen, onClose, classId }: { isOpen: boolean, onClose: () => void, classId: string }) => {
+    const [tab, setTab] = useState<'assign' | 'manage'>('assign');
+    const [albums, setAlbums] = useState<AlbumTemplate[]>([]);
+    const [activeAssignments, setActiveAssignments] = useState<ClassAlbum[]>([]);
+
+    const [loading, setLoading] = useState(false);
+    const [assigning, setAssigning] = useState<string | null>(null);
+    const [unassigning, setUnassigning] = useState<string | null>(null);
+    const [confirmUnassign, setConfirmUnassign] = useState<string | null>(null); // ID of workbook to confirm unassign
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!isOpen) return;
+        setLoading(true);
+        const load = async () => {
+            const user = getCurrentUser();
+            if (user) {
+                // Load Templates
+                const userAlbums = await getDesignerAlbums(user.uid);
+                setAlbums(userAlbums);
+
+                // Load Active Assignments
+                const active = await getStudentAssignments(classId);
+                setActiveAssignments(active);
+            }
+            setLoading(false);
+        };
+        load();
+    }, [isOpen, classId]);
+
+    const handleAssign = async (templateId: string) => {
+        const user = getCurrentUser();
+        if (!user) return;
+        setAssigning(templateId);
+        try {
+            await assignAlbumToClass(templateId, classId, user.uid);
+            // Refresh details
+            const active = await getStudentAssignments(classId);
+            setActiveAssignments(active);
+            alert("Workbook assigned successfully!");
+            setTab('manage'); // Switch tab to see it
+        } catch (e) {
+            console.error("Failed to assign", e);
+            alert("Error assigning workbook");
+        } finally {
+            setAssigning(null);
+        }
+    };
+
+    const handleUnassignClick = (assignmentId: string) => {
+        setConfirmUnassign(assignmentId); // Show confirmation modal
+    };
+
+    const handleUnassignConfirm = async () => {
+        if (!confirmUnassign) return;
+        const assignmentId = confirmUnassign;
+        setConfirmUnassign(null); // Close confirmation modal
+        setUnassigning(assignmentId);
+        try {
+            await unassignWorkbook(assignmentId, false);
+            const active = await getStudentAssignments(classId);
+            setActiveAssignments(active);
+        } catch (err) {
+            console.error('Failed to unassign:', err);
+            alert('Failed to unassign workbook');
+        } finally {
+            setUnassigning(null);
+        }
+    };
+
+    if (!isOpen) return null;
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <div className="bg-white rounded-2xl p-6 w-full max-w-2xl max-h-[80vh] flex flex-col shadow-2xl animate-fade-in-up">
+
+                <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-xl font-bold text-gray-900">Manage Workbooks</h2>
+                    <button onClick={onClose} className="text-gray-400 hover:text-gray-600">✕</button>
+                </div>
+
+                <div className="flex gap-4 border-b border-gray-100 mb-4 pb-1">
+                    <button
+                        onClick={() => setTab('assign')}
+                        className={`pb-2 text-sm font-bold transition-colors ${tab === 'assign' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-400 hover:text-gray-600'}`}
+                    >
+                        Assign New
+                    </button>
+                    <button
+                        onClick={() => setTab('manage')}
+                        className={`pb-2 text-sm font-bold transition-colors ${tab === 'manage' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-400 hover:text-gray-600'}`}
+                    >
+                        Active Assignments ({activeAssignments.length})
+                    </button>
+                </div>
+
+                <div className="flex-1 overflow-y-auto space-y-3 p-1">
+                    {loading ? (
+                        <div className="text-center py-10 text-gray-400">Loading library...</div>
+                    ) : tab === 'assign' ? (
+                        albums.length === 0 ? (
+                            <div className="text-center py-10">
+                                <p className="text-gray-500 mb-4">You haven't designed any workbooks yet.</p>
+                                <Button variant="primary" onClick={() => window.location.href = '/host/design'}>Go to Designer</Button>
+                            </div>
+                        ) : (
+                            albums.map(album => (
+                                <div key={album.id} className="border border-gray-100 p-4 rounded-xl flex justify-between items-center hover:bg-gray-50 transition-colors">
+                                    <div>
+                                        <h3 className="font-bold text-gray-800">{album.title}</h3>
+                                        <p className="text-sm text-gray-400">{album.pages?.length || 0} Pages • {album.totalPointsAvailable} Pts</p>
+                                    </div>
+                                    <Button
+                                        variant="primary"
+                                        onClick={() => handleAssign(album.id)}
+                                        disabled={assigning === album.id}
+                                        className="bg-blue-600 text-white"
+                                    >
+                                        {assigning === album.id ? 'Assigning...' : 'Assign'}
+                                    </Button>
+                                </div>
+                            ))
+                        )
+                    ) : (
+                        // Manage View
+                        activeAssignments.length === 0 ? (
+                            <div className="text-center py-10 text-gray-400">No active workbooks for this class.</div>
+                        ) : (
+                            activeAssignments.map(assign => (
+                                <div key={assign.id} className="bg-blue-50 border border-blue-100 p-4 rounded-xl flex justify-between items-center">
+                                    <div>
+                                        <h3 className="font-bold text-gray-800">{assign.title}</h3>
+                                        <p className="text-xs text-blue-500 font-bold uppercase tracking-wider">Active</p>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <Button
+                                            variant="secondary"
+                                            onClick={() => router.push(`/host/class/${classId}/workbook/${assign.id}`)}
+                                            className="bg-white text-blue-600 border border-blue-200 hover:bg-blue-50"
+                                        >
+                                            View Report
+                                        </Button>
+                                        <button
+                                            type="button"
+                                            onClick={() => handleUnassignClick(assign.id)}
+                                            disabled={unassigning === assign.id}
+                                            className="px-4 py-2 text-sm font-bold bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 rounded-xl transition-all disabled:opacity-50"
+                                        >
+                                            {unassigning === assign.id ? 'Removing...' : 'Unassign'}
+                                        </button>
+                                    </div>
+                                </div>
+                            ))
+                        )
+                    )}
+                </div>
+            </div>
+
+            {/* Confirmation Modal for Unassign */}
+            {confirmUnassign && (
+                <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+                    <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl animate-fade-in-up">
+                        <div className="text-center">
+                            <div className="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
+                                <span className="text-3xl">⚠️</span>
+                            </div>
+                            <h3 className="text-xl font-bold text-gray-900 mb-2">Unassign Workbook?</h3>
+                            <p className="text-gray-600 mb-6">
+                                This will remove the workbook from the class. <br />
+                                <strong className="text-green-600">Student progress will be kept.</strong>
+                            </p>
+                            <div className="flex gap-3 justify-center">
+                                <button
+                                    onClick={() => setConfirmUnassign(null)}
+                                    className="px-6 py-3 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition-all"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleUnassignConfirm}
+                                    className="px-6 py-3 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 transition-all"
+                                >
+                                    Yes, Unassign
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
 
 export default function ClassDashboard() {
     return (

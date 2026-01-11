@@ -106,13 +106,23 @@ function CreatePollContent() {
 
             <div className="max-w-3xl mx-auto pt-10">
                 <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-8 border border-gray-100 dark:border-slate-700">
-                    <div className="flex items-center gap-4 mb-8">
-                        <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-xl">
-                            <span className="text-3xl">📊</span>
-                        </div>
-                        <div>
-                            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Create LiveVote</h1>
-                            <p className="text-gray-500 dark:text-gray-400">Ask your class a question and get real-time feedback.</p>
+                    <div className="flex flex-col gap-4 mb-8">
+                        {classId && (
+                            <button
+                                onClick={() => router.push(`/dashboard/class?id=${classId}`)}
+                                className="self-start text-sm font-bold text-green-600 dark:text-green-400 hover:underline flex items-center gap-1 transition-colors"
+                            >
+                                &larr; Back to Class
+                            </button>
+                        )}
+                        <div className="flex items-center gap-4">
+                            <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-xl">
+                                <span className="text-3xl">📊</span>
+                            </div>
+                            <div>
+                                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Create LiveVote</h1>
+                                <p className="text-gray-500 dark:text-gray-400">Ask your class a question and get real-time feedback.</p>
+                            </div>
                         </div>
                     </div>
 

@@ -17,7 +17,50 @@
                     "order": "DESCENDING"
                 }
             ]
+        },
+        {
+            "collectionGroup": "album_progress",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "classAlbumId",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "studentId",
+                    "order": "ASCENDING"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "class_albums",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "classId",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "status",
+                    "order": "ASCENDING"
+                }
+            ]
         }
     ],
-    "fieldOverrides": []
+    "fieldOverrides": [
+        {
+            "collectionGroup": "members",
+            "fieldPath": "userId",
+            "indexes": [
+                {
+                    "order": "ASCENDING",
+                    "queryScope": "COLLECTION_GROUP"
+                },
+                {
+                    "order": "DESCENDING",
+                    "queryScope": "COLLECTION_GROUP"
+                }
+            ]
+        }
+    ]
 }

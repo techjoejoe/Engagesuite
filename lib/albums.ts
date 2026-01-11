@@ -11,7 +11,9 @@ import {
     where,
     getDocs,
     addDoc,
-    serverTimestamp
+    serverTimestamp,
+    runTransaction,
+    increment
 } from 'firebase/firestore';
 import { UserProfile, addLifetimePoints } from './auth';
 
@@ -55,7 +57,9 @@ export interface AlbumTemplate {
     createdAt: number;
     updatedAt: number;
     pages: AlbumPage[];
-    totalPointsAvailable: number; // Sum of all block points
+    draftPages?: AlbumPage[]; // Working copy of pages
+    completionPoints: number; // Bonus points for finishing the workbook
+    totalPointsAvailable: number; // Sum of all block points + completionPoints
 }
 
 // 2. Class Assignment (Created by Trainer)
@@ -98,8 +102,10 @@ export interface AlbumProgress {
             isCorrect?: boolean; // If auto-graded
             awardedPoints: number; // Points given for this answer
             feedback?: string; // Trainer feedback
+            needsGrading?: boolean; // True if requires manual grading
         }
     };
+    completionBonusAwarded?: boolean;
 }
 
 // --- Functions ---
@@ -114,6 +120,7 @@ export async function createAlbumTemplate(designerId: string, title: string): Pr
         createdAt: Date.now(),
         updatedAt: Date.now(),
         pages: [], // Starts empty
+        completionPoints: 0,
         totalPointsAvailable: 0
     };
 
@@ -143,14 +150,28 @@ export async function getDesignerAlbums(designerId: string): Promise<AlbumTempla
 export async function updateAlbumTemplate(templateId: string, updates: Partial<AlbumTemplate>) {
     const ref = doc(db, 'album_templates', templateId);
 
-    // Recalculate total points if pages changed
-    if (updates.pages) {
+    // Recalculate total points if pages OR completionPoints changed
+    if (updates.pages || typeof updates.completionPoints === 'number') {
         let total = 0;
-        updates.pages.forEach(p => {
-            p.blocks.forEach(b => {
-                total += (b.points || 0);
+
+        // Add block points (need pages)
+        // If pages are not in update, we risk losing them in calculation if we don't fetch.
+        // Assuming Editor ALWAYS sends pages if it saves.
+        if (updates.pages) {
+            updates.pages.forEach(p => {
+                p.blocks.forEach(b => {
+                    total += (b.points || 0);
+                });
             });
-        });
+        }
+
+        // Add Completion Points
+        // If explicitly updated, use it. If not, we can't guess easily without fetching.
+        // But for our app usage, we likely send everything.
+        if (typeof updates.completionPoints === 'number') {
+            total += updates.completionPoints;
+        }
+
         updates.totalPointsAvailable = total;
     }
 
@@ -196,32 +217,145 @@ export async function assignAlbumToClass(
 
 // 6. Submit Answer (Student)
 // This handles saving the answer AND awarding points if auto-gradable
+// 6. Submit Answer (Student)
+// This handles saving the answer AND awarding points if auto-gradable
 export async function submitAlbumAnswer(
     progressId: string,
     blockId: string,
     answer: string,
     pointsPossible: number,
-    isCorrect: boolean // passed from frontend logic or backend verification
+    isCorrect: boolean
+) {
+    try {
+        await runTransaction(db, async (transaction) => {
+            // 1. Get current progress to calculate point delta
+            const progressRef = doc(db, 'album_progress', progressId);
+            const progressDoc = await transaction.get(progressRef);
+
+            if (!progressDoc.exists()) throw "Progress doc invalid";
+            const progressData = progressDoc.data() as AlbumProgress;
+
+            const oldAnswerData = progressData.answers?.[blockId];
+            const oldPoints = oldAnswerData?.awardedPoints || 0;
+            const newPoints = isCorrect ? pointsPossible : 0;
+            const pointDelta = newPoints - oldPoints; // e.g., 10 - 0 = +10, or 0 - 10 = -10
+
+            // 2. Update AlbumProgress
+            // Note: Using dot notation for nested map update
+            transaction.update(progressRef, {
+                [`answers.${blockId}`]: {
+                    answer,
+                    submittedAt: Date.now(),
+                    isCorrect,
+                    awardedPoints: newPoints
+                },
+                lastAccessedAt: Date.now(),
+                // Update local aggregation of points earned in this album
+                currentPointsEarned: increment(pointDelta)
+            });
+
+            // 3. If there is a point change, update Class Score and Lifetime Score concurrently
+            // NOTE: Security Rules allow the student to update their own member doc and user doc.
+            if (pointDelta !== 0) {
+                const { classId, studentId } = progressData;
+
+                // Refs
+                const classMemberRef = doc(db, 'classes', classId, 'members', studentId);
+                const userRef = doc(db, 'users', studentId);
+                const historyRef = doc(collection(db, 'classes', classId, 'members', studentId, 'history'));
+
+                // Read member doc to ensure existence (optional safety)
+                // For efficiency, we assume member exists if they are playing the album
+
+                // Update Class Score
+                transaction.update(classMemberRef, {
+                    score: increment(pointDelta)
+                });
+
+                // Update Lifetime Score
+                transaction.set(userRef, {
+                    lifetimePoints: increment(pointDelta),
+                    lastActive: Date.now(),
+                    gamesPlayed: increment(oldAnswerData ? 0 : 1) // Increment games played only on first answer? No, this is per game. Maybe only on finish? Let's strictly do points here.
+                }, { merge: true });
+
+                // Log History
+                transaction.set(historyRef, {
+                    timestamp: Date.now(),
+                    points: pointDelta,
+                    reason: `Album Answer: ${blockId}`,
+                    adminId: null
+                });
+            }
+        });
+        console.log("Answer submitted and points synced.");
+    } catch (e) {
+        console.error("Transaction failed in submitAlbumAnswer:", e);
+        throw e;
+    }
+}
+
+export async function updateAlbumProgressStats(
+    progressId: string,
+    updates: {
+        percentComplete?: number;
+        currentPointsEarned?: number;
+        completedPageIds?: string[];
+        status?: 'in_progress' | 'completed';
+    }
 ) {
     const progressRef = doc(db, 'album_progress', progressId);
-
-    const pointsToAward = isCorrect ? pointsPossible : 0;
-
-    // Update the Map inside Firestore
-    // Note: Firestore maps update syntax is `field.key`
     await updateDoc(progressRef, {
-        [`answers.${blockId}`]: {
-            answer,
-            submittedAt: Date.now(),
-            isCorrect,
-            awardedPoints: pointsToAward
-        },
+        ...updates,
         lastAccessedAt: Date.now()
     });
+}
 
-    // We ideally should aggregate points here or trigger a Cloud Function
-    // For now, we rely on a separate specific "Recalculate" call or Cloud Function
-    // to update `currentPointsEarned`.
+// 6b. Complete Workbook & Award Bonus
+export async function completeWorkbook(progressId: string, templateId: string) {
+    try {
+        await runTransaction(db, async (transaction) => {
+            const progressRef = doc(db, 'album_progress', progressId);
+            const progressDoc = await transaction.get(progressRef);
+            if (!progressDoc.exists()) throw "Progress doc not found";
+            const progressData = progressDoc.data() as AlbumProgress;
+
+            if (progressData.completionBonusAwarded) return; // Already awarded
+
+            const templateRef = doc(db, 'album_templates', templateId);
+            const templateDoc = await transaction.get(templateRef);
+            if (!templateDoc.exists()) throw "Template doc not found";
+            const templateData = templateDoc.data() as AlbumTemplate;
+
+            const bonus = templateData.completionPoints || 0;
+
+            if (bonus > 0) {
+                const { classId, studentId } = progressData;
+                const classMemberRef = doc(db, 'classes', classId, 'members', studentId);
+                const userRef = doc(db, 'users', studentId);
+                const historyRef = doc(collection(db, 'classes', classId, 'members', studentId, 'history'));
+
+                transaction.update(classMemberRef, { score: increment(bonus) });
+                transaction.set(userRef, { lifetimePoints: increment(bonus) }, { merge: true });
+                transaction.set(historyRef, {
+                    timestamp: Date.now(),
+                    points: bonus,
+                    reason: 'Workbook Completion Bonus',
+                    adminId: null
+                });
+            }
+
+            transaction.update(progressRef, {
+                status: 'completed',
+                percentComplete: 100,
+                completionBonusAwarded: true,
+                currentPointsEarned: increment(bonus),
+                lastAccessedAt: Date.now()
+            });
+        });
+    } catch (e) {
+        console.error("Error completing workbook:", e);
+    }
 }
 
 // 7. Get Student Assignments
@@ -232,7 +366,30 @@ export async function getStudentAssignments(classId: string): Promise<ClassAlbum
         where('status', '==', 'active')
     );
     const snap = await getDocs(q);
-    return snap.docs.map(d => d.data() as ClassAlbum);
+    return snap.docs.map(d => {
+        const data = d.data() as ClassAlbum;
+        // Use Firestore doc ID as fallback if 'id' field is missing
+        return { ...data, id: data.id || d.id };
+    });
+}
+
+// 7b. Listen for Student Assignments (Real-time)
+import { onSnapshot } from 'firebase/firestore';
+
+export function onStudentAssignmentsChange(classId: string, callback: (albums: ClassAlbum[]) => void): () => void {
+    const q = query(
+        collection(db, 'class_albums'),
+        where('classId', '==', classId),
+        where('status', '==', 'active')
+    );
+    return onSnapshot(q, (snap) => {
+        const albums = snap.docs.map(d => {
+            const data = d.data() as ClassAlbum;
+            // Use Firestore doc ID as fallback if 'id' field is missing
+            return { ...data, id: data.id || d.id };
+        });
+        callback(albums);
+    });
 }
 
 // 11. Get All Progress for a Class Assessment (Gradebook)
@@ -295,3 +452,39 @@ export async function getOrCreateAlbumProgress(
 
     return { ...newProgress, id: docRef.id };
 }
+
+// Unassign workbook from class (Trainer)
+// This archives the assignment and optionally deletes student progress
+export async function unassignWorkbook(
+    assignmentId: string,
+    deleteProgress: boolean = false
+): Promise<void> {
+    const { deleteDoc } = await import('firebase/firestore');
+
+    // 1. Get the assignment
+    const assignmentRef = doc(db, 'class_albums', assignmentId);
+    const assignmentSnap = await getDoc(assignmentRef);
+
+    if (!assignmentSnap.exists()) {
+        throw new Error('Assignment not found');
+    }
+
+    // 2. Delete the assignment
+    await deleteDoc(assignmentRef);
+
+    // 3. Optionally delete all related student progress
+    if (deleteProgress) {
+        const progressQuery = query(
+            collection(db, 'album_progress'),
+            where('classAlbumId', '==', assignmentId)
+        );
+        const progressSnap = await getDocs(progressQuery);
+
+        // Delete each progress document
+        const deletePromises = progressSnap.docs.map(docSnap =>
+            deleteDoc(doc(db, 'album_progress', docSnap.id))
+        );
+        await Promise.all(deletePromises);
+    }
+}
+

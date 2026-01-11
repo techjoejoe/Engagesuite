@@ -98,12 +98,12 @@ export default function JoinPage() {
     };
 
     return (
-        <main className="min-h-screen flex items-center justify-center bg-slate-900 p-6 relative overflow-hidden">
-            {/* Animated Background */}
+        <main className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
+            {/* Animated Background - Vibrant */}
             <div className="absolute inset-0 z-0">
-                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-600/20 rounded-full blur-[120px] animate-blob" />
-                <div className="absolute top-[20%] right-[-10%] w-[40%] h-[40%] bg-indigo-600/20 rounded-full blur-[120px] animate-blob animation-delay-2000" />
-                <div className="absolute bottom-[-10%] left-[20%] w-[40%] h-[40%] bg-pink-600/20 rounded-full blur-[120px] animate-blob animation-delay-4000" />
+                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#7C3AED]/40 rounded-full blur-[120px] animate-blob" />
+                <div className="absolute top-[20%] right-[-10%] w-[40%] h-[40%] bg-[#06B6D4]/35 rounded-full blur-[120px] animate-blob animation-delay-2000" />
+                <div className="absolute bottom-[-10%] left-[20%] w-[40%] h-[40%] bg-[#F472B6]/30 rounded-full blur-[120px] animate-blob animation-delay-4000" />
             </div>
 
             <div className="w-full max-w-md relative z-10">
@@ -113,14 +113,14 @@ export default function JoinPage() {
                         <h1 className="text-3xl font-black text-white mb-2 tracking-tight">
                             Join the <span className="text-gradient">Fun!</span>
                         </h1>
-                        <p className="text-slate-400">
+                        <p className="text-[#94A3B8]">
                             Enter the code to start playing
                         </p>
                     </div>
 
                     <div className="flex flex-col gap-5">
                         <div>
-                            <label className="block mb-2 text-sm font-bold text-slate-300">
+                            <label className="block mb-2 text-sm font-bold text-[#6a6e79]">
                                 Room Code
                             </label>
                             <input
@@ -129,13 +129,13 @@ export default function JoinPage() {
                                 value={roomCode}
                                 onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
                                 maxLength={6}
-                                className="w-full px-4 py-4 text-center text-2xl font-black tracking-[0.2em] uppercase input-glass placeholder-slate-500/50"
+                                className="w-full px-4 py-4 text-center text-2xl font-black tracking-[0.2em] uppercase input-glass placeholder-[#94A3B8]/50"
                             />
                         </div>
 
                         {!user && (
                             <div>
-                                <label className="block mb-2 text-sm font-bold text-slate-300">
+                                <label className="block mb-2 text-sm font-bold text-[#94A3B8]">
                                     Your Name
                                 </label>
                                 <input
@@ -143,7 +143,7 @@ export default function JoinPage() {
                                     placeholder="Enter your name"
                                     value={playerName}
                                     onChange={(e) => setPlayerName(e.target.value)}
-                                    className="w-full px-4 py-3 input-glass placeholder-slate-400"
+                                    className="w-full px-4 py-3 input-glass placeholder-[#94A3B8]/60"
                                 />
                             </div>
                         )}
@@ -155,7 +155,7 @@ export default function JoinPage() {
                         )}
 
                         {error && (
-                            <div className="p-3 bg-red-500/20 border border-red-500/30 rounded-xl text-red-200 text-sm text-center backdrop-blur-sm">
+                            <div className="p-3 bg-red-500/20 border border-red-500/30 rounded-xl text-red-300 text-sm text-center backdrop-blur-sm">
                                 {error}
                             </div>
                         )}
@@ -170,7 +170,7 @@ export default function JoinPage() {
 
                         <button
                             onClick={() => router.push('/')}
-                            className="w-full py-3 btn-glass font-semibold text-slate-300 hover:text-white"
+                            className="w-full py-3 btn-glass font-semibold text-[#94A3B8] hover:text-white"
                         >
                             ← Back to Home
                         </button>

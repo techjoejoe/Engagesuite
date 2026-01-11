@@ -1,5 +1,5 @@
 import { db } from './firebase';
-import { doc, getDoc, setDoc, updateDoc, increment, runTransaction, collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, increment, runTransaction, collection, query, orderBy, limit, getDocs, collectionGroup, where } from 'firebase/firestore';
 
 export interface ClassMember {
     userId: string;
@@ -74,6 +74,8 @@ export async function awardPoints(classId: string, userId: string, points: numbe
                 lastActive: Date.now()
             }, { merge: true });
 
+
+
             // 7. Record History
             transaction.set(historyRef, {
                 timestamp: Date.now(),
@@ -93,6 +95,24 @@ export async function getClassLeaderboard(classId: string, limitCount: number = 
     const q = query(membersRef, orderBy('score', 'desc'), limit(limitCount));
     const snapshot = await getDocs(q);
     return snapshot.docs.map(d => d.data() as ClassMember);
+}
+
+// Global Leaderboard by Lifetime Points
+export interface GlobalLeaderboardEntry {
+    userId: string;
+    displayName: string;
+    lifetimePoints: number;
+}
+
+export async function getGlobalLeaderboard(limitCount: number = 100): Promise<GlobalLeaderboardEntry[]> {
+    const usersRef = collection(db, 'users');
+    const q = query(usersRef, orderBy('lifetimePoints', 'desc'), limit(limitCount));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(d => ({
+        userId: d.id,
+        displayName: d.data().displayName || 'Anonymous',
+        lifetimePoints: d.data().lifetimePoints || 0
+    }));
 }
 
 // Get a specific member's stats
@@ -139,6 +159,8 @@ export async function adjustStudentPoints(classId: string, userId: string, point
                 lifetimePoints: increment(pointsChange),
                 lastActive: Date.now()
             }, { merge: true });
+
+
 
             // Record History
             transaction.set(historyRef, {
@@ -203,6 +225,8 @@ export async function bulkAdjustClassPoints(classId: string, pointsChange: numbe
                 lastActive: Date.now()
             }, { merge: true });
 
+
+
             // Record History
             batch.set(historyRef, {
                 timestamp: Date.now(),
@@ -226,4 +250,56 @@ export async function getStudentHistory(classId: string, userId: string): Promis
     const q = query(historyRef, orderBy('timestamp', 'desc'), limit(50));
     const snapshot = await getDocs(q);
     return snapshot.docs.map(d => ({ id: d.id, ...d.data() } as PointHistory));
+}
+
+// Ensure student's lifetime points are at least equal to their class points
+// This fixes data inconsistencies where lifetime points lagged behind class points
+export async function ensureLifetimePointsAtLeast(userId: string, minPoints: number) {
+    if (minPoints <= 0) return;
+
+    const userRef = doc(db, 'users', userId);
+
+    try {
+        await runTransaction(db, async (transaction) => {
+            const userDoc = await transaction.get(userRef);
+            if (!userDoc.exists()) return;
+
+            const currentLifetime = userDoc.data().lifetimePoints || 0;
+
+            if (currentLifetime < minPoints) {
+                console.log(`[Diff Repair] Fixing lifetime points for ${userId}. Current: ${currentLifetime}, Min: ${minPoints}`);
+                transaction.update(userRef, {
+                    lifetimePoints: minPoints // Bump up to match class points
+                });
+            }
+        });
+    } catch (e) {
+        console.error("[Diff Repair] Failed to ensure lifetime points:", e);
+    }
+}
+
+// Propagate nickname changes to all class memberships (Client-side fallback for Cloud Function)
+export async function updateUserNicknameInClasses(userId: string, newNickname: string): Promise<void> {
+    try {
+        // Query all memberships for this user across all classes
+        // Note: This requires a composite index if sorted, but basic where equality is fine.
+        const membersRef = collectionGroup(db, 'members');
+        const q = query(membersRef, where('userId', '==', userId));
+        const snapshot = await getDocs(q);
+
+        if (snapshot.empty) return;
+
+        console.log(`Propagating nickname "${newNickname}" to ${snapshot.size} classes...`);
+
+        const batch = writeBatch(db);
+        snapshot.docs.forEach((doc) => {
+            batch.update(doc.ref, { nickname: newNickname });
+        });
+
+        await batch.commit();
+        console.log('Nickname propagation complete.');
+    } catch (error) {
+        console.error('Error propagating nickname:', error);
+        // Don't throw, just log. It's a background consistency task.
+    }
 }

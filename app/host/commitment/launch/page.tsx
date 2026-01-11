@@ -126,9 +126,18 @@ function CommitmentWallContent() {
                                     {note.text}
                                 </p>
                                 <div className="flex items-center justify-between mt-auto pt-4 border-t border-black/10">
-                                    <span className={`text-sm font-bold uppercase tracking-wider ${note.color === 'yellow' ? 'text-black/60' : 'text-white/80'}`}>
-                                        {note.userName || 'Anonymous'}
-                                    </span>
+                                    <div className="flex items-center gap-2">
+                                        {note.userPhoto ? (
+                                            <img src={note.userPhoto} alt={note.userName} className="w-8 h-8 rounded-full object-cover border-2 border-white/20" />
+                                        ) : (
+                                            <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-xs font-bold">
+                                                {(note.userName || '?').charAt(0)}
+                                            </div>
+                                        )}
+                                        <span className={`text-sm font-bold uppercase tracking-wider ${note.color === 'yellow' ? 'text-black/60' : 'text-white/80'}`}>
+                                            {note.userName || 'Anonymous'}
+                                        </span>
+                                    </div>
                                     <span className="text-xs opacity-50">
                                         {new Date(note.timestamp?.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                     </span>

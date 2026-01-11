@@ -4,6 +4,7 @@ import { doc, updateDoc, onSnapshot, arrayUnion, setDoc, getDoc } from 'firebase
 export interface Buzz {
     userId: string;
     displayName: string;
+    photoURL?: string;
     timestamp: number;
 }
 
@@ -55,7 +56,7 @@ export const resetBuzzer = async (classId: string) => {
 };
 
 // Student: Buzz in
-export const buzzIn = async (classId: string, userId: string, displayName: string) => {
+export const buzzIn = async (classId: string, userId: string, displayName: string, photoURL?: string) => {
     const buzzerRef = doc(db, `classes/${classId}/tools/buzzer`);
     const snap = await getDoc(buzzerRef);
 
@@ -69,6 +70,7 @@ export const buzzIn = async (classId: string, userId: string, displayName: strin
                     buzzes: arrayUnion({
                         userId,
                         displayName,
+                        photoURL: photoURL || null,
                         timestamp: Date.now()
                     })
                 });

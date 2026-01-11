@@ -20,9 +20,7 @@ function LaunchPicPickContent() {
     const [creating, setCreating] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
-        description: 'Submit and vote for your favorite photos!',
-        uploadDurationMinutes: '30',
-        votingDurationMinutes: '15'
+        description: 'Submit and vote for your favorite photos!'
     });
 
     useEffect(() => {
@@ -59,19 +57,8 @@ function LaunchPicPickContent() {
         setCreating(true);
 
         try {
-            const uploadMins = parseInt(formData.uploadDurationMinutes);
-            const votingMins = parseInt(formData.votingDurationMinutes);
-
-            if (isNaN(uploadMins) || uploadMins < 1 || isNaN(votingMins) || votingMins < 1) {
-                alert('Please enter valid positive numbers for duration.');
-                setCreating(false);
-                return;
-            }
-
             const now = new Date();
-            const uploadEnd = new Date(now.getTime() + uploadMins * 60000);
-            const votingStart = uploadEnd;
-            const votingEnd = new Date(votingStart.getTime() + votingMins * 60000);
+            const oneYearFromNow = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000);
 
             // Generate gallery code
             const code = Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -81,12 +68,16 @@ function LaunchPicPickContent() {
                 name: formData.name,
                 description: formData.description,
                 code,
+                hostId: user.uid,
+                classId, // Link to class
                 uploadStart: now,
-                uploadEnd,
-                votingStart,
-                votingEnd,
-                createdAt: serverTimestamp(),
-                classId // Link to class
+                uploadEnd: oneYearFromNow, // Placeholder
+                votingStart: now,
+                votingEnd: oneYearFromNow, // Placeholder
+                uploadOpen: false, // Trainer controls manually
+                votingOpen: false, // Trainer controls manually
+                showVoteCounts: false, // Hidden by default
+                createdAt: serverTimestamp()
             });
 
             // Set as current class activity
@@ -113,114 +104,98 @@ function LaunchPicPickContent() {
     }
 
     return (
-        <main className="min-h-screen bg-gray-50 dark:bg-slate-900 p-6 flex items-center justify-center transition-colors duration-300">
+        <main className="min-h-screen bg-gray-50 dark:bg-slate-900 p-6 transition-colors duration-300">
             <HostMenu currentPage="PicPick" classId={classId || undefined} />
-            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-gray-100 dark:border-slate-700 p-8 max-w-2xl w-full">
-                {/* Header */}
-                <div className="text-center mb-8">
-                    <div className="text-6xl mb-4">📸</div>
-                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                        Launch PicPick
-                    </h1>
-                    <p className="text-gray-500 dark:text-gray-400">
-                        Start a photo contest for <span className="font-semibold text-gray-700 dark:text-gray-300">{classData.name}</span>
-                    </p>
-                </div>
+            <div className="max-w-2xl mx-auto">
+                {/* Back Button */}
+                <Button
+                    variant="secondary"
+                    onClick={() => router.push(`/dashboard/class?id=${classId}`)}
+                    type="button"
+                    className="mb-6 bg-slate-800 hover:bg-slate-700 text-white border-slate-700"
+                >
+                    ← Back to Class
+                </Button>
 
-                {/* Form */}
-                <form onSubmit={handleLaunch} className="space-y-6">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Gallery Name
-                        </label>
-                        <input
-                            type="text"
-                            value={formData.name}
-                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                            required
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
-                            placeholder="e.g., Holiday Photo Contest"
-                        />
+                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-gray-100 dark:border-slate-700 p-8">
+                    {/* Header */}
+                    <div className="text-center mb-8">
+                        <div className="text-6xl mb-4">📸</div>
+                        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                            Launch PicPick
+                        </h1>
+                        <p className="text-gray-500 dark:text-gray-400">
+                            Start a photo contest for <span className="font-semibold text-gray-700 dark:text-gray-300">{classData.name}</span>
+                        </p>
                     </div>
 
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Description
-                        </label>
-                        <textarea
-                            value={formData.description}
-                            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                            rows={3}
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition-all resize-none"
-                            placeholder="What's this contest about?"
-                        />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
+                    {/* Form */}
+                    <form onSubmit={handleLaunch} className="space-y-6">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Upload Duration (minutes)
+                                Gallery Name
                             </label>
                             <input
-                                type="number"
-                                value={formData.uploadDurationMinutes}
-                                onChange={(e) => setFormData({ ...formData, uploadDurationMinutes: e.target.value })}
+                                type="text"
+                                value={formData.name}
+                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                 required
-                                min="1"
                                 className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+                                placeholder="e.g., Holiday Photo Contest"
                             />
                         </div>
+
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Voting Duration (minutes)
+                                Description
                             </label>
-                            <input
-                                type="number"
-                                value={formData.votingDurationMinutes}
-                                onChange={(e) => setFormData({ ...formData, votingDurationMinutes: e.target.value })}
-                                required
-                                min="1"
-                                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+                            <textarea
+                                value={formData.description}
+                                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                rows={3}
+                                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition-all resize-none"
+                                placeholder="What's this contest about?"
                             />
                         </div>
-                    </div>
 
-                    {/* Info Box */}
-                    <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-                        <div className="flex items-start gap-3">
-                            <div className="text-2xl">ℹ️</div>
-                            <div className="flex-1">
-                                <h4 className="font-semibold text-blue-900 dark:text-blue-300 mb-1">How it works:</h4>
-                                <ul className="text-sm text-blue-800 dark:text-blue-400 space-y-1">
-                                    <li>• Students will see the gallery immediately on their devices</li>
-                                    <li>• They can upload photos during the upload window</li>
-                                    <li>• After uploads close, students can vote for their favorites</li>
-                                    <li>• The winning photo will be displayed at the end</li>
-                                </ul>
+                        {/* Info Box */}
+                        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                            <div className="flex items-start gap-3">
+                                <div className="text-2xl">ℹ️</div>
+                                <div className="flex-1">
+                                    <h4 className="font-semibold text-blue-900 dark:text-blue-300 mb-1">How it works:</h4>
+                                    <ul className="text-sm text-blue-800 dark:text-blue-400 space-y-1">
+                                        <li>• Students will see the gallery on their dashboard</li>
+                                        <li>• You control when uploads and voting are open</li>
+                                        <li>• Toggle upload/voting on or off at any time</li>
+                                        <li>• Show or hide vote counts as needed</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    {/* Actions */}
-                    <div className="flex gap-3">
-                        <Button
-                            variant="secondary"
-                            onClick={() => router.push(`/dashboard/class?id=${classId}`)}
-                            disabled={creating}
-                            className="flex-1 bg-slate-800 hover:bg-slate-700 text-white border-slate-700"
-                        >
-                            ← Back to Class
-                        </Button>
-                        <Button
-                            variant="primary"
-                            type="submit"
-                            disabled={creating}
-                            className="flex-1"
-                        >
-                            {creating ? 'Starting...' : '🚀 Start Gallery'}
-                        </Button>
-                    </div>
-                </form>
+                        {/* Actions */}
+                        <div className="flex gap-3">
+                            <Button
+                                variant="secondary"
+                                onClick={() => router.push(`/picpick/admin?classId=${classId}`)}
+                                disabled={creating}
+                                type="button"
+                                className="flex-1 bg-white dark:bg-slate-700 text-gray-900 dark:text-white border-gray-300 dark:border-slate-600 hover:bg-gray-100 dark:hover:bg-slate-600"
+                            >
+                                📋 Existing Galleries
+                            </Button>
+                            <Button
+                                variant="primary"
+                                type="submit"
+                                disabled={creating}
+                                className="flex-1"
+                            >
+                                {creating ? 'Creating...' : '+ New Gallery'}
+                            </Button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </main>
     );

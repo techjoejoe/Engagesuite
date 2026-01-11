@@ -1,13 +1,16 @@
 // Firebase Authentication and User Management
-import { getAuth, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, User, setPersistence, browserLocalPersistence } from 'firebase/auth';
+import { getAuth, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, User, setPersistence, browserLocalPersistence, verifyBeforeUpdateEmail } from 'firebase/auth';
 import { doc, setDoc, getDoc, collection, query, where, getDocs, updateDoc, increment } from 'firebase/firestore';
 import { db, app } from './firebase';
 
 const auth = getAuth(app);
 // Ensure persistence is set to LOCAL (default behavior, but explicit is better)
-setPersistence(auth, browserLocalPersistence).catch((error) => {
-    console.error("Auth persistence error:", error);
-});
+// Ensure persistence is set to LOCAL only on client
+if (typeof window !== 'undefined') {
+    setPersistence(auth, browserLocalPersistence).catch((error) => {
+        console.error("Auth persistence error:", error);
+    });
+}
 
 const googleProvider = new GoogleAuthProvider();
 
@@ -163,10 +166,20 @@ export async function updateUserRole(uid: string, role: 'host' | 'player'): Prom
     await updateDoc(userRef, { role });
 }
 
+import { updateUserNicknameInClasses } from './scoring';
+
+// ... (other imports)
+
 // Update user profile data
 export async function updateUserProfile(uid: string, data: Partial<UserProfile>): Promise<void> {
     const userRef = doc(db, 'users', uid);
     await updateDoc(userRef, data);
+
+    // Propagate changes immediately if displayName is updated
+    if (data.displayName) {
+        // Run in background (catch errors internally)
+        updateUserNicknameInClasses(uid, data.displayName);
+    }
 }
 
 // Get lifetime leaderboard (top 100 users)
@@ -198,4 +211,12 @@ import { sendPasswordResetEmail } from 'firebase/auth';
 
 export async function resetPassword(email: string): Promise<void> {
     await sendPasswordResetEmail(auth, email);
+}
+
+// Update user email
+export async function updateUserEmail(email: string): Promise<void> {
+    const user = auth.currentUser;
+    if (user) {
+        await verifyBeforeUpdateEmail(user, email);
+    }
 }

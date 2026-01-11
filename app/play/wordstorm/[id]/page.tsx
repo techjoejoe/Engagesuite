@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState, use } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
+import { useRouter, useParams } from 'next/navigation';
 import { submitWord } from '@/lib/wordstorm';
 
-export default function WordStormPlayPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = use(params);
+export default function WordStormPlayPage() {
+    const params = useParams();
+    const id = params.id as string;
     const router = useRouter();
     const [word, setWord] = useState('');
     const [submitting, setSubmitting] = useState(false);

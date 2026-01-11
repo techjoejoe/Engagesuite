@@ -3,7 +3,7 @@
 import React from 'react';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-    variant?: 'primary' | 'secondary' | 'success' | 'danger' | 'glass';
+    variant?: 'primary' | 'secondary' | 'success' | 'danger' | 'glass' | 'outline';
     size?: 'sm' | 'md' | 'lg';
     children: React.ReactNode;
 }
@@ -19,10 +19,11 @@ export default function Button({
 
     const variants = {
         primary: 'btn-3d-primary',
-        secondary: 'btn-glass text-white',
+        secondary: 'btn-3d-secondary',
         success: 'bg-green-500 text-white hover:bg-green-600 shadow-md hover:shadow-lg hover:-translate-y-0.5 rounded-xl',
         danger: 'btn-3d-danger',
-        glass: 'btn-glass text-white'
+        glass: 'btn-glass text-white',
+        outline: 'bg-transparent border-2 border-[#7C3AED] text-[#A78BFA] hover:bg-[#7C3AED] hover:text-white rounded-xl transition-all'
     };
 
     const sizes = {

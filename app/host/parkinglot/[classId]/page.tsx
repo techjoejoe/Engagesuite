@@ -1,15 +1,17 @@
 'use client';
 
-import React, { useState, useEffect, use } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation';
 import { onParkingLotChange, markQuestionAnswered, deleteQuestion, answerQuestion, ParkingLotItem } from '@/lib/parkinglot';
 import { onAuthStateChange } from '@/lib/auth';
 import HostMenu from '@/components/HostMenu';
 import Button from '@/components/Button';
 import { Icons } from '@/components/picpick/Icons';
 
-export default function HostParkingLotPage({ params }: { params: Promise<{ classId: string }> }) {
-    const { classId } = use(params);
+export default function HostParkingLotPage() {
+    const params = useParams();
+    const classId = params.classId as string;
+    console.log('[ParkingLot] Loaded with classId:', classId);
     const router = useRouter();
     const [questions, setQuestions] = useState<ParkingLotItem[]>([]);
     const [loading, setLoading] = useState(true);

@@ -1,11 +1,13 @@
 'use client';
 
-import React, { useState, useEffect, use } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { doc, collection, onSnapshot, updateDoc, increment, addDoc, serverTimestamp, getDoc, orderBy, query } from 'firebase/firestore';
+import { useRouter, useParams } from 'next/navigation';
+import { doc, collection, onSnapshot, updateDoc, increment, addDoc, serverTimestamp, getDoc, getDocs, setDoc, orderBy, query } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '@/lib/firebase';
+import { onAuthStateChange, getUserProfile } from '@/lib/auth';
+import { hasUserVoted, getUserVoteCount } from '@/lib/picpick';
 import { Icons } from '@/components/picpick/Icons';
 import { Spinner, Toast, Confetti, WinnerBadge } from '@/components/picpick/UI';
 import { PhotoCard } from '@/components/picpick/PhotoCard';
@@ -31,70 +33,41 @@ const getTimeRemaining = (end: any) => {
     return `${minutes}m`;
 };
 
-const isWithinWindow = (start: any, end: any) => {
-    if (!start || !end) return false;
-    const now = new Date();
-    const startDate = start?.toDate ? start.toDate() : new Date(start);
-    const endDate = end?.toDate ? end.toDate() : new Date(end);
-    return now >= startDate && now <= endDate;
-};
 
-const getTodayString = () => {
-    return new Date().toISOString().split('T')[0];
-};
 
-// Voting helpers
-const getVotingData = (galleryId: string) => {
-    if (typeof window === 'undefined') return { totalVotes: 0, photoVotes: {} };
-
-    const today = getTodayString();
-    const key = `picpick_votes_${galleryId}`;
-    const data = JSON.parse(localStorage.getItem(key) || '{}');
-
-    // Reset if new day
-    if (data.date !== today) {
-        const newData = { date: today, totalVotes: 0, photoVotes: {} };
-        localStorage.setItem(key, JSON.stringify(newData));
-        return newData;
-    }
-
-    return data;
-};
-
-const saveVotingData = (galleryId: string, data: any) => {
-    if (typeof window === 'undefined') return;
-    const key = `picpick_votes_${galleryId}`;
-    localStorage.setItem(key, JSON.stringify(data));
-};
-
-const canVoteForPhoto = (galleryId: string, photoId: string) => {
-    const data = getVotingData(galleryId);
-    if (data.totalVotes >= 4) return false;
-    const photoVoteCount = data.photoVotes[photoId] || 0;
-    if (photoVoteCount >= 2) return false;
-    return true;
-};
-
-const recordVote = (galleryId: string, photoId: string) => {
-    const data = getVotingData(galleryId);
-    data.totalVotes++;
-    data.photoVotes[photoId] = (data.photoVotes[photoId] || 0) + 1;
-    saveVotingData(galleryId, data);
-    return data;
-};
-
-export default function GalleryPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = use(params);
+export default function GalleryPage() {
+    const params = useParams();
+    const id = params.id as string;
     const router = useRouter();
+    const [user, setUser] = useState<any>(null);
+    const [userProfile, setUserProfile] = useState<any>(null);
     const [currentGallery, setCurrentGallery] = useState<any>(null);
     const [photos, setPhotos] = useState<any[]>([]);
     const [uploading, setUploading] = useState(false);
     const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
     const [showConfetti, setShowConfetti] = useState(false);
     const [timeRemaining, setTimeRemaining] = useState('');
-    const [votingData, setVotingData] = useState<{ totalVotes: number, photoVotes: Record<string, number> }>({ totalVotes: 0, photoVotes: {} });
+    const [userVoteCount, setUserVoteCount] = useState(0);
+    const [votedPhotoIds, setVotedPhotoIds] = useState<Set<string>>(new Set());
     const [loading, setLoading] = useState(true);
     const [showUploadModal, setShowUploadModal] = useState(false);
+
+    // Authentication check
+    useEffect(() => {
+        const unsubscribe = onAuthStateChange(async (currentUser) => {
+            if (!currentUser) {
+                setToast({ message: 'Please log in to view this gallery', type: 'error' });
+                setTimeout(() => router.push('/login'), 2000);
+                return;
+            }
+            setUser(currentUser);
+
+            // Get user profile
+            const profile = await getUserProfile(currentUser.uid);
+            setUserProfile(profile);
+        });
+        return () => unsubscribe();
+    }, [router]);
 
     // Load gallery
     useEffect(() => {
@@ -112,12 +85,30 @@ export default function GalleryPage({ params }: { params: Promise<{ id: string }
         fetchGallery();
     }, [id, router]);
 
-    // Load voting data
+    // Load user's votes
     useEffect(() => {
-        if (currentGallery?.id) {
-            setVotingData(getVotingData(currentGallery.id));
-        }
-    }, [currentGallery?.id]);
+        if (!currentGallery?.id || !user) return;
+
+        const loadUserVotes = async () => {
+            const voteCount = await getUserVoteCount(currentGallery.id, user.uid);
+            setUserVoteCount(voteCount);
+
+            // Load which photos user voted for
+            const photosRef = collection(db, 'galleries', currentGallery.id, 'photos');
+            const photosSnap = await getDocs(photosRef);
+            const voted = new Set<string>();
+
+            for (const photoDoc of photosSnap.docs) {
+                const hasVoted = await hasUserVoted(currentGallery.id, photoDoc.id, user.uid);
+                if (hasVoted) {
+                    voted.add(photoDoc.id);
+                }
+            }
+            setVotedPhotoIds(voted);
+        };
+
+        loadUserVotes();
+    }, [currentGallery?.id, user]);
 
     // Real-time photos listener
     useEffect(() => {
@@ -142,20 +133,44 @@ export default function GalleryPage({ params }: { params: Promise<{ id: string }
     }, [currentGallery?.votingEnd]);
 
     const handleVote = async (photoId: string) => {
-        if (!canVoteForPhoto(currentGallery.id, photoId)) {
-            setToast({ message: 'Cannot vote for this photo', type: 'error' });
+        if (!user) {
+            setToast({ message: 'Please log in to vote', type: 'error' });
+            return;
+        }
+
+        // Check if already voted for this photo
+        if (votedPhotoIds.has(photoId)) {
+            setToast({ message: 'You already voted for this photo', type: 'error' });
+            return;
+        }
+
+
+        // Check vote limit (4 votes total)
+        if (userVoteCount >= 4) {
+            setToast({ message: 'You have used all 4 votes', type: 'error' });
             return;
         }
 
         try {
+            // Record vote in subcollection
+            const voteRef = doc(db, 'galleries', currentGallery.id, 'photos', photoId, 'votes', user.uid);
+            await setDoc(voteRef, {
+                userId: user.uid,
+                userName: userProfile?.displayName || 'Anonymous',
+                userPhoto: userProfile?.photoURL || null,
+                votedAt: serverTimestamp()
+            });
+
+            // Increment vote count on photo
             const photoRef = doc(db, 'galleries', currentGallery.id, 'photos', photoId);
             await updateDoc(photoRef, { votes: increment(1) });
 
-            const newData = recordVote(currentGallery.id, photoId);
-            setVotingData({ ...newData });
+            // Update local state
+            setVotedPhotoIds(prev => new Set(prev).add(photoId));
+            setUserVoteCount(prev => prev + 1);
             setToast({ message: 'Vote cast! ❤️', type: 'success' });
 
-            if (newData.totalVotes === 1) {
+            if (userVoteCount === 0) {
                 setShowConfetti(true);
                 setTimeout(() => setShowConfetti(false), 3000);
             }
@@ -166,6 +181,11 @@ export default function GalleryPage({ params }: { params: Promise<{ id: string }
     };
 
     const handleUpload = async (blob: Blob) => {
+        if (!user || !userProfile) {
+            setToast({ message: 'Please log in to upload', type: 'error' });
+            return;
+        }
+
         setUploading(true);
         try {
             const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.jpg`;
@@ -175,7 +195,9 @@ export default function GalleryPage({ params }: { params: Promise<{ id: string }
 
             await addDoc(collection(db, 'galleries', currentGallery.id, 'photos'), {
                 imageUrl,
-                uploadedBy: 'Anonymous',
+                userId: user.uid,
+                userName: userProfile.displayName || 'Anonymous',
+                userPhoto: userProfile.photoURL || null,
                 uploadedAt: serverTimestamp(),
                 votes: 0
             });
@@ -199,9 +221,9 @@ export default function GalleryPage({ params }: { params: Promise<{ id: string }
 
     if (!currentGallery) return null;
 
-    const votingOpen = isWithinWindow(currentGallery.votingStart, currentGallery.votingEnd);
-    const uploadOpen = isWithinWindow(currentGallery.uploadStart, currentGallery.uploadEnd);
-    const votesRemaining = 4 - votingData.totalVotes;
+    const votingOpen = currentGallery.votingOpen || false;
+    const uploadOpen = currentGallery.uploadOpen || false;
+    const votesRemaining = 4 - userVoteCount;
 
     return (
         <div className="min-h-screen w-full bg-[#0a0a0f] text-white font-display relative selection:bg-indigo-500/30">
@@ -279,18 +301,16 @@ export default function GalleryPage({ params }: { params: Promise<{ id: string }
                             )}
                         </Card>
                     ) : (
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-                            {photos.map((photo, index) => (
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 md:gap-10 justify-items-center">
+                            {photos.map((photo) => (
                                 <PhotoCard
                                     key={photo.id}
                                     photo={photo}
-                                    rank={index + 1}
-                                    galleryId={currentGallery.id}
                                     onVote={handleVote}
-                                    votingOpen={votingOpen}
-                                    canVote={votingOpen && canVoteForPhoto(currentGallery.id, photo.id)}
-                                    votesRemaining={votesRemaining}
-                                    votesOnThis={votingData.photoVotes[photo.id] || 0}
+                                    votingOpen={currentGallery.votingOpen}
+                                    canVote={userVoteCount < 4}
+                                    hasVoted={votedPhotoIds.has(photo.id)}
+                                    showVoteCounts={currentGallery.showVoteCounts}
                                 />
                             ))}
                         </div>

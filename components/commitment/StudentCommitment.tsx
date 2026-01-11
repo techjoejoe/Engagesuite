@@ -9,6 +9,7 @@ interface Props {
     classId: string;
     userId: string;
     userName: string;
+    userPhoto?: string;
 }
 
 const COLORS = [
@@ -19,7 +20,7 @@ const COLORS = [
     { id: 'purple', bg: 'bg-purple-600', border: 'border-purple-700' },
 ];
 
-export default function StudentCommitment({ classId, userId, userName }: Props) {
+export default function StudentCommitment({ classId, userId, userName, userPhoto }: Props) {
     const [text, setText] = useState('');
     const [selectedColor, setSelectedColor] = useState('pink');
     const [submitted, setSubmitted] = useState(false);
@@ -34,6 +35,7 @@ export default function StudentCommitment({ classId, userId, userName }: Props) 
             await addDoc(collection(db, 'classes', classId, 'commitments'), {
                 userId,
                 userName,
+                userPhoto: userPhoto || null,
                 text: text.trim(),
                 color: selectedColor,
                 timestamp: serverTimestamp()
@@ -87,10 +89,10 @@ export default function StudentCommitment({ classId, userId, userName }: Props) 
 
                 {/* Text Area */}
                 <div className={`flex-1 rounded-2xl p-6 shadow-inner transition-colors duration-300 flex flex-col ${selectedColor === 'pink' ? 'bg-pink-500/20' :
-                        selectedColor === 'blue' ? 'bg-blue-500/20' :
-                            selectedColor === 'green' ? 'bg-green-500/20' :
-                                selectedColor === 'yellow' ? 'bg-yellow-400/20' :
-                                    'bg-purple-600/20'
+                    selectedColor === 'blue' ? 'bg-blue-500/20' :
+                        selectedColor === 'green' ? 'bg-green-500/20' :
+                            selectedColor === 'yellow' ? 'bg-yellow-400/20' :
+                                'bg-purple-600/20'
                     }`}>
                     <label className="text-xs font-bold uppercase tracking-wider mb-2 opacity-70 text-white">
                         I commit to...
@@ -112,10 +114,10 @@ export default function StudentCommitment({ classId, userId, userName }: Props) 
                     type="submit"
                     disabled={submitting || !text.trim()}
                     className={`w-full py-4 text-xl font-bold shadow-lg transition-all active:scale-95 ${selectedColor === 'pink' ? 'bg-pink-500 hover:bg-pink-600' :
-                            selectedColor === 'blue' ? 'bg-blue-500 hover:bg-blue-600' :
-                                selectedColor === 'green' ? 'bg-green-500 hover:bg-green-600' :
-                                    selectedColor === 'yellow' ? 'bg-yellow-400 hover:bg-yellow-500 text-black' :
-                                        'bg-purple-600 hover:bg-purple-700'
+                        selectedColor === 'blue' ? 'bg-blue-500 hover:bg-blue-600' :
+                            selectedColor === 'green' ? 'bg-green-500 hover:bg-green-600' :
+                                selectedColor === 'yellow' ? 'bg-yellow-400 hover:bg-yellow-500 text-black' :
+                                    'bg-purple-600 hover:bg-purple-700'
                         }`}
                 >
                     {submitting ? 'Posting...' : 'Sign the Wall ✍️'}

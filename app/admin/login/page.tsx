@@ -99,19 +99,19 @@ function AdminLoginContent() {
                     <h1 className="text-3xl font-black text-white mb-2 tracking-tight">
                         Host <span className="text-gradient">Login</span>
                     </h1>
-                    <p className="text-slate-300">
+                    <p className="text-[#94A3B8]">
                         Manage your classes and games
                     </p>
                 </div>
 
                 <form onSubmit={handleEmailLogin} className="flex flex-col gap-5">
                     <div>
-                        <label className="block mb-2 text-sm font-bold text-slate-300">
+                        <label className="block mb-2 text-sm font-bold text-[#6a6e79]">
                             Email
                         </label>
                         <input
                             type="email"
-                            className="w-full px-4 py-3 input-glass placeholder-slate-400"
+                            className="w-full px-4 py-3 input-glass placeholder-[#94A3B8]/60"
                             placeholder="your@email.com"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
@@ -120,12 +120,12 @@ function AdminLoginContent() {
                     </div>
 
                     <div>
-                        <label className="block mb-2 text-sm font-bold text-slate-300">
+                        <label className="block mb-2 text-sm font-bold text-[#94A3B8]">
                             Password
                         </label>
                         <input
                             type="password"
-                            className="w-full px-4 py-3 input-glass placeholder-slate-400"
+                            className="w-full px-4 py-3 input-glass placeholder-[#6a6e79]/60"
                             placeholder="••••••••"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
@@ -148,7 +148,7 @@ function AdminLoginContent() {
                     </button>
                 </form>
 
-                <div className="my-6 text-center text-slate-400 text-sm font-medium">
+                <div className="my-6 text-center text-[#94A3B8] text-sm font-medium">
                     or continue with
                 </div>
 
@@ -162,10 +162,10 @@ function AdminLoginContent() {
                 </button>
 
                 <div className="mt-8 text-center text-sm">
-                    <span className="text-slate-400">Don't have a host account? </span>
+                    <span className="text-[#94A3B8]">Don't have a host account? </span>
                     <button
                         onClick={() => router.push('/admin/signup')}
-                        className="text-indigo-400 font-bold hover:text-indigo-300 transition-colors"
+                        className="text-[#22D3EE] font-bold hover:text-[#06B6D4] transition-colors"
                     >
                         Sign Up
                     </button>
@@ -177,12 +177,12 @@ function AdminLoginContent() {
 
 export default function AdminLoginPage() {
     return (
-        <main className="min-h-screen flex items-center justify-center bg-slate-900 p-6 relative overflow-hidden">
-            {/* Animated Background */}
+        <main className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
+            {/* Animated Background - Vibrant */}
             <div className="absolute inset-0 z-0">
-                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-600/20 rounded-full blur-[120px] animate-blob" />
-                <div className="absolute top-[20%] right-[-10%] w-[40%] h-[40%] bg-indigo-600/20 rounded-full blur-[120px] animate-blob animation-delay-2000" />
-                <div className="absolute bottom-[-10%] left-[20%] w-[40%] h-[40%] bg-pink-600/20 rounded-full blur-[120px] animate-blob animation-delay-4000" />
+                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#7C3AED]/40 rounded-full blur-[120px] animate-blob" />
+                <div className="absolute top-[20%] right-[-10%] w-[40%] h-[40%] bg-[#06B6D4]/35 rounded-full blur-[120px] animate-blob animation-delay-2000" />
+                <div className="absolute bottom-[-10%] left-[20%] w-[40%] h-[40%] bg-[#F472B6]/30 rounded-full blur-[120px] animate-blob animation-delay-4000" />
             </div>
 
             <div className="absolute top-6 right-6 z-20">

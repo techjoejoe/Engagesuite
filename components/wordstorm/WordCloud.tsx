@@ -1,13 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
-import * as d3 from 'd3';
-import cloud from 'd3-cloud';
-
-interface Word {
-    text: string;
-    size: number;
-}
+import React, { useEffect, useState, useMemo } from 'react';
 
 interface WordCloudProps {
     words: { text: string; count: number }[];
@@ -15,93 +8,163 @@ interface WordCloudProps {
     height?: number;
 }
 
-export default function WordCloud({ words, width = 800, height = 600 }: WordCloudProps) {
-    const svgRef = useRef<SVGSVGElement>(null);
-    const [cloudWords, setCloudWords] = useState<any[]>([]);
+interface PlacedWord {
+    text: string;
+    count: number;
+    size: number;
+    x: number;
+    y: number;
+    color: string;
+}
 
-    useEffect(() => {
-        if (!words.length) return;
-
-        // Normalize sizes
-        const maxCount = Math.max(...words.map(w => w.count));
-        const minCount = Math.min(...words.map(w => w.count));
-
-        // Scale function: Linear scale for font size
-        // Adjust range based on screen size if needed, but 20-100 is a good start
-        const sizeScale = d3.scaleLinear()
-            .domain([minCount, maxCount])
-            .range([30, 120]);
-
-        // Color scale: Vibrant Rainbow
-        const colors = [
-            '#ef4444', '#f97316', '#f59e0b', '#84cc16', '#10b981',
-            '#06b6d4', '#3b82f6', '#8b5cf6', '#d946ef', '#f43f5e'
-        ];
-        const colorScale = d3.scaleOrdinal(colors);
-
-        const layout = cloud()
-            .size([width, height])
-            .words(words.map(d => ({ text: d.text, size: sizeScale(d.count), count: d.count })))
-            .padding(15) // Increased padding
-            .rotate(() => (~~(Math.random() * 2) * 90))
-            .font("Inter")
-            .fontSize((d: any) => d.size)
-            .on("end", (computedWords: any) => {
-                setCloudWords(computedWords);
-            });
-
-        layout.start();
-
-    }, [words, width, height]);
-
+export default function WordCloud({ words, width = 900, height = 550 }: WordCloudProps) {
     const colors = [
         '#ef4444', '#f97316', '#f59e0b', '#84cc16', '#10b981',
         '#06b6d4', '#3b82f6', '#8b5cf6', '#d946ef', '#f43f5e'
     ];
-    const getColor = (i: number) => colors[i % colors.length];
+
+    const placedWords = useMemo(() => {
+        if (!words.length) return [];
+
+        // Limit to 65 words max for denser cloud
+        const limitedWords = words.slice(0, 65);
+
+        // Get count range
+        const maxCount = Math.max(...limitedWords.map(w => w.count));
+        const minCount = Math.min(...limitedWords.map(w => w.count));
+        const countRange = maxCount - minCount || 1;
+
+        // Calculate sizes - scale from 16px to 110px based on count
+        const wordsWithSize = limitedWords.map((w, i) => {
+            const normalizedCount = (w.count - minCount) / countRange;
+            // Use power curve for more dramatic size differences
+            const size = 16 + Math.pow(normalizedCount, 0.5) * 94;
+            return {
+                text: w.text,
+                count: w.count,
+                size: Math.round(size),
+                color: colors[i % colors.length]
+            };
+        });
+
+        // Sort by size descending (place big words first)
+        wordsWithSize.sort((a, b) => b.size - a.size);
+
+        // Simple grid-based placement that fills the space
+        const placed: PlacedWord[] = [];
+        const occupiedRects: { x: number; y: number; w: number; h: number }[] = [];
+
+        const padding = 5; // Tighter space between words
+        const margin = 20; // Reduced margin from edges
+
+        // Helper to check if a rect overlaps with any existing rect
+        const overlaps = (x: number, y: number, w: number, h: number): boolean => {
+            for (const rect of occupiedRects) {
+                if (!(x + w + padding < rect.x ||
+                    x > rect.x + rect.w + padding ||
+                    y + h + padding < rect.y ||
+                    y > rect.y + rect.h + padding)) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        // Try to place each word
+        for (const word of wordsWithSize) {
+            // Estimate word dimensions (rough approximation)
+            const wordWidth = word.text.length * word.size * 0.6;
+            const wordHeight = word.size * 1.2;
+
+            let placed_word = false;
+
+            // Try spiral placement from center outward
+            const centerX = width / 2;
+            const centerY = height / 2;
+
+            // Smaller step (10) and angle (0.2) for tighter packing attempts
+            for (let radius = 0; radius < Math.max(width, height) && !placed_word; radius += 10) {
+                for (let angle = 0; angle < Math.PI * 2 && !placed_word; angle += 0.2) {
+                    const x = centerX + Math.cos(angle) * radius - wordWidth / 2;
+                    const y = centerY + Math.sin(angle) * radius - wordHeight / 2;
+
+                    // Check bounds
+                    if (x < margin || x + wordWidth > width - margin ||
+                        y < margin || y + wordHeight > height - margin) {
+                        continue;
+                    }
+
+                    // Check overlap
+                    if (!overlaps(x, y, wordWidth, wordHeight)) {
+                        placed.push({
+                            ...word,
+                            x: x + wordWidth / 2, // Center point
+                            y: y + wordHeight / 2
+                        });
+                        occupiedRects.push({ x, y, w: wordWidth, h: wordHeight });
+                        placed_word = true;
+                    }
+                }
+            }
+        }
+
+        return placed;
+    }, [words, width, height]);
+
+    if (!words.length) {
+        return (
+            <div className="flex items-center justify-center w-full h-full text-gray-400">
+                No words yet...
+            </div>
+        );
+    }
 
     return (
         <svg
-            ref={svgRef}
-            width={width}
-            height={height}
+            width="100%"
+            height="100%"
             viewBox={`0 0 ${width} ${height}`}
-            style={{ maxWidth: '100%', height: 'auto', overflow: 'visible' }}
+            preserveAspectRatio="xMidYMid meet"
+            style={{ width: '100%', height: '100%', minHeight: '500px' }}
         >
-            <g transform={`translate(${width / 2},${height / 2})`}>
-                {cloudWords.map((w, i) => (
-                    <text
-                        key={`${w.text}-${i}`}
-                        className="cursor-pointer select-none"
-                        style={{
-                            fontFamily: 'Inter, sans-serif',
-                            fontSize: `${w.size}px`,
-                            fill: getColor(i),
-                            fontWeight: '900',
-                            textAnchor: 'middle',
-                            transform: `translate(${w.x}px, ${w.y}px) rotate(${w.rotate}deg)`,
-                            transition: 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                            opacity: 0,
-                            animation: 'fadeIn 0.6s forwards',
-                            textShadow: '0 4px 12px rgba(0,0,0,0.15)'
-                        }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.transform = `translate(${w.x}px, ${w.y}px) rotate(${w.rotate}deg) scale(1.15)`;
-                            e.currentTarget.style.filter = 'drop-shadow(0 0 10px rgba(255,255,255,0.5))';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.transform = `translate(${w.x}px, ${w.y}px) rotate(${w.rotate}deg) scale(1)`;
-                            e.currentTarget.style.filter = 'none';
-                        }}
-                    >
-                        {w.text}
-                        <title>{w.count} submissions</title>
-                    </text>
-                ))}
-            </g>
-            <style jsx>{`
-                @keyframes fadeIn {
-                    to { opacity: 1; }
+            {placedWords.map((w, i) => (
+                <text
+                    key={`${w.text}-${i}`}
+                    x={w.x}
+                    y={w.y}
+                    className="cursor-pointer select-none transition-all duration-300"
+                    style={{
+                        fontFamily: 'Inter, sans-serif',
+                        fontSize: `${w.size}px`,
+                        fill: w.color,
+                        fontWeight: '800',
+                        textAnchor: 'middle',
+                        dominantBaseline: 'middle',
+                        opacity: 0,
+                        transformBox: 'fill-box', // Needed for proper scale transform
+                        transformOrigin: 'center', // Scale from center of word
+                        animation: `wordFadeIn 0.5s ${i * 0.02}s forwards`,
+                        textShadow: '0 2px 8px rgba(0,0,0,0.15)'
+                    }}
+                    onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = 'scale(1.2)';
+                        e.currentTarget.style.filter = 'drop-shadow(0 0 10px rgba(255,255,255,0.6))';
+                        e.currentTarget.style.zIndex = '100';
+                    }}
+                    onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'scale(1)';
+                        e.currentTarget.style.filter = 'none';
+                        e.currentTarget.style.zIndex = 'auto';
+                    }}
+                >
+                    {w.text}
+                    <title>{w.count} submissions</title>
+                </text>
+            ))}
+            <style>{`
+                @keyframes wordFadeIn {
+                    from { opacity: 0; transform: scale(0.8); }
+                    to { opacity: 1; transform: scale(1); }
                 }
             `}</style>
         </svg>

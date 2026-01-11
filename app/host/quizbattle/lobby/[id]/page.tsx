@@ -1,13 +1,16 @@
 'use client';
 
-import React, { useState, useEffect, use } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+import { useRouter, useSearchParams, useParams } from 'next/navigation';
 import { getGame, getQuiz, onGameChange, startGame, createGame } from '@/lib/quizbattle';
 import HamburgerMenu from '@/components/HamburgerMenu';
 import { updateClassActivity } from '@/lib/classes';
+import { onAuthStateChange } from '@/lib/auth';
 
-export default function QuizLobbyPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = use(params);
+export default function QuizLobbyPage() {
+    const params = useParams();
+    const id = params.id as string;
+    console.log('[QuizLobby] Loaded with id:', id);
     const router = useRouter();
     const searchParams = useSearchParams();
     const classIdParam = searchParams.get('classId');
@@ -17,28 +20,47 @@ export default function QuizLobbyPage({ params }: { params: Promise<{ id: string
     const [gameId, setGameId] = useState('');
 
     useEffect(() => {
-        const init = async () => {
-            const quizData = await getQuiz(id);
-            if (!quizData) {
-                alert('Quiz not found');
-                router.back();
+        if (!id) {
+            console.error('[QuizLobby] No quiz ID provided in route');
+            return;
+        }
+
+        const unsubscribe = onAuthStateChange(async (user) => {
+            if (!user) {
+                console.error('[QuizLobby] User not authenticated');
+                // Allow guests? No, rules require authentication for creating games
+                router.push(`/login?redirect=/host/quizbattle/lobby/${id}`);
                 return;
             }
-            setQuiz(quizData);
 
-            const targetClassId = classIdParam || quizData.classId;
+            try {
+                const quizData = await getQuiz(id);
+                if (!quizData) {
+                    alert('Quiz not found');
+                    router.back();
+                    return;
+                }
+                setQuiz(quizData);
 
-            const userId = localStorage.getItem('userId') || 'guest';
-            const gId = await createGame(id, targetClassId, userId);
-            setGameId(gId);
+                const targetClassId = classIdParam || quizData.classId;
 
-            // Sync class activity
-            if (targetClassId) {
-                updateClassActivity(targetClassId, { type: 'quizbattle', id: gId });
+                // Use the REAL authenticated user ID
+                const gId = await createGame(id, targetClassId, user.uid);
+                setGameId(gId);
+
+                // Sync class activity
+                if (targetClassId) {
+                    updateClassActivity(targetClassId, { type: 'quizbattle', id: gId });
+                }
+            } catch (error) {
+                console.error('[QuizLobby] Error initializing:', error);
+                alert('Failed to load quiz. Please try again.');
+                router.back();
             }
-        };
-        init();
-    }, [id, classIdParam]);
+        });
+
+        return () => unsubscribe();
+    }, [id, classIdParam, router]);
 
     useEffect(() => {
         if (!gameId) return;
@@ -70,8 +92,8 @@ export default function QuizLobbyPage({ params }: { params: Promise<{ id: string
             {/* Background Effects */}
             <div className="absolute inset-0 z-0 pointer-events-none">
                 <div className="absolute inset-0 bg-gradient-to-br from-indigo-950/40 via-[#0a0a0f] to-purple-950/40"></div>
-                <div className="absolute top-[-20%] left-[-20%] w-[500px] h-[500px] bg-indigo-600/20 rounded-full blur-[100px] animate-pulse"></div>
-                <div className="absolute bottom-[-20%] right-[-20%] w-[500px] h-[500px] bg-purple-600/20 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '2s' }}></div>
+                <div className="absolute top-[-20%] left-[-20%] w-[500px] h-[500px] bg-indigo-600/20 rounded-full blur-[100px]"></div>
+                <div className="absolute bottom-[-20%] right-[-20%] w-[500px] h-[500px] bg-purple-600/20 rounded-full blur-[100px]"></div>
             </div>
 
             <div className="relative z-10 flex-1 flex flex-col container mx-auto px-4 py-6">

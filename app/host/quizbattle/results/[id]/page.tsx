@@ -1,13 +1,14 @@
 'use client';
 
-import React, { useState, useEffect, use } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation';
 import { getGame, getLeaderboard } from '@/lib/quizbattle';
 import Button from '@/components/Button';
 import HamburgerMenu from '@/components/HamburgerMenu';
 
-export default function QuizResultsPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = use(params);
+export default function QuizResultsPage() {
+    const params = useParams();
+    const id = params.id as string;
     const router = useRouter();
     const [game, setGame] = useState<any>(null);
     const [leaderboard, setLeaderboard] = useState<any[]>([]);
@@ -24,32 +25,19 @@ export default function QuizResultsPage({ params }: { params: Promise<{ id: stri
     }, [id]);
 
     if (!game) return (
-        <div style={{ minHeight: '100vh', backgroundColor: '#f5f5f5', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#666' }}>
+        <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex items-center justify-center text-gray-600 dark:text-gray-400">
             Loading...
         </div>
     );
 
     return (
-        <main style={{
-            minHeight: '100vh',
-            backgroundColor: '#f5f5f5',
-            fontFamily: 'sans-serif',
-            display: 'flex',
-            flexDirection: 'column',
-            padding: '24px'
-        }}>
+        <main className="min-h-screen bg-gray-50 dark:bg-slate-900 font-sans flex flex-col p-6 transition-colors duration-300">
             <HamburgerMenu currentPage="QuizBattle" />
 
-            <div style={{ maxWidth: '1000px', margin: '0 auto', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <div className="max-w-[1000px] mx-auto w-full flex flex-col items-center">
 
                 {/* Title */}
-                <h1 style={{
-                    fontSize: '48px',
-                    fontWeight: 'bold',
-                    color: '#1a1d21',
-                    marginBottom: '48px',
-                    textAlign: 'center'
-                }}>
+                <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-12 text-center">
                     Final Results
                 </h1>
 

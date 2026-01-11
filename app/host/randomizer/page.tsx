@@ -103,8 +103,8 @@ function RandomizerContent() {
                         setWinner(winnerProfile);
                         setIsSpinning(false);
 
-                        // Update state with winner
-                        if (classId) updateClassActivity(classId, { type: 'randomizer', state: { winner: winnerProfile.displayName } });
+                        // Update state with winner (full profile)
+                        if (classId) updateClassActivity(classId, { type: 'randomizer', state: { winner: winnerProfile } });
                     }
                 }, 200); // Slower final roll
             }
@@ -163,26 +163,47 @@ function RandomizerContent() {
                             </p>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 p-4">
                             {members.map((student, index) => {
                                 const isHighlighted = highlightedIndex === index;
                                 return (
                                     <div
                                         key={student.uid}
                                         className={`
-                                            relative p-4 rounded-xl text-center transition-all duration-100 transform
+                                            relative flex flex-col items-center justify-center p-4 rounded-2xl text-center transition-all duration-150 transform
+                                            aspect-square shadow-lg border-2
                                             ${isHighlighted
-                                                ? 'bg-gradient-to-br from-indigo-500 to-purple-600 scale-105 shadow-[0_0_20px_rgba(99,102,241,0.5)] z-10 border-transparent'
-                                                : 'bg-slate-800/80 border border-slate-700 hover:border-slate-600'
+                                                ? 'bg-gradient-to-br from-indigo-600 to-purple-600 scale-110 z-20 border-white/50 shadow-[0_0_40px_rgba(99,102,241,0.6)]'
+                                                : 'bg-slate-800/60 border-slate-700/50 hover:border-indigo-500/50 hover:bg-slate-700/60 hover:scale-105'
                                             }
                                         `}
                                     >
-                                        <div className={`font-bold truncate ${isHighlighted ? 'text-white text-lg' : 'text-slate-300'}`}>
+                                        {/* Avatar */}
+                                        <div className={`
+                                            relative w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden mb-4 shadow-xl border-4
+                                            ${isHighlighted ? 'border-white ring-4 ring-indigo-400' : 'border-slate-600/50'}
+                                            transition-all duration-150
+                                        `}>
+                                            {student.photoURL ? (
+                                                <img
+                                                    src={student.photoURL}
+                                                    alt={student.displayName}
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            ) : (
+                                                <div className={`w-full h-full flex items-center justify-center text-4xl font-bold ${isHighlighted ? 'bg-white/20 text-white' : 'bg-slate-700 text-slate-400'}`}>
+                                                    {(student.displayName || '?').charAt(0).toUpperCase()}
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Name */}
+                                        <div className={`
+                                            font-bold truncate w-full px-1 leading-tight
+                                            ${isHighlighted ? 'text-white text-xl drop-shadow-md' : 'text-slate-300 text-lg'}
+                                        `}>
                                             {student.displayName}
                                         </div>
-                                        {isHighlighted && (
-                                            <div className="absolute inset-0 rounded-xl ring-2 ring-white/50 animate-pulse" />
-                                        )}
                                     </div>
                                 );
                             })}
@@ -226,9 +247,27 @@ function RandomizerContent() {
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/90 backdrop-blur-md animate-fade-in">
                     <Confetti />
                     <div className="relative z-50 flex flex-col items-center text-center p-12 animate-bounce-in">
-                        <div className="text-8xl mb-6 animate-bounce">👑</div>
-                        <h2 className="text-3xl font-bold text-indigo-300 mb-2 tracking-widest uppercase">The Winner Is</h2>
-                        <h1 className="text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-orange-400 to-red-500 mb-8 drop-shadow-2xl">
+                        {winner.photoURL ? (
+                            <div className="relative mb-8 group">
+                                <div className="absolute inset-0 bg-white blur-xl opacity-30 animate-pulse rounded-full"></div>
+                                <img
+                                    src={winner.photoURL}
+                                    alt={winner.displayName}
+                                    className="relative w-56 h-56 rounded-full border-8 border-white shadow-[0_0_60px_rgba(255,255,255,0.4)] object-cover animate-bounce-in"
+                                />
+                                <div className="absolute -bottom-4 -right-4 text-7xl animate-bounce delay-100">👑</div>
+                            </div>
+                        ) : (
+                            <div className="relative mb-8">
+                                <div className="w-56 h-56 rounded-full border-8 border-white shadow-[0_0_60px_rgba(255,255,255,0.4)] bg-gradient-to-br from-indigo-500 to-pink-500 flex items-center justify-center text-9xl text-white font-bold animate-bounce-in">
+                                    {(winner.displayName || 'W').charAt(0).toUpperCase()}
+                                </div>
+                                <div className="absolute -bottom-4 -right-4 text-7xl animate-bounce delay-100">👑</div>
+                            </div>
+                        )}
+
+                        <h2 className="text-4xl font-bold text-white mb-2 tracking-widest uppercase drop-shadow-md">The Winner Is</h2>
+                        <h1 className="text-7xl md:text-9xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-orange-400 to-red-500 mb-10 drop-shadow-2xl filter webkit-text-stroke-1-white">
                             {winner.displayName}
                         </h1>
                         <button
