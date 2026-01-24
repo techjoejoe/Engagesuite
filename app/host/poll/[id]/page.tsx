@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { QRCodeSVG } from 'qrcode.react';
 import { getPoll, onPollChange, onVotesChange, togglePollResults, updatePollStatus, Poll, Vote } from '@/lib/poll';
+import { updateClassActivity } from '@/lib/classes';
 import HostMenu from '@/components/HostMenu';
 import Button from '@/components/Button';
 import { Icons } from '@/components/picpick/Icons';
@@ -31,6 +32,22 @@ export default function PollHostPage() {
         });
         return () => unsubscribe();
     }, [id]);
+
+    // Sync class activity when poll loads
+    useEffect(() => {
+        if (poll?.classId) {
+            updateClassActivity(poll.classId, { type: 'poll', id: id });
+        }
+    }, [poll?.classId, id]);
+
+    // Cleanup: Clear activity when leaving
+    useEffect(() => {
+        return () => {
+            if (poll?.classId) {
+                updateClassActivity(poll.classId, { type: 'none' });
+            }
+        };
+    }, [poll?.classId]);
 
     // Listen to Votes
     useEffect(() => {

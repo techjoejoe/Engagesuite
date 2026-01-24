@@ -22,6 +22,15 @@ function CommitmentWallContent() {
         updateClassActivity(classId, { type: 'commitment' }).catch(console.error);
     }, [classId]);
 
+    // Cleanup: Clear activity when leaving page
+    useEffect(() => {
+        return () => {
+            if (classId) {
+                updateClassActivity(classId, { type: 'none' }).catch(console.error);
+            }
+        };
+    }, [classId]);
+
     // Listen for Commitments
     useEffect(() => {
         if (!classId) return;

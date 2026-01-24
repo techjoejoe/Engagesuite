@@ -620,8 +620,12 @@ export default function UserDash({ classData, userId, onLeaveClass }: UserDashPr
 
     // Render Active Component
     const renderContent = () => {
+        // DEBUG: Log current activity
+        console.log('[UserDash] renderContent called. Activity:', JSON.stringify(classData.currentActivity));
+
         // 0. Priority: Manual Override
         if (manualActivityType) {
+            console.log('[UserDash] Rendering manual activity:', manualActivityType);
             if (manualActivityType === 'buzzer') {
                 if (!userProfile) return <div className="animate-pulse text-white">Loading...</div>;
                 return (
@@ -650,6 +654,7 @@ export default function UserDash({ classData, userId, onLeaveClass }: UserDashPr
 
         // 1. Priority: Active Activity (Tickr, Quiz, etc.)
         if (activity && activity.type !== 'none') {
+            console.log('[UserDash] Rendering activity type:', activity.type, 'id:', activity.id);
             switch (activity.type) {
                 case 'randomizer': return <StudentRandomizer state={activity.state} classId={classData.id} />;
                 case 'tickr': return <StudentTickr timerId={activity.id || ''} />;
@@ -663,10 +668,13 @@ export default function UserDash({ classData, userId, onLeaveClass }: UserDashPr
                 case 'buzzer':
                     if (!userProfile) return <div className="animate-pulse text-white">Loading...</div>;
                     return <BuzzerView classId={classData.id} userProfile={userProfile} />;
-                default: return null;
+                default:
+                    console.log('[UserDash] Unknown activity type:', activity.type);
+                    return null;
             }
         }
 
+        console.log('[UserDash] No active activity, showing dashboard');
 
 
         // 3. Fallback: Full Dashboard View (Class + Global tabs)

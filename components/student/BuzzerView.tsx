@@ -14,7 +14,9 @@ export default function BuzzerView({ classId, userProfile }: Props) {
     const [myBuzz, setMyBuzz] = useState<{ rank: number, timestamp: number } | null>(null);
 
     useEffect(() => {
+        console.log('[BuzzerView] Subscribing to buzzer for classId:', classId);
         const unsubscribe = onBuzzerChange(classId, (data) => {
+            console.log('[BuzzerView] Buzzer state updated:', data.status, 'buzzes:', data.buzzes.length);
             setState(data);
 
             // Check if I buzzed
@@ -86,12 +88,12 @@ export default function BuzzerView({ classId, userProfile }: Props) {
         <div className="flex flex-col items-center justify-center h-[60vh] animate-fade-in">
             <button
                 onClick={handleBuzz}
-                className="w-64 h-64 md:w-72 md:h-72 rounded-full bg-red-500 border-b-8 border-red-700 active:border-b-0 active:translate-y-2 transition-all shadow-2xl shadow-red-500/50 flex flex-col items-center justify-center group hover:bg-red-400 focus:outline-none touch-manipulation"
+                className="w-64 h-64 md:w-72 md:h-72 rounded-full bg-green-500 border-b-8 border-green-700 active:border-b-0 active:translate-y-2 transition-all shadow-2xl shadow-green-500/50 flex flex-col items-center justify-center group hover:bg-green-400 focus:outline-none touch-manipulation"
             >
                 <span className="text-6xl mb-2 group-hover:scale-110 transition-transform">🔔</span>
                 <span className="text-4xl font-black text-white tracking-widest">BUZZ!</span>
             </button>
-            <p className="mt-8 text-xl font-bold text-white animate-pulse">
+            <p className="mt-8 text-xl font-bold text-green-400 animate-pulse">
                 GO! GO! GO!
             </p>
         </div>

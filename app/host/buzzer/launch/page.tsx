@@ -36,6 +36,15 @@ function BuzzerLaunchContent() {
         return () => unsubscribe();
     }, [classId]);
 
+    // Cleanup: Clear activity when leaving page
+    useEffect(() => {
+        return () => {
+            if (classId) {
+                updateClassActivity(classId, { type: 'none' }).catch(console.error);
+            }
+        };
+    }, [classId]);
+
     const toggleStatus = async () => {
         if (!classId) return;
         const newStatus = state.status === 'locked' ? 'open' : 'locked';
