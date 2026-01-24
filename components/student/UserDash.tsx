@@ -818,6 +818,8 @@ export default function UserDash({ classData, userId, onLeaveClass }: UserDashPr
                             <div className="text-lg font-black text-green-400 leading-none">{userProfile?.lifetimePoints || 0}</div>
                             <div className="text-[9px] font-bold text-slate-500 uppercase mt-1">Lifetime</div>
                         </div>
+                        <div className="w-px bg-white/10" />
+                        <ThemeToggle />
                     </div>
                 </div>
 

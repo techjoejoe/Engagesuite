@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { signOutUser } from '@/lib/auth';
 import { onEnergyChange, StudentEnergy, launchPulseCheck, getActivePulseCheck, closePulseCheck, onPulseCheckChange, PulseCheck, resetAllEnergy } from '@/lib/energy';
 import { onUnansweredCountChange } from '@/lib/parkinglot';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 interface HostMenuProps {
     currentPage?: string;
@@ -274,10 +275,11 @@ export default function HostMenu({ currentPage = '', classId, className = '' }: 
             >
                 {/* Header */}
                 <div className="p-6 border-b border-white/10 bg-white/5">
-                    <div className="flex items-center gap-4 mb-4">
+                    <div className="flex items-center justify-between mb-4">
                         <h2 className="text-2xl font-bold text-white">
                             Host Menu
                         </h2>
+                        <ThemeToggle />
                     </div>
                     <p className="text-sm text-gray-400">
                         Quick navigation and tools
