@@ -149,6 +149,17 @@ export default function HostPlayPage() {
         responses.filter(r => r.answerIndex === index).length
     ) || [];
 
+    // Find fastest correct responder
+    const correctResponses = responses.filter(r => r.answerIndex === currentQuestion?.correctAnswerIndex);
+    const fastestResponder = correctResponses.length > 0
+        ? correctResponses.reduce((fastest, current) =>
+            current.timeToAnswer < fastest.timeToAnswer ? current : fastest
+        )
+        : null;
+    const fastestPlayerName = fastestResponder && game.players[fastestResponder.userId]
+        ? game.players[fastestResponder.userId].nickname
+        : null;
+
     const answerColors = ['#E21B3C', '#1368CE', '#D89E00', '#26890C'];
     const answerLabels = ['A', 'B', 'C', 'D'];
 
@@ -275,14 +286,39 @@ export default function HostPlayPage() {
 
                 {/* Notes Popup (Reveal Only) */}
                 {game.phase === 'reveal' && currentQuestion.notes && (
-                    <div className="mt-8 w-full bg-yellow-50 border-2 border-yellow-200 rounded-2xl p-6 shadow-xl animate-bounce-in">
+                    <div className="mt-8 w-full bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-200 dark:border-yellow-700 rounded-2xl p-6 shadow-xl animate-bounce-in">
                         <div className="flex items-start gap-4">
                             <div className="text-3xl">💡</div>
                             <div>
-                                <h3 className="font-bold text-yellow-800 uppercase tracking-widest text-sm mb-1">Host Notes</h3>
-                                <div className="text-lg text-yellow-900 font-medium leading-relaxed">
+                                <h3 className="font-bold text-yellow-800 dark:text-yellow-400 uppercase tracking-widest text-sm mb-1">Host Notes</h3>
+                                <div className="text-lg text-yellow-900 dark:text-yellow-200 font-medium leading-relaxed">
                                     {currentQuestion.notes}
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Fastest Responder Popup (Reveal Only) */}
+                {game.phase === 'reveal' && fastestPlayerName && (
+                    <div className="mt-6 w-full bg-gradient-to-r from-emerald-500 to-green-600 rounded-2xl p-6 shadow-xl animate-bounce-in">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-4">
+                                <div className="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center text-3xl">
+                                    ⚡
+                                </div>
+                                <div>
+                                    <h3 className="font-bold text-white/80 uppercase tracking-widest text-sm mb-1">Fastest Correct Answer</h3>
+                                    <div className="text-2xl font-black text-white">
+                                        {fastestPlayerName}
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="text-right">
+                                <div className="text-4xl font-black text-white">
+                                    {(fastestResponder.timeToAnswer / 1000).toFixed(2)}s
+                                </div>
+                                <div className="text-sm text-white/70 font-bold">Response Time</div>
                             </div>
                         </div>
                     </div>

@@ -59,26 +59,39 @@ export async function createClass(hostId: string, name: string, startDate?: stri
 
 // Join a class by code
 export async function joinClass(userId: string, code: string): Promise<string> {
+    console.log('[joinClass] Starting join for user:', userId, 'with code:', code);
+
     const classesRef = collection(db, 'classes');
-    const q = query(classesRef, where('code', '==', code.toUpperCase()));
+    const normalizedCode = code.toUpperCase();
+    console.log('[joinClass] Querying for code:', normalizedCode);
+
+    const q = query(classesRef, where('code', '==', normalizedCode));
     const querySnapshot = await getDocs(q);
 
+    console.log('[joinClass] Query result - empty:', querySnapshot.empty, 'size:', querySnapshot.size);
+
     if (querySnapshot.empty) {
+        console.log('[joinClass] No class found with code:', normalizedCode);
         throw new Error('Invalid class code');
     }
 
     const classDoc = querySnapshot.docs[0];
     const classId = classDoc.id;
+    console.log('[joinClass] Found class:', classId);
 
     // Add user to class members
+    console.log('[joinClass] Adding user to class members...');
     await updateDoc(doc(db, 'classes', classId), {
         memberIds: arrayUnion(userId)
     });
+    console.log('[joinClass] User added to memberIds');
 
-    // Update user profile with joined class
-    await updateDoc(doc(db, 'users', userId), {
+    // Update user profile with joined class (use setDoc with merge in case doc doesn't exist yet)
+    console.log('[joinClass] Updating user profile with joinedClassId...');
+    await setDoc(doc(db, 'users', userId), {
         joinedClassId: classId
-    });
+    }, { merge: true });
+    console.log('[joinClass] User profile updated. Join complete!');
 
     return classId;
 }
@@ -128,6 +141,7 @@ export async function getClassMembers(classId: string): Promise<UserProfile[]> {
 // Update the current activity for a class
 
 export async function updateClassActivity(classId: string, activity: Class['currentActivity']) {
+    console.log('[updateClassActivity] Updating class:', classId, 'to activity:', JSON.stringify(activity));
     const docRef = doc(db, 'classes', classId);
 
     // Check if we need to log this as a new activity usage
@@ -149,6 +163,7 @@ export async function updateClassActivity(classId: string, activity: Class['curr
     }
 
     await updateDoc(docRef, { currentActivity: activity });
+    console.log('[updateClassActivity] Successfully updated activity to:', activity?.type || 'none');
 }
 
 // Get class by code (read-only)

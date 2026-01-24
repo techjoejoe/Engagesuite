@@ -65,6 +65,15 @@ export default function TickrHostPage() {
         }
     }, [timer, id, hasSyncedActivity, timeLeft]);
 
+    // Cleanup: Clear activity when leaving page
+    useEffect(() => {
+        return () => {
+            if (timer?.classId) {
+                updateClassActivity(timer.classId, { type: 'none' });
+            }
+        };
+    }, [timer?.classId]);
+
     // Countdown logic
     useEffect(() => {
         if (!timer || timer.status !== 'running') return;

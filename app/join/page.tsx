@@ -68,8 +68,12 @@ export default function JoinPage() {
                 router.push(`/play/class/${classId}`);
                 return;
             } catch (classErr: any) {
+                console.error('Class join error:', classErr);
+                // If it's not just "invalid code", show the actual error
                 if (classErr.message !== 'Invalid class code') {
-                    console.error('Class join error:', classErr);
+                    setError(`Join failed: ${classErr.message || 'Unknown error'}`);
+                    setLoading(false);
+                    return;
                 }
             }
 
@@ -89,9 +93,9 @@ export default function JoinPage() {
             localStorage.setItem('playerName', pName);
 
             router.push(`/play?room=${roomCode}`);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error joining game:', error);
-            setError('Failed to join game. Please try again.');
+            setError(`Failed to join: ${error.message || 'Unknown error'}`);
         } finally {
             setLoading(false);
         }

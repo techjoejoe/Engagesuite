@@ -54,6 +54,15 @@ function RandomizerContent() {
         return () => unsubscribe();
     }, [user, classId, router]);
 
+    // Separate cleanup effect - only clears activity when truly leaving the page
+    useEffect(() => {
+        return () => {
+            if (classId) {
+                updateClassActivity(classId, { type: 'none' });
+            }
+        };
+    }, [classId]);
+
     const handleSpin = () => {
         if (members.length === 0) return;
 

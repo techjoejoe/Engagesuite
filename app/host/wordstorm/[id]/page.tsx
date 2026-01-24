@@ -103,6 +103,17 @@ export default function WordStormHostPage() {
         return () => { isMounted = false; };
     }, [id]);
 
+    // Cleanup: Clear activity when leaving page
+    useEffect(() => {
+        return () => {
+            if (classId) {
+                import('@/lib/classes').then(({ updateClassActivity }) => {
+                    updateClassActivity(classId, { type: 'none' });
+                });
+            }
+        };
+    }, [classId]);
+
 
 
     const handleClear = async () => {
