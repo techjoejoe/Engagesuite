@@ -80,7 +80,7 @@ const nextConfig = {
   },
   
   // Output configuration
-  output: 'standalone',
+ 
   
   // Disable telemetry
   telemetry: false,
