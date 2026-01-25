@@ -10,40 +10,37 @@ const config: Config = {
     extend: {
       screens: {
         // Mobile-first breakpoints
-        'xs': '320px',      // Small phones
-        'sm': '640px',      // Large phones
-        'md': '768px',      // Tablets
-        'lg': '1024px',     // Desktop
-        'xl': '1280px',     // Large desktop
-        '2xl': '1536px',    // Extra large desktop
+        'xs': '320px',
+        'sm': '640px',
+        'md': '768px',
+        'lg': '1024px',
+        'xl': '1280px',
+        '2xl': '1536px',
         
         // Custom breakpoints for educational contexts
-        'smartboard': '1920px',   // Large touch displays (Smartboards)
-        'tablet-landscape': '1024px',  // Tablets in landscape
-        'mobile-landscape': '568px',   // Phones in landscape
+        'smartboard': '1920px',
+        'tablet-landscape': '1024px',
+        'mobile-landscape': '568px',
         
-        // Max-width breakpoints (for mobile-first design)
+        // Max-width breakpoints
         'max-sm': { 'max': '639px' },
         'max-md': { 'max': '767px' },
         'max-lg': { 'max': '1023px' },
       },
       
       spacing: {
-        // Touch-friendly spacing for Smartboards
-        'touch': '48px',     // Minimum touch target size
-        'touch-lg': '64px',  // Large touch target
+        'touch': '48px',
+        'touch-lg': '64px',
       },
       
       fontSize: {
-        // Readable sizes for different screen sizes
         'smartboard': ['2.5rem', { lineHeight: '3rem' }],
         'smartboard-lg': ['3.5rem', { lineHeight: '4rem' }],
       },
       
       maxWidth: {
-        // Content width constraints
-        'reading': '65ch',    // Optimal reading width
-        'smartboard': '90%',  // Smartboard content width
+        'reading': '65ch',
+        'smartboard': '90%',
       },
     },
   },
