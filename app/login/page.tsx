@@ -59,18 +59,18 @@ function LoginContent() {
 
     return (
         <div className="w-full max-w-md relative z-10">
-            <div className="glass-card-strong p-8 md:p-12 animate-fade-in">
+            <div className="glass-card-strong p-8 md:p-12 animate-fade-in bg-white border-gray-200">
                 <div className="text-center mb-8">
                     <div className="text-6xl mb-4">🔐</div>
-                    <h1 className="text-3xl font-bold text-white mb-2">Welcome Back</h1>
-                    <p className="text-[#94A3B8]">
+                    <h1 className="text-3xl font-bold text-[#0f172a] mb-2">Welcome Back</h1>
+                    <p className="text-[#64748b]">
                         Login to play and track your points
                     </p>
                 </div>
 
                 <form onSubmit={handleEmailLogin} className="flex flex-col gap-4">
                     <div>
-                        <label className="block mb-2 text-sm font-medium text-[#94A3B8]">
+                        <label className="block mb-2 text-sm font-medium text-[#475569]">
                             Email
                         </label>
                         <input
@@ -84,7 +84,7 @@ function LoginContent() {
                     </div>
 
                     <div>
-                        <label className="block mb-2 text-sm font-medium text-[#94A3B8]">
+                        <label className="block mb-2 text-sm font-medium text-[#475569]">
                             Password
                         </label>
                         <input
@@ -98,7 +98,7 @@ function LoginContent() {
                     </div>
 
                     {error && (
-                        <div className="p-3 bg-red-500/20 border border-red-500/30 rounded-lg text-red-300 text-sm text-center backdrop-blur-sm">
+                        <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm text-center">
                             {error}
                         </div>
                     )}
@@ -106,7 +106,7 @@ function LoginContent() {
                     <Button
                         variant="primary"
                         size="lg"
-                        className="w-full mt-2"
+                        className="w-full mt-2 glow-violet"
                         type="submit"
                         disabled={loading}
                     >
@@ -114,7 +114,7 @@ function LoginContent() {
                     </Button>
                 </form>
 
-                <div className="my-6 text-center text-[#94A3B8] text-sm">
+                <div className="my-6 text-center text-[#94a3b8] text-sm">
                     or
                 </div>
 
@@ -130,10 +130,10 @@ function LoginContent() {
                 </Button>
 
                 <div className="mt-8 text-center text-sm">
-                    <span className="text-[#94A3B8]">Don't have an account? </span>
+                    <span className="text-[#64748b]">Don't have an account? </span>
                     <button
                         onClick={() => router.push('/signup')}
-                        className="text-[#22D3EE] font-semibold hover:text-[#06B6D4] transition-colors"
+                        className="text-[#6366f1] font-semibold hover:text-[#4f46e5] transition-colors"
                     >
                         Sign Up
                     </button>
@@ -142,7 +142,7 @@ function LoginContent() {
                 <div className="mt-4 text-center text-sm">
                     <button
                         onClick={() => router.push('/')}
-                        className="text-[#94A3B8] hover:text-white underline transition-colors"
+                        className="text-[#64748b] hover:text-[#0f172a] underline transition-colors"
                     >
                         Back to Home
                     </button>
@@ -154,15 +154,15 @@ function LoginContent() {
 
 export default function LoginPage() {
     return (
-        <main className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
-            {/* Background Blobs - Vibrant */}
+        <main className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden bg-white">
+            {/* Professional Background - Subtle */}
             <div className="absolute inset-0 z-0 overflow-hidden">
-                <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-[#7C3AED]/40 rounded-full blur-[150px] animate-blob" />
-                <div className="absolute top-[30%] right-[-15%] w-[45%] h-[45%] bg-[#06B6D4]/35 rounded-full blur-[130px] animate-blob animation-delay-2000" />
-                <div className="absolute bottom-[-15%] left-[25%] w-[50%] h-[50%] bg-[#F472B6]/30 rounded-full blur-[140px] animate-blob animation-delay-4000" />
+                <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-[#6366f1]/10 rounded-full blur-[150px] animate-blob" />
+                <div className="absolute top-[30%] right-[-15%] w-[45%] h-[45%] bg-[#3b82f6]/8 rounded-full blur-[130px] animate-blob animation-delay-2000" />
+                <div className="absolute bottom-[-15%] left-[25%] w-[50%] h-[50%] bg-[#8b5cf6]/8 rounded-full blur-[140px] animate-blob animation-delay-4000" />
             </div>
 
-            <Suspense fallback={<div className="text-center text-white">Loading...</div>}>
+            <Suspense fallback={<div className="text-center text-[#0f172a]">Loading...</div>}>
                 <LoginContent />
             </Suspense>
         </main>
