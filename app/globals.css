@@ -2,210 +2,208 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ============================================
-   PROFESSIONAL COLOR SYSTEM - TrackUPC Style
-   ============================================ */
+/* ================================================
+   CLASSDASH DARK THEME - Professional Color System
+   Based on TrackUPC.com design language
+   ================================================ */
 
-@layer base {
-  body {
-    background-color: #ffffff;
-    color: #0f172a;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    color: #0f172a;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-  }
+:root {
+  /* Primary Dark Background */
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-tertiary: #334155;
+  
+  /* Accent Colors */
+  --accent-primary: #6366f1;
+  --accent-secondary: #8b5cf6;
+  --accent-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+  
+  /* Text Colors */
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  
+  /* Border Colors */
+  --border-primary: rgba(255, 255, 255, 0.1);
+  --border-secondary: rgba(255, 255, 255, 0.05);
+  
+  /* Status Colors */
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --error: #ef4444;
 }
 
-@layer utilities {
-  /* Professional Gradient Text */
-  .text-gradient {
-    background: linear-gradient(135deg, #6366f1 0%, #3b82f6 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
+/* Global Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-  .text-gradient-violet {
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
+html {
+  scroll-behavior: smooth;
+}
 
-  .text-gradient-cyan {
-    background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
-  .text-gradient-coral {
-    background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
+/* ================================================
+   UTILITY CLASSES
+   ================================================ */
 
-  /* Professional Glass Cards */
+/* Glass Morphism Card */
+.glass-card {
+  background: rgba(30, 41, 59, 0.5);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-primary);
+  border-radius: 16px;
+}
+
+/* Gradient Text */
+.gradient-text {
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glow Effects */
+.glow-indigo {
+  box-shadow: 0 0 40px rgba(99, 102, 241, 0.3);
+}
+
+.glow-purple {
+  box-shadow: 0 0 40px rgba(139, 92, 246, 0.3);
+}
+
+/* Buttons */
+.btn-primary {
+  background: var(--accent-primary);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background: #4f46e5;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--text-primary);
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  border: 1px solid var(--border-primary);
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--accent-primary);
+}
+
+/* Input Fields */
+.input-dark {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  color: var(--text-primary);
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.input-dark:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+.input-dark::placeholder {
+  color: var(--text-muted);
+}
+
+/* Links */
+a {
+  color: var(--accent-primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--accent-secondary);
+}
+
+/* ================================================
+   ANIMATIONS
+   ================================================ */
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(99, 102, 241, 0.5); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s infinite;
+}
+
+/* ================================================
+   SCROLLBAR STYLING
+   ================================================ */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bg-tertiary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-primary);
+}
+
+/* ================================================
+   RESPONSIVE BREAKPOINTS
+   ================================================ */
+
+@media (max-width: 768px) {
   .glass-card {
-    background-color: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border: 1px solid #e2e8f0;
-    border-radius: 1rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
   }
-
-  .glass-card-hover {
-    transition: all 0.3s ease;
-  }
-
-  .glass-card-hover:hover {
-    background-color: #ffffff;
-    border-color: #cbd5e1;
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  }
-
-  .glass-card-strong {
-    background-color: #ffffff;
-    backdrop-filter: blur(10px);
-    border: 1px solid #e2e8f0;
-    border-radius: 1rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
-  }
-
-  /* Professional Input Styles */
-  .input-glass {
-    background-color: #f8fafc;
-    border: 2px solid #e2e8f0;
-    border-radius: 0.75rem;
-    color: #0f172a;
-    transition: all 0.2s ease;
-  }
-
-  .input-glass:focus {
-    outline: none;
-    border-color: #6366f1;
-    background-color: #ffffff;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-  }
-
-  .input-glass::placeholder {
-    color: #94a3b8;
-  }
-
-  /* Professional Glow Effects */
-  .glow-violet {
-    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.25);
-  }
-
-  .glow-violet:hover {
-    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.35);
-  }
-
-  .glow-cyan {
-    box-shadow: 0 4px 14px rgba(59, 130, 246, 0.25);
-  }
-
-  .glow-cyan:hover {
-    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.35);
-  }
-
-  /* Professional Backgrounds */
-  .bg-gradient-light {
-    background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
-  }
-
-  .bg-gradient-primary {
-    background: linear-gradient(135deg, #6366f1 0%, #3b82f6 100%);
-  }
-
-  /* Animations */
-  .animate-blob {
-    animation: blob 7s infinite;
-  }
-
-  .animation-delay-2000 {
-    animation-delay: 2s;
-  }
-
-  .animation-delay-4000 {
-    animation-delay: 4s;
-  }
-
-  @keyframes blob {
-    0%, 100% {
-      transform: translate(0px, 0px) scale(1);
-    }
-    33% {
-      transform: translate(30px, -50px) scale(1.1);
-    }
-    66% {
-      transform: translate(-20px, 20px) scale(0.9);
-    }
-  }
-
-  .animate-gradient-x {
-    animation: gradient-x 3s ease infinite;
-    background-size: 200% 200%;
-  }
-
-  @keyframes gradient-x {
-    0%, 100% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-  }
-
-  .animate-fade-in-up {
-    animation: fade-in-up 0.6s ease-out forwards;
-    opacity: 0;
-  }
-
-  .delay-100 {
-    animation-delay: 0.1s;
-  }
-
-  .delay-200 {
-    animation-delay: 0.2s;
-  }
-
-  .delay-300 {
-    animation-delay: 0.3s;
-  }
-
-  .delay-500 {
-    animation-delay: 0.5s;
-  }
-
-  @keyframes fade-in-up {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .animate-fade-in {
-    animation: fadeIn 0.5s ease-in;
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
+  
+  .btn-primary,
+  .btn-secondary {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
   }
 }
