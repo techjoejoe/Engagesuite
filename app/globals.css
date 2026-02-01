@@ -3,8 +3,7 @@
 @tailwind utilities;
 
 /* ================================================
-   CLASSDASH DARK THEME - Professional Color System
-   Based on TrackUPC.com design language
+   CLASSDASH DARK THEME
    ================================================ */
 
 :root {
@@ -31,13 +30,6 @@
   --success: #22c55e;
   --warning: #f59e0b;
   --error: #ef4444;
-}
-
-/* Global Reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
 }
 
 html {
