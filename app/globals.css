@@ -3,56 +3,34 @@
 @tailwind utilities;
 
 :root {
-  /* Core Brand Colors */
-  --violet: #7C3AED;
-  --cyan: #06B6D4; 
-  --coral: #F472B6;
-  --gold: #FBBF24;
-  
-  /* Backgrounds */
-  --bg-dark: #0F0A1E;
+  --bg-dark: #0f172a;
+  --accent-violet: #7c3aed;
+  --accent-cyan: #06b6d4;
 }
 
 @layer base {
   body {
-    background-color: var(--bg-dark);
-    background-image: 
-      radial-gradient(ellipse at 10% 10%, rgba(124, 58, 237, 0.4) 0%, transparent 40%),
-      radial-gradient(ellipse at 90% 20%, rgba(6, 182, 212, 0.35) 0%, transparent 40%);
-    color: #ffffff;
-    min-height: 100vh;
+    @apply min-h-screen antialiased text-white;
+    background: radial-gradient(ellipse at 10% 10%, rgba(124, 58, 237, 0.3) 0%, transparent 40%),
+                radial-gradient(ellipse at 90% 20%, rgba(6, 182, 212, 0.25) 0%, transparent 40%),
+                #0f172a;
+    background-attachment: fixed;
   }
 }
 
 @layer utilities {
   .glass-card {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(16px);
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 1rem;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   }
   
   .text-gradient {
-    background: linear-gradient(to right, #A78BFA, #22D3EE);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-cyan-400;
   }
 
-  /* 3D Button Styles */
   .btn-3d-primary {
-    background: linear-gradient(to bottom, #A78BFA, #7C3AED);
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.75rem;
-    font-weight: bold;
-    box-shadow: 0 4px 0 #5B21B6, 0 8px 15px rgba(0,0,0,0.3);
-    transition: all 0.1s;
-  }
-  
-  .btn-3d-primary:active {
-    transform: translateY(4px);
-    box-shadow: 0 0 0 #5B21B6;
+    @apply px-6 py-3 bg-gradient-to-b from-violet-500 to-violet-700 rounded-xl font-bold shadow-lg transition-all active:translate-y-1 active:shadow-none;
   }
 }
