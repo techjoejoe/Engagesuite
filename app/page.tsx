@@ -1,97 +1,230 @@
+'use client';
+
 import Link from 'next/link';
-import Button from '@/components/Button';
 
 export default function Home() {
+  const features = [
+    {
+      icon: '📊',
+      title: 'Live Polls',
+      desc: 'Create instant polls and see real-time results from your classroom.'
+    },
+    {
+      icon: '🎯',
+      title: 'Quick Quizzes',
+      desc: 'Assess understanding with timed quizzes and automatic grading.'
+    },
+    {
+      icon: '🎮',
+      title: 'Game Mode',
+      desc: 'Turn learning into competition with leaderboards and rewards.'
+    },
+    {
+      icon: '📈',
+      title: 'Analytics',
+      desc: 'Track progress and identify students who need extra help.'
+    }
+  ];
+
   return (
-    <main className="min-h-screen relative overflow-hidden bg-white">
-      {/* Professional Background - Subtle */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
-        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-[#6366f1]/10 rounded-full blur-[150px] animate-blob" />
-        <div className="absolute top-[30%] right-[-15%] w-[45%] h-[45%] bg-[#3b82f6]/8 rounded-full blur-[130px] animate-blob animation-delay-2000" />
-        <div className="absolute bottom-[-15%] left-[25%] w-[50%] h-[50%] bg-[#8b5cf6]/8 rounded-full blur-[140px] animate-blob animation-delay-4000" />
+    <main className="min-h-screen relative overflow-hidden bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a]">
+      {/* Background Effects */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-[-10%] right-[-5%] w-[60%] h-[60%] bg-indigo-600/20 rounded-full blur-[150px]" />
+        <div className="absolute bottom-[-10%] left-[-5%] w-[50%] h-[50%] bg-purple-600/15 rounded-full blur-[120px]" />
       </div>
 
-      {/* Navbar */}
-      <nav className="relative z-10 flex justify-between items-center p-6 max-w-7xl mx-auto backdrop-blur-sm bg-white/80 border-b border-gray-200">
-        <div className="text-2xl font-black tracking-tighter flex items-center gap-2">
-          <span className="text-4xl">🚀</span>
-          <span className="text-gradient">ClassDash</span>
+      {/* Navigation */}
+      <nav className="relative z-10 flex justify-between items-center p-6 max-w-7xl mx-auto">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center text-2xl shadow-lg">
+            🚀
+          </div>
+          <div>
+            <div className="text-xl font-bold text-white">ClassDash</div>
+            <div className="text-xs text-gray-400">Classroom Engagement</div>
+          </div>
         </div>
         <div className="flex items-center gap-4">
-          <Link href="/login">
-            <Button variant="glass" size="md">Log In</Button>
+          <Link 
+            href="/login" 
+            className="px-5 py-2.5 text-sm font-semibold text-white hover:text-indigo-300 transition-colors"
+          >
+            Sign In
           </Link>
-          <Link href="/signup">
-            <Button variant="primary" className="glow-violet">Get Started</Button>
+          <Link 
+            href="/signup" 
+            className="px-6 py-2.5 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg shadow-lg shadow-indigo-500/25 transition-all hover:-translate-y-0.5"
+          >
+            Start Free Trial
           </Link>
         </div>
       </nav>
 
-      {/* Hero Content */}
-      <div className="relative z-10 container mx-auto px-4 pt-12 pb-20 text-center">
-        <div className="inline-block mb-6 px-4 py-1.5 rounded-full bg-[#eff6ff] border border-[#bfdbfe] text-[#1e40af] text-sm font-bold tracking-wide uppercase animate-fade-in-up">
-          ✨ The Ultimate Classroom Companion
-        </div>
+      {/* Hero Section */}
+      <div className="relative z-10 container mx-auto px-6 pt-16 pb-20">
+        <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
+          {/* Left Column - Text */}
+          <div>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 text-sm font-semibold mb-8">
+              <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+              Trusted by 2,500+ Teachers
+            </div>
 
-        <h1 className="text-6xl md:text-8xl font-black mb-8 tracking-tight text-[#0f172a] animate-fade-in-up delay-100">
-          Make Learning <br />
-          <span className="text-gradient animate-gradient-x">Unforgettable</span>
-        </h1>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 leading-tight">
+              Make Learning{' '}
+              <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                Unforgettable
+              </span>
+            </h1>
 
-        <p className="text-xl md:text-2xl text-[#64748b] mb-12 max-w-2xl mx-auto leading-relaxed animate-fade-in-up delay-200">
-          Engage your students directly on their devices with live polls, quizzes, and interactive games.
-          Turn every lesson into an adventure.
-        </p>
+            <p className="text-lg md:text-xl text-gray-300 mb-8 leading-relaxed">
+              Engage your students with live polls, quizzes, and interactive games. 
+              Transform your classroom into an exciting learning experience.
+            </p>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up delay-300">
-          <Link href="/signup">
-            <Button variant="primary" size="lg" className="glow-violet">🚀 Start Free</Button>
-          </Link>
-          <Link href="/join">
-            <Button variant="glass" size="lg">🎮 Join a Game</Button>
-          </Link>
-        </div>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Link 
+                href="/signup"
+                className="px-8 py-4 text-center font-bold text-white bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-all hover:-translate-y-1"
+              >
+                Get Started Free
+              </Link>
+              <Link 
+                href="/login"
+                className="px-8 py-4 text-center font-semibold text-white border border-white/20 rounded-xl hover:bg-white/5 transition-all"
+              >
+                Watch Demo
+              </Link>
+            </div>
+          </div>
 
-        {/* Feature Cards */}
-        <div className="mt-24 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto animate-fade-in-up delay-500">
-          {[
-            { icon: '⚡', title: 'QuizBattle', desc: 'Competitive trivia games', color: 'from-[#6366f1] to-[#8b5cf6]' },
-            { icon: '📊', title: 'LiveVote', desc: 'Real-time polling', color: 'from-[#3b82f6] to-[#06b6d4]' },
-            { icon: '📸', title: 'PicPick', desc: 'Photo challenges', color: 'from-[#f59e0b] to-[#f97316]' },
-            { icon: '☁️', title: 'WordStorm', desc: 'Collaborative clouds', color: 'from-[#8b5cf6] to-[#a855f7]' }
-          ].map((feature, i) => (
-            <div key={i} className="group glass-card glass-card-hover p-6 flex flex-col items-center text-center bg-white border-gray-200">
-              <div className={`w-16 h-16 bg-gradient-to-br ${feature.color} rounded-2xl flex items-center justify-center text-4xl mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
-                {feature.icon}
+          {/* Right Column - Dashboard Preview */}
+          <div className="relative hidden lg:block">
+            <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 rounded-2xl blur-2xl"></div>
+            <div className="relative bg-[#1e293b]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl">
+              {/* Mock Dashboard Header */}
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center text-white text-sm">
+                    📊
+                  </div>
+                  <span className="text-white font-semibold">Live Session</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                  <span className="text-green-400 text-sm">32 Students</span>
+                </div>
               </div>
-              <h3 className="text-xl font-bold text-[#0f172a] mb-2">{feature.title}</h3>
-              <p className="text-[#64748b]">{feature.desc}</p>
-            </div>
-          ))}
-        </div>
 
-        {/* Stats Section */}
-        <div className="mt-20 glass-card-strong p-8 max-w-4xl mx-auto animate-fade-in-up delay-500 bg-white border-gray-200">
-          <div className="grid grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="text-4xl font-black text-gradient-violet">10K+</div>
-              <div className="text-[#64748b] text-sm mt-1">Classrooms</div>
-            </div>
-            <div className="text-center border-x border-[#e2e8f0]">
-              <div className="text-4xl font-black text-gradient-cyan">500K+</div>
-              <div className="text-[#64748b] text-sm mt-1">Students Engaged</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-black text-gradient-coral">1M+</div>
-              <div className="text-[#64748b] text-sm mt-1">Questions Answered</div>
+              {/* Mock Question */}
+              <div className="bg-[#0f172a]/50 rounded-xl p-4 mb-4">
+                <p className="text-gray-400 text-xs mb-2">Current Question</p>
+                <p className="text-white font-medium">What is the capital of France?</p>
+              </div>
+
+              {/* Mock Answer Options */}
+              <div className="space-y-3">
+                {[
+                  { letter: 'A', text: 'London', votes: 2, color: 'bg-red-500/20' },
+                  { letter: 'B', text: 'Paris', votes: 28, color: 'bg-green-500/20', correct: true },
+                  { letter: 'C', text: 'Berlin', votes: 1, color: 'bg-red-500/20' },
+                  { letter: 'D', text: 'Madrid', votes: 1, color: 'bg-red-500/20' }
+                ].map((option, i) => (
+                  <div 
+                    key={i}
+                    className={`flex items-center justify-between p-3 rounded-lg ${option.color} border ${option.correct ? 'border-green-500/50' : 'border-transparent'}`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className={`w-6 h-6 rounded flex items-center justify-center text-xs font-bold ${option.correct ? 'bg-green-500 text-white' : 'bg-white/10 text-gray-400'}`}>
+                        {option.letter}
+                      </span>
+                      <span className={option.correct ? 'text-green-400' : 'text-gray-300'}>
+                        {option.text}
+                      </span>
+                    </div>
+                    <span className="text-gray-500 text-sm">{option.votes} votes</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </div>
 
+      {/* Features Section */}
+      <div className="relative z-10 container mx-auto px-6 py-20">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            Everything You Need to{' '}
+            <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+              Engage Students
+            </span>
+          </h2>
+          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+            Powerful tools designed for modern classrooms
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+          {features.map((feature, i) => (
+            <div 
+              key={i}
+              className="group p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-indigo-500/50 hover:bg-white/10 transition-all duration-300"
+            >
+              <div className="w-14 h-14 mb-4 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                {feature.icon}
+              </div>
+              <h3 className="text-lg font-semibold text-white mb-2">{feature.title}</h3>
+              <p className="text-gray-400 text-sm leading-relaxed">{feature.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Stats Section */}
+      <div className="relative z-10 container mx-auto px-6 py-16">
+        <div className="max-w-4xl mx-auto bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-10">
+          <div className="grid grid-cols-3 gap-8 text-center">
+            <div>
+              <div className="text-4xl font-black text-white mb-2">10K+</div>
+              <div className="text-sm text-gray-400 uppercase tracking-wide">Classrooms</div>
+            </div>
+            <div className="border-x border-white/10">
+              <div className="text-4xl font-black text-white mb-2">500K+</div>
+              <div className="text-sm text-gray-400 uppercase tracking-wide">Students</div>
+            </div>
+            <div>
+              <div className="text-4xl font-black text-white mb-2">1M+</div>
+              <div className="text-sm text-gray-400 uppercase tracking-wide">Questions</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* CTA Section */}
+      <div className="relative z-10 container mx-auto px-6 py-20">
+        <div className="max-w-3xl mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+            Ready to Transform Your Classroom?
+          </h2>
+          <p className="text-gray-400 text-lg mb-8">
+            Join thousands of teachers who are making learning more engaging.
+          </p>
+          <Link 
+            href="/signup"
+            className="inline-block px-10 py-4 text-lg font-bold text-white bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-all hover:-translate-y-1"
+          >
+            Start Your Free Trial
+          </Link>
+        </div>
+      </div>
+
       {/* Footer */}
-      <footer className="relative z-10 border-t border-[#e2e8f0] py-8 text-center text-[#64748b] text-sm bg-white/80 backdrop-blur-sm">
-        <p>© 2026 ClassDash. Making learning fun, one question at a time.</p>
+      <footer className="relative z-10 border-t border-white/10 py-8">
+        <div className="container mx-auto px-6 text-center text-gray-500 text-sm">
+          <p>© 2026 ClassDash. Making learning fun, one question at a time.</p>
+        </div>
       </footer>
     </main>
   );
