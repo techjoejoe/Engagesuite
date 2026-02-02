@@ -12,7 +12,7 @@ import { logEvent } from '@/lib/analytics';
 import HostMenu from '@/components/HostMenu';
 import { getStudentAssignments, ClassAlbum } from '@/lib/albums';
 
-function Trainer-ToolboxboardContent() {
+function ClassDashboardContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const classId = searchParams.get('id');
@@ -521,14 +521,14 @@ const AssignmentModal = ({ isOpen, onClose, classId }: { isOpen: boolean, onClos
     );
 };
 
-export default function Trainer-Toolboxboard() {
+export default function ClassDashboard() {
     return (
         <Suspense fallback={
             <div className="min-h-screen flex items-center justify-center bg-slate-900">
                 <div className="animate-pulse text-xl font-semibold text-gray-300">Loading...</div>
             </div>
         }>
-            <Trainer-ToolboxboardContent />
+            <ClassDashboardContent />
         </Suspense>
     );
 }

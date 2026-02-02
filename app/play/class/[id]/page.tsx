@@ -6,7 +6,7 @@ import { onClassChange, getClassByCode, Class } from '@/lib/classes';
 import { onAuthStateChange } from '@/lib/auth';
 import UserDash from '@/components/student/UserDash';
 
-export default function StudentTrainer-Toolboxboard() {
+export default function StudentClassDashboard() {
     const params = useParams();
     const id = params.id as string;
     const router = useRouter();

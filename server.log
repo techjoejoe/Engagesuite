@@ -512,3 +512,741 @@ Import trace for requested module:
 ./app/signup/page.tsx
  ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
  GET /apple-touch-icon.png 404 in 275ms
+ ⚠ ./app/signup/page.tsx
+Attempted import error: 'auth' is not exported from '@/lib/firebase' (imported as 'auth').
+
+Import trace for requested module:
+./app/signup/page.tsx
+
+./app/signup/page.tsx
+Attempted import error: 'auth' is not exported from '@/lib/firebase' (imported as 'auth').
+
+Import trace for requested module:
+./app/signup/page.tsx
+ ⨯ Error: Cannot find module './4121.js'
+Require stack:
+- /workspaces/Engagesuite/.next/server/webpack-runtime.js
+- /workspaces/Engagesuite/.next/server/app/_not-found/page.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/require.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/load-components.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/utils.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/options.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/index.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/parse-module.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/get-page-static-info.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-server.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/start-server.js
+    at __webpack_require__.f.require (.next/server/webpack-runtime.js:198:28)
+    at <unknown> (.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (.next/server/webpack-runtime.js:162:22)
+    at <unknown> (.next/server/app/student/dashboard/page.js:19:18213)
+    at Object.<anonymous> (.next/server/app/student/dashboard/page.js:19:18260) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array],
+  page: '/student/dashboard'
+}
+ ⚠ ./app/signup/page.tsx
+Attempted import error: 'auth' is not exported from '@/lib/firebase' (imported as 'auth').
+
+Import trace for requested module:
+./app/signup/page.tsx
+
+./app/signup/page.tsx
+Attempted import error: 'auth' is not exported from '@/lib/firebase' (imported as 'auth').
+
+Import trace for requested module:
+./app/signup/page.tsx
+ ⨯ Error: Cannot find module './4121.js'
+Require stack:
+- /workspaces/Engagesuite/.next/server/webpack-runtime.js
+- /workspaces/Engagesuite/.next/server/app/_not-found/page.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/require.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/load-components.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/utils.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/options.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/index.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/parse-module.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/get-page-static-info.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-server.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/start-server.js
+    at __webpack_require__.f.require (.next/server/webpack-runtime.js:198:28)
+    at <unknown> (.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (.next/server/webpack-runtime.js:162:22)
+    at <unknown> (.next/server/app/profile/page.js:1:16039)
+    at Object.<anonymous> (.next/server/app/profile/page.js:1:16087) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array],
+  page: '/profile'
+}
+ ⚠ ./app/signup/page.tsx
+Attempted import error: 'auth' is not exported from '@/lib/firebase' (imported as 'auth').
+
+Import trace for requested module:
+./app/signup/page.tsx
+
+./app/signup/page.tsx
+Attempted import error: 'auth' is not exported from '@/lib/firebase' (imported as 'auth').
+
+Import trace for requested module:
+./app/signup/page.tsx
+ GET /student/dashboard 500 in 3596ms
+ GET /profile 500 in 3589ms
+ ⨯ Error: Cannot find module './4121.js'
+Require stack:
+- /workspaces/Engagesuite/.next/server/webpack-runtime.js
+- /workspaces/Engagesuite/.next/server/pages/_document.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/require.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/load-components.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/utils.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/options.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/index.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/parse-module.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/get-page-static-info.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-server.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/start-server.js
+    at __webpack_require__.f.require (.next/server/webpack-runtime.js:198:28)
+    at <unknown> (.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (.next/server/webpack-runtime.js:162:22)
+    at <unknown> (.next/server/app/profile/page.js:1:16039)
+    at Object.<anonymous> (.next/server/app/profile/page.js:1:16087) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array],
+  page: '/profile'
+}
+ ⨯ Error: Cannot find module './4121.js'
+Require stack:
+- /workspaces/Engagesuite/.next/server/webpack-runtime.js
+- /workspaces/Engagesuite/.next/server/pages/_document.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/require.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/load-components.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/utils.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/options.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/index.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/parse-module.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/get-page-static-info.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-server.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/start-server.js
+    at __webpack_require__.f.require (.next/server/webpack-runtime.js:198:28)
+    at <unknown> (.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (.next/server/webpack-runtime.js:162:22)
+    at <unknown> (.next/server/app/student/dashboard/page.js:19:18213)
+    at Object.<anonymous> (.next/server/app/student/dashboard/page.js:19:18260) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array],
+  page: '/student/dashboard'
+}
+ GET /profile 500 in 247ms
+ GET /student/dashboard 500 in 237ms
+ ⨯ Error: Cannot find module './4121.js'
+Require stack:
+- /workspaces/Engagesuite/.next/server/webpack-runtime.js
+- /workspaces/Engagesuite/.next/server/pages/_document.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/require.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/load-components.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/utils.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/options.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/index.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/parse-module.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/get-page-static-info.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-server.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/start-server.js
+    at __webpack_require__.f.require (.next/server/webpack-runtime.js:198:28)
+    at <unknown> (.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (.next/server/webpack-runtime.js:162:22)
+    at <unknown> (.next/server/app/student/dashboard/page.js:19:18213)
+    at Object.<anonymous> (.next/server/app/student/dashboard/page.js:19:18260) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array],
+  page: '/student/dashboard'
+}
+ GET /student/dashboard 500 in 240ms
+ ⨯ Error: Cannot find module './4121.js'
+Require stack:
+- /workspaces/Engagesuite/.next/server/webpack-runtime.js
+- /workspaces/Engagesuite/.next/server/pages/_document.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/require.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/load-components.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/utils.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/options.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/index.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/parse-module.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/get-page-static-info.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-server.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/start-server.js
+    at __webpack_require__.f.require (.next/server/webpack-runtime.js:198:28)
+    at <unknown> (.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (.next/server/webpack-runtime.js:162:22)
+    at <unknown> (.next/server/app/profile/page.js:1:16039)
+    at Object.<anonymous> (.next/server/app/profile/page.js:1:16087) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array],
+  page: '/profile'
+}
+ GET /profile 500 in 267ms
+ ⨯ Error: Cannot find module './4121.js'
+Require stack:
+- /workspaces/Engagesuite/.next/server/webpack-runtime.js
+- /workspaces/Engagesuite/.next/server/pages/_document.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/require.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/load-components.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/utils.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/options.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/index.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/parse-module.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/get-page-static-info.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-server.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/start-server.js
+    at __webpack_require__.f.require (.next/server/webpack-runtime.js:198:28)
+    at <unknown> (.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (.next/server/webpack-runtime.js:162:22)
+    at <unknown> (.next/server/app/profile/page.js:1:16039)
+    at Object.<anonymous> (.next/server/app/profile/page.js:1:16087) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array],
+  page: '/profile'
+}
+ GET /profile 500 in 254ms
+ ⨯ Error: Cannot find module './4121.js'
+Require stack:
+- /workspaces/Engagesuite/.next/server/webpack-runtime.js
+- /workspaces/Engagesuite/.next/server/pages/_document.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/require.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/load-components.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/utils.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/options.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/index.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/parse-module.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/get-page-static-info.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-server.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/start-server.js
+    at __webpack_require__.f.require (.next/server/webpack-runtime.js:198:28)
+    at <unknown> (.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (.next/server/webpack-runtime.js:162:22)
+    at <unknown> (.next/server/app/student/dashboard/page.js:19:18213)
+    at Object.<anonymous> (.next/server/app/student/dashboard/page.js:19:18260) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array],
+  page: '/student/dashboard'
+}
+ GET /student/dashboard 500 in 275ms
+ ⚠ ./app/signup/page.tsx
+Attempted import error: 'auth' is not exported from '@/lib/firebase' (imported as 'auth').
+
+Import trace for requested module:
+./app/signup/page.tsx
+
+./app/signup/page.tsx
+Attempted import error: 'auth' is not exported from '@/lib/firebase' (imported as 'auth').
+
+Import trace for requested module:
+./app/signup/page.tsx
+ ⚠ ./app/signup/page.tsx
+Attempted import error: 'auth' is not exported from '@/lib/firebase' (imported as 'auth').
+
+Import trace for requested module:
+./app/signup/page.tsx
+
+./app/signup/page.tsx
+Attempted import error: 'auth' is not exported from '@/lib/firebase' (imported as 'auth').
+
+Import trace for requested module:
+./app/signup/page.tsx
+ ⨯ Error: Cannot find module './4121.js'
+Require stack:
+- /workspaces/Engagesuite/.next/server/webpack-runtime.js
+- /workspaces/Engagesuite/.next/server/pages/_document.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/require.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/load-components.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/utils.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/options.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/index.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/parse-module.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/get-page-static-info.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-server.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/start-server.js
+    at __webpack_require__.f.require (.next/server/webpack-runtime.js:198:28)
+    at <unknown> (.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (.next/server/webpack-runtime.js:162:22)
+    at <unknown> (.next/server/app/profile/page.js:1:16039)
+    at Object.<anonymous> (.next/server/app/profile/page.js:1:16087) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array],
+  page: '/profile'
+}
+ ⨯ Error: Cannot find module './4121.js'
+Require stack:
+- /workspaces/Engagesuite/.next/server/webpack-runtime.js
+- /workspaces/Engagesuite/.next/server/pages/_document.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/require.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/load-components.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/utils.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/options.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/index.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/parse-module.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/get-page-static-info.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-server.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/start-server.js
+    at __webpack_require__.f.require (.next/server/webpack-runtime.js:198:28)
+    at <unknown> (.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (.next/server/webpack-runtime.js:162:22)
+    at <unknown> (.next/server/app/student/dashboard/page.js:19:18213)
+    at Object.<anonymous> (.next/server/app/student/dashboard/page.js:19:18260) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array],
+  page: '/student/dashboard'
+}
+ GET /profile 500 in 277ms
+ GET /student/dashboard 500 in 231ms
+ ✓ Compiled /_error in 2.3s (1229 modules)
+ ⨯ Error: Cannot find module './4121.js'
+Require stack:
+- /workspaces/Engagesuite/.next/server/webpack-runtime.js
+- /workspaces/Engagesuite/.next/server/app/profile/page.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/require.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/load-components.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/utils.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/options.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/index.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/parse-module.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/get-page-static-info.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-server.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/start-server.js
+    at __webpack_require__.f.require (.next/server/webpack-runtime.js:198:28)
+    at <unknown> (.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (.next/server/webpack-runtime.js:162:22)
+    at <unknown> (.next/server/app/profile/page.js:1:16039)
+    at Object.<anonymous> (.next/server/app/profile/page.js:1:16087) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array],
+  page: '/profile'
+}
+ ⨯ Error: Cannot find module './4121.js'
+Require stack:
+- /workspaces/Engagesuite/.next/server/webpack-runtime.js
+- /workspaces/Engagesuite/.next/server/app/profile/page.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/require.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/load-components.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/utils.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/options.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/index.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/parse-module.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/get-page-static-info.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-server.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/start-server.js
+    at __webpack_require__.f.require (.next/server/webpack-runtime.js:198:28)
+    at <unknown> (.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (.next/server/webpack-runtime.js:162:22)
+    at <unknown> (.next/server/pages/_document.js:1:345)
+    at Object.<anonymous> (.next/server/pages/_document.js:1:393) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array]
+}
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET /student/dashboard 200 in 430ms
+ GET /profile 500 in 1862ms
+ ✓ Compiled /_not-found in 269ms (638 modules)
+ ⨯ Error: Cannot find module './4121.js'
+Require stack:
+- /workspaces/Engagesuite/.next/server/webpack-runtime.js
+- /workspaces/Engagesuite/.next/server/app/_not-found/page.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/require.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/load-components.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/utils.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/options.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/index.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/parse-module.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/get-page-static-info.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-server.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/start-server.js
+    at __webpack_require__.f.require (.next/server/webpack-runtime.js:198:28)
+    at <unknown> (.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (.next/server/webpack-runtime.js:162:22)
+    at <unknown> (.next/server/app/_not-found/page.js:1:2211)
+    at Object.<anonymous> (.next/server/app/_not-found/page.js:1:2259) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array]
+}
+ ⨯ Error: Cannot find module './4121.js'
+Require stack:
+- /workspaces/Engagesuite/.next/server/webpack-runtime.js
+- /workspaces/Engagesuite/.next/server/app/_not-found/page.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/require.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/load-components.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/utils.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/options.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/index.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/parse-module.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/get-page-static-info.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-server.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/start-server.js
+    at __webpack_require__.f.require (.next/server/webpack-runtime.js:198:28)
+    at <unknown> (.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (.next/server/webpack-runtime.js:162:22)
+    at <unknown> (.next/server/app/_not-found/page.js:1:2211)
+    at Object.<anonymous> (.next/server/app/_not-found/page.js:1:2259) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array]
+}
+ ⨯ Error: Cannot find module './4121.js'
+Require stack:
+- /workspaces/Engagesuite/.next/server/webpack-runtime.js
+- /workspaces/Engagesuite/.next/server/app/_not-found/page.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/require.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/load-components.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/utils.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/options.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/index.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/parse-module.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/get-page-static-info.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-server.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/start-server.js
+    at __webpack_require__.f.require (.next/server/webpack-runtime.js:198:28)
+    at <unknown> (.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (.next/server/webpack-runtime.js:162:22)
+    at <unknown> (.next/server/app/_not-found/page.js:1:2211)
+    at Object.<anonymous> (.next/server/app/_not-found/page.js:1:2259) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array]
+}
+ ⨯ Error: Cannot find module './4121.js'
+Require stack:
+- /workspaces/Engagesuite/.next/server/webpack-runtime.js
+- /workspaces/Engagesuite/.next/server/app/_not-found/page.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/require.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/load-components.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/utils.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/options.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/index.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/parse-module.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/get-page-static-info.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-server.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/start-server.js
+    at __webpack_require__.f.require (.next/server/webpack-runtime.js:198:28)
+    at <unknown> (.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (.next/server/webpack-runtime.js:162:22)
+    at <unknown> (.next/server/app/_not-found/page.js:1:2211)
+    at Object.<anonymous> (.next/server/app/_not-found/page.js:1:2259) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array]
+}
+ GET /_next/static/chunks/app/global-error.js 500 in 476ms
+ GET /_next/static/chunks/app/not-found.js 500 in 467ms
+ GET /_next/static/chunks/app-pages-internals.js 500 in 343ms
+ GET /_next/static/chunks/vendor.js?v=1770008430181 500 in 337ms
+ ⨯ Error: Cannot find module './4121.js'
+Require stack:
+- /workspaces/Engagesuite/.next/server/webpack-runtime.js
+- /workspaces/Engagesuite/.next/server/app/_not-found/page.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/require.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/load-components.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/utils.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/options.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/index.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/parse-module.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/get-page-static-info.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-server.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/start-server.js
+    at __webpack_require__.f.require (.next/server/webpack-runtime.js:198:28)
+    at <unknown> (.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (.next/server/webpack-runtime.js:162:22)
+    at <unknown> (.next/server/app/_not-found/page.js:1:2211)
+    at Object.<anonymous> (.next/server/app/_not-found/page.js:1:2259) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array]
+}
+ GET /_next/static/chunks/app/error.js 500 in 53ms
+ ⨯ Error: Cannot find module './4121.js'
+Require stack:
+- /workspaces/Engagesuite/.next/server/webpack-runtime.js
+- /workspaces/Engagesuite/.next/server/app/_not-found/page.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/require.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/load-components.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/utils.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/options.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/index.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/parse-module.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/get-page-static-info.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-server.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/start-server.js
+    at __webpack_require__.f.require (.next/server/webpack-runtime.js:198:28)
+    at <unknown> (.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (.next/server/webpack-runtime.js:162:22)
+    at <unknown> (.next/server/app/_not-found/page.js:1:2211)
+    at Object.<anonymous> (.next/server/app/_not-found/page.js:1:2259) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array]
+}
+ ⨯ Error: Cannot find module './4121.js'
+Require stack:
+- /workspaces/Engagesuite/.next/server/webpack-runtime.js
+- /workspaces/Engagesuite/.next/server/app/_not-found/page.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/require.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/load-components.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/utils.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/options.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/index.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/parse-module.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/get-page-static-info.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-server.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/start-server.js
+    at __webpack_require__.f.require (.next/server/webpack-runtime.js:198:28)
+    at <unknown> (.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (.next/server/webpack-runtime.js:162:22)
+    at <unknown> (.next/server/app/_not-found/page.js:1:2211)
+    at Object.<anonymous> (.next/server/app/_not-found/page.js:1:2259) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array]
+}
+ GET /_next/static/css/app/layout.css?v=1770008430181 500 in 95ms
+ GET /_next/static/chunks/main-app.js?v=1770008430181 500 in 85ms
+ ⨯ Error: Cannot find module './4121.js'
+Require stack:
+- /workspaces/Engagesuite/.next/server/webpack-runtime.js
+- /workspaces/Engagesuite/.next/server/app/_not-found/page.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/require.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/load-components.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/utils.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/options.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/index.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/parse-module.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/get-page-static-info.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-server.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/start-server.js
+    at __webpack_require__.f.require (.next/server/webpack-runtime.js:198:28)
+    at <unknown> (.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (.next/server/webpack-runtime.js:162:22)
+    at <unknown> (.next/server/app/_not-found/page.js:1:2211)
+    at Object.<anonymous> (.next/server/app/_not-found/page.js:1:2259) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array]
+}
+ GET /apple-touch-icon.png 500 in 294ms
+ ✓ Compiled in 507ms (592 modules)
+ ⨯ Error: Cannot find module './4121.js'
+Require stack:
+- /workspaces/Engagesuite/.next/server/webpack-runtime.js
+- /workspaces/Engagesuite/.next/server/app/_not-found/page.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/require.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/load-components.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/utils.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/options.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/index.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/parse-module.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/get-page-static-info.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-server.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/start-server.js
+    at __webpack_require__.f.require (.next/server/webpack-runtime.js:198:28)
+    at <unknown> (.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (.next/server/webpack-runtime.js:162:22)
+    at <unknown> (.next/server/app/profile/page.js:1:16039)
+    at Object.<anonymous> (.next/server/app/profile/page.js:1:16087) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array],
+  page: '/profile'
+}
+ ⨯ Error: Cannot find module './4121.js'
+Require stack:
+- /workspaces/Engagesuite/.next/server/webpack-runtime.js
+- /workspaces/Engagesuite/.next/server/app/_not-found/page.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/require.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/load-components.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/utils.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/options.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/swc/index.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/parse-module.js
+- /workspaces/Engagesuite/node_modules/next/dist/build/analysis/get-page-static-info.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/router-server.js
+- /workspaces/Engagesuite/node_modules/next/dist/server/lib/start-server.js
+    at __webpack_require__.f.require (.next/server/webpack-runtime.js:198:28)
+    at <unknown> (.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (.next/server/webpack-runtime.js:162:22)
+    at <unknown> (.next/server/pages/_document.js:1:345)
+    at Object.<anonymous> (.next/server/pages/_document.js:1:393) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array]
+}
+ GET /profile 500 in 139ms
+Failed to get source map: [Error: Failed to read file contents of /workspaces/Engagesuite/.next/server/webpack-runtime.js.] {
+  [cause]: [Error: ENOENT: no such file or directory, open '/workspaces/Engagesuite/.next/server/webpack-runtime.js'] {
+    errno: -2,
+    code: 'ENOENT',
+    syscall: 'open',
+    path: '/workspaces/Engagesuite/.next/server/webpack-runtime.js'
+  }
+}
+Failed to get source map: [Error: Failed to read file contents of /workspaces/Engagesuite/.next/server/pages/_document.js.] {
+  [cause]: [Error: ENOENT: no such file or directory, open '/workspaces/Engagesuite/.next/server/pages/_document.js'] {
+    errno: -2,
+    code: 'ENOENT',
+    syscall: 'open',
+    path: '/workspaces/Engagesuite/.next/server/pages/_document.js'
+  }
+}
+Failed to get source map: [Error: Failed to read file contents of /workspaces/Engagesuite/.next/server/webpack-runtime.js.] {
+  [cause]: [Error: ENOENT: no such file or directory, open '/workspaces/Engagesuite/.next/server/webpack-runtime.js'] {
+    errno: -2,
+    code: 'ENOENT',
+    syscall: 'open',
+    path: '/workspaces/Engagesuite/.next/server/webpack-runtime.js'
+  }
+}
+Failed to get source map: [Error: Failed to read file contents of /workspaces/Engagesuite/.next/server/webpack-runtime.js.] {
+  [cause]: [Error: ENOENT: no such file or directory, open '/workspaces/Engagesuite/.next/server/webpack-runtime.js'] {
+    errno: -2,
+    code: 'ENOENT',
+    syscall: 'open',
+    path: '/workspaces/Engagesuite/.next/server/webpack-runtime.js'
+  }
+}
+Failed to get source map: [Error: Failed to read file contents of /workspaces/Engagesuite/.next/server/webpack-runtime.js.] {
+  [cause]: [Error: ENOENT: no such file or directory, open '/workspaces/Engagesuite/.next/server/webpack-runtime.js'] {
+    errno: -2,
+    code: 'ENOENT',
+    syscall: 'open',
+    path: '/workspaces/Engagesuite/.next/server/webpack-runtime.js'
+  }
+}
+Failed to get source map: [Error: Failed to read file contents of /workspaces/Engagesuite/.next/server/pages/_document.js.] {
+  [cause]: [Error: ENOENT: no such file or directory, open '/workspaces/Engagesuite/.next/server/pages/_document.js'] {
+    errno: -2,
+    code: 'ENOENT',
+    syscall: 'open',
+    path: '/workspaces/Engagesuite/.next/server/pages/_document.js'
+  }
+}
+Failed to get source map: [Error: Failed to read file contents of /workspaces/Engagesuite/.next/server/webpack-runtime.js.] {
+  [cause]: [Error: ENOENT: no such file or directory, open '/workspaces/Engagesuite/.next/server/webpack-runtime.js'] {
+    errno: -2,
+    code: 'ENOENT',
+    syscall: 'open',
+    path: '/workspaces/Engagesuite/.next/server/webpack-runtime.js'
+  }
+}
+Failed to get source map: [Error: Failed to read file contents of /workspaces/Engagesuite/.next/server/pages/_document.js.] {
+  [cause]: [Error: ENOENT: no such file or directory, open '/workspaces/Engagesuite/.next/server/pages/_document.js'] {
+    errno: -2,
+    code: 'ENOENT',
+    syscall: 'open',
+    path: '/workspaces/Engagesuite/.next/server/pages/_document.js'
+  }
+}
+Failed to get source map: [Error: Failed to read file contents of /workspaces/Engagesuite/.next/server/webpack-runtime.js.] {
+  [cause]: [Error: ENOENT: no such file or directory, open '/workspaces/Engagesuite/.next/server/webpack-runtime.js'] {
+    errno: -2,
+    code: 'ENOENT',
+    syscall: 'open',
+    path: '/workspaces/Engagesuite/.next/server/webpack-runtime.js'
+  }
+}
+Failed to get source map: [Error: Failed to read file contents of /workspaces/Engagesuite/.next/server/webpack-runtime.js.] {
+  [cause]: [Error: ENOENT: no such file or directory, open '/workspaces/Engagesuite/.next/server/webpack-runtime.js'] {
+    errno: -2,
+    code: 'ENOENT',
+    syscall: 'open',
+    path: '/workspaces/Engagesuite/.next/server/webpack-runtime.js'
+  }
+}
+Failed to get source map: [Error: Failed to read file contents of /workspaces/Engagesuite/.next/server/webpack-runtime.js.] {
+  [cause]: [Error: ENOENT: no such file or directory, open '/workspaces/Engagesuite/.next/server/webpack-runtime.js'] {
+    errno: -2,
+    code: 'ENOENT',
+    syscall: 'open',
+    path: '/workspaces/Engagesuite/.next/server/webpack-runtime.js'
+  }
+}
+Failed to get source map: [Error: Failed to read file contents of /workspaces/Engagesuite/.next/server/pages/_document.js.] {
+  [cause]: [Error: ENOENT: no such file or directory, open '/workspaces/Engagesuite/.next/server/pages/_document.js'] {
+    errno: -2,
+    code: 'ENOENT',
+    syscall: 'open',
+    path: '/workspaces/Engagesuite/.next/server/pages/_document.js'
+  }
+}

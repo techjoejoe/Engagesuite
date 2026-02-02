@@ -3,6 +3,7 @@ import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
 import { getFirestore, Firestore, enableIndexedDbPersistence, enableMultiTabIndexedDbPersistence } from 'firebase/firestore';
 import { getDatabase, Database } from 'firebase/database';
 import { getStorage, FirebaseStorage } from 'firebase/storage';
+import { getAuth, Auth } from 'firebase/auth';
 
 const firebaseConfig = {
     // NOTE: Replace these with your actual Firebase configuration
@@ -21,12 +22,14 @@ let app: FirebaseApp;
 let db: Firestore;
 let realtimeDb: Database;
 let storage: FirebaseStorage;
+let auth: Auth;
 
 if (!getApps().length) {
     app = initializeApp(firebaseConfig);
     db = getFirestore(app);
     realtimeDb = getDatabase(app);
     storage = getStorage(app);
+    auth = getAuth(app);
     
     // Enable offline persistence for instant reads (<50ms)
     // This caches data locally for immediate access
@@ -48,6 +51,7 @@ if (!getApps().length) {
     db = getFirestore(app);
     realtimeDb = getDatabase(app);
     storage = getStorage(app);
+    auth = getAuth(app);
 }
 
-export { app, db, realtimeDb, storage };
+export { app, db, realtimeDb, storage, auth };
