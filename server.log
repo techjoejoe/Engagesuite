@@ -362,3 +362,153 @@ Import trace for requested module:
  GET /favicon.ico 200 in 15ms
  GET /apple-touch-icon.png 404 in 32ms
  GET /signup 200 in 20ms
+ GET /favicon.ico 200 in 9ms
+ ⚠ ./app/signup/page.tsx
+Attempted import error: 'auth' is not exported from '@/lib/firebase' (imported as 'auth').
+
+Import trace for requested module:
+./app/signup/page.tsx
+
+./app/signup/page.tsx
+Attempted import error: 'auth' is not exported from '@/lib/firebase' (imported as 'auth').
+
+Import trace for requested module:
+./app/signup/page.tsx
+ ⚠ ./app/signup/page.tsx
+Attempted import error: 'auth' is not exported from '@/lib/firebase' (imported as 'auth').
+
+Import trace for requested module:
+./app/signup/page.tsx
+
+./app/signup/page.tsx
+Attempted import error: 'auth' is not exported from '@/lib/firebase' (imported as 'auth').
+
+Import trace for requested module:
+./app/signup/page.tsx
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET /dashboard 200 in 2562ms
+ ⚠ ./app/signup/page.tsx
+Attempted import error: 'auth' is not exported from '@/lib/firebase' (imported as 'auth').
+
+Import trace for requested module:
+./app/signup/page.tsx
+
+./app/signup/page.tsx
+Attempted import error: 'auth' is not exported from '@/lib/firebase' (imported as 'auth').
+
+Import trace for requested module:
+./app/signup/page.tsx
+ ⚠ ./app/signup/page.tsx
+Attempted import error: 'auth' is not exported from '@/lib/firebase' (imported as 'auth').
+
+Import trace for requested module:
+./app/signup/page.tsx
+
+./app/signup/page.tsx
+Attempted import error: 'auth' is not exported from '@/lib/firebase' (imported as 'auth').
+
+Import trace for requested module:
+./app/signup/page.tsx
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET /apple-touch-icon.png 404 in 267ms
+ ⚠ ./app/signup/page.tsx
+Attempted import error: 'auth' is not exported from '@/lib/firebase' (imported as 'auth').
+
+Import trace for requested module:
+./app/signup/page.tsx
+
+./app/signup/page.tsx
+Attempted import error: 'auth' is not exported from '@/lib/firebase' (imported as 'auth').
+
+Import trace for requested module:
+./app/signup/page.tsx
+ ⚠ ./app/signup/page.tsx
+Attempted import error: 'auth' is not exported from '@/lib/firebase' (imported as 'auth').
+
+Import trace for requested module:
+./app/signup/page.tsx
+
+./app/signup/page.tsx
+Attempted import error: 'auth' is not exported from '@/lib/firebase' (imported as 'auth').
+
+Import trace for requested module:
+./app/signup/page.tsx
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET /student/dashboard 200 in 1582ms
+ GET /apple-touch-icon.png 404 in 38ms
+ GET /dashboard 200 in 236ms
+ GET /student/dashboard 200 in 42ms
+ GET /apple-touch-icon.png 404 in 64ms
+ GET /student/dashboard 200 in 22ms
+ GET /favicon.ico 200 in 47ms
+ GET /apple-touch-icon.png 404 in 37ms
+ GET /login 200 in 17ms
+ GET /apple-touch-icon.png 404 in 17ms
+ GET /dashboard 200 in 19ms
+ GET /apple-touch-icon.png 404 in 16ms
+ GET /student/dashboard 200 in 13ms
+ ⚠ ./app/signup/page.tsx
+Attempted import error: 'auth' is not exported from '@/lib/firebase' (imported as 'auth').
+
+Import trace for requested module:
+./app/signup/page.tsx
+
+./app/signup/page.tsx
+Attempted import error: 'auth' is not exported from '@/lib/firebase' (imported as 'auth').
+
+Import trace for requested module:
+./app/signup/page.tsx
+ ⚠ ./app/signup/page.tsx
+Attempted import error: 'auth' is not exported from '@/lib/firebase' (imported as 'auth').
+
+Import trace for requested module:
+./app/signup/page.tsx
+
+./app/signup/page.tsx
+Attempted import error: 'auth' is not exported from '@/lib/firebase' (imported as 'auth').
+
+Import trace for requested module:
+./app/signup/page.tsx
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET /profile 200 in 1815ms
+ GET /student/dashboard 200 in 20ms
+ GET /profile 200 in 13ms
+ GET /apple-touch-icon.png 404 in 37ms
+ ⚠ ./app/signup/page.tsx
+Attempted import error: 'auth' is not exported from '@/lib/firebase' (imported as 'auth').
+
+Import trace for requested module:
+./app/signup/page.tsx
+
+./app/signup/page.tsx
+Attempted import error: 'auth' is not exported from '@/lib/firebase' (imported as 'auth').
+
+Import trace for requested module:
+./app/signup/page.tsx
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET /profile 200 in 129ms
+ GET /student/dashboard 200 in 25ms
+ ⚠ ./app/signup/page.tsx
+Attempted import error: 'auth' is not exported from '@/lib/firebase' (imported as 'auth').
+
+Import trace for requested module:
+./app/signup/page.tsx
+
+./app/signup/page.tsx
+Attempted import error: 'auth' is not exported from '@/lib/firebase' (imported as 'auth').
+
+Import trace for requested module:
+./app/signup/page.tsx
+ ⚠ ./app/signup/page.tsx
+Attempted import error: 'auth' is not exported from '@/lib/firebase' (imported as 'auth').
+
+Import trace for requested module:
+./app/signup/page.tsx
+
+./app/signup/page.tsx
+Attempted import error: 'auth' is not exported from '@/lib/firebase' (imported as 'auth').
+
+Import trace for requested module:
+./app/signup/page.tsx
+ ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+ GET /apple-touch-icon.png 404 in 275ms

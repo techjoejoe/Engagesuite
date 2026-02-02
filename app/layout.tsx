@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 // SEO Metadata
 export const metadata: Metadata = {
   title: {
-    default: "Trainer-Toolbox - Interactive Training Tools Platform Platform",
+    default: "Trainer-Toolbox - Interactive Training Tools Platform",
     template: "%s | Trainer-Toolbox",
   },
   description: "Engage students with live quizzes, polls, word clouds, and interactive activities. Transform your classroom with real-time engagement tools.",
