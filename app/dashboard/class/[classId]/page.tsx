@@ -7,7 +7,7 @@ import { useRouter, useParams } from 'next/navigation';
  * This page redirects to the main class dashboard using query params.
  * The canonical URL is /dashboard/class?id=classId
  */
-export default function ClassDashboardRedirect() {
+export default function Trainer-ToolboxboardRedirect() {
     const router = useRouter();
     const params = useParams();
     const classId = params.classId as string;

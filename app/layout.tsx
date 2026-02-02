@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 // SEO Metadata
 export const metadata: Metadata = {
   title: {
-    default: "ClassDash - Interactive Classroom Engagement Platform",
-    template: "%s | ClassDash",
+    default: "Trainer-Toolbox - Interactive Training Tools Platform Platform",
+    template: "%s | Trainer-Toolbox",
   },
   description: "Engage students with live quizzes, polls, word clouds, and interactive activities. Transform your classroom with real-time engagement tools.",
   keywords: [
@@ -31,23 +31,23 @@ export const metadata: Metadata = {
     "classroom games",
     "teaching tools",
   ],
-  authors: [{ name: "ClassDash Team" }],
-  creator: "ClassDash",
-  publisher: "ClassDash",
+  authors: [{ name: "Trainer-Toolbox Team" }],
+  creator: "Trainer-Toolbox",
+  publisher: "Trainer-Toolbox",
 
   // Open Graph (for social sharing)
   openGraph: {
     type: "website",
     locale: "en_US",
-    siteName: "ClassDash",
-    title: "ClassDash - Interactive Classroom Engagement",
+    siteName: "Trainer-Toolbox",
+    title: "Trainer-Toolbox - Interactive Training Tools Platform",
     description: "Transform learning with live quizzes, polls, and interactive activities.",
     images: [
       {
         url: "/og-image.png", // You'll need to add this image to /public
         width: 1200,
         height: 630,
-        alt: "ClassDash - Interactive Classroom Platform",
+        alt: "Trainer-Toolbox - Interactive Classroom Platform",
       },
     ],
   },
@@ -55,7 +55,7 @@ export const metadata: Metadata = {
   // Twitter Card
   twitter: {
     card: "summary_large_image",
-    title: "ClassDash - Interactive Classroom Engagement",
+    title: "Trainer-Toolbox - Interactive Training Tools Platform",
     description: "Transform learning with live quizzes, polls, and interactive activities.",
     images: ["/og-image.png"],
   },

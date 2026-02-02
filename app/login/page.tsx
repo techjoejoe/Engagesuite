@@ -61,7 +61,7 @@ function LoginContent() {
         <div className="w-full max-w-md relative z-10">
             <div className="glass-card-strong p-8 md:p-12 animate-fade-in">
                 <div className="text-center mb-8">
-                    <div className="text-6xl mb-4">🔐</div>
+                    <div className="text-8xl mb-6">🔐</div>
                     <h1 className="text-3xl font-bold text-white mb-2">Welcome Back</h1>
                     <p className="text-[#94A3B8]">
                         Login to play and track your points
@@ -110,7 +110,7 @@ function LoginContent() {
                         type="submit"
                         disabled={loading}
                     >
-                        {loading ? 'Logging in...' : '🚀 Login'}
+                        {loading ? 'Logging in...' : <><span className="text-2xl">🚀</span> Login</>}
                     </Button>
                 </form>
 
@@ -154,12 +154,12 @@ function LoginContent() {
 
 export default function LoginPage() {
     return (
-        <main className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
+        <main className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a]">
             {/* Background Blobs - Vibrant */}
             <div className="absolute inset-0 z-0 overflow-hidden">
-                <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-[#7C3AED]/40 rounded-full blur-[150px] animate-blob" />
-                <div className="absolute top-[30%] right-[-15%] w-[45%] h-[45%] bg-[#06B6D4]/35 rounded-full blur-[130px] animate-blob animation-delay-2000" />
-                <div className="absolute bottom-[-15%] left-[25%] w-[50%] h-[50%] bg-[#F472B6]/30 rounded-full blur-[140px] animate-blob animation-delay-4000" />
+                <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-600/20 rounded-full blur-[150px] animate-blob" />
+                <div className="absolute top-[30%] right-[-15%] w-[45%] h-[45%] bg-purple-600/15 rounded-full blur-[130px] animate-blob animation-delay-2000" />
+                <div className="absolute bottom-[-15%] left-[25%] w-[50%] h-[50%] bg-indigo-500/10 rounded-full blur-[140px] animate-blob animation-delay-4000" />
             </div>
 
             <Suspense fallback={<div className="text-center text-white">Loading...</div>}>

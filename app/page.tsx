@@ -37,24 +37,24 @@ export default function Home() {
       {/* Navigation */}
       <nav className="relative z-10 flex justify-between items-center p-6 max-w-7xl mx-auto">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center text-2xl shadow-lg">
+          <div className="w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center text-2xl shadow-lg">
             🚀
           </div>
           <div>
-            <div className="text-xl font-bold text-white">ClassDash</div>
-            <div className="text-xs text-gray-400">Classroom Engagement</div>
+            <div className="text-2xl font-bold text-white whitespace-nowrap">Trainer-Toolbox</div>
+            <div className="text-sm text-gray-400">Training Tools Platform</div>
           </div>
         </div>
         <div className="flex items-center gap-4">
           <Link 
             href="/login" 
-            className="px-5 py-2.5 text-sm font-semibold text-white hover:text-indigo-300 transition-colors"
+            className="px-4 py-2 text-sm font-semibold whitespace-nowrap text-white hover:text-indigo-300 transition-colors"
           >
             Sign In
           </Link>
           <Link 
             href="/signup" 
-            className="px-6 py-2.5 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg shadow-lg shadow-indigo-500/25 transition-all hover:-translate-y-0.5"
+            className="px-4 py-2 text-sm font-bold whitespace-nowrap text-white bg-gradient-to-r from-pink-500 to-orange-400 hover:from-pink-600 hover:to-orange-500 rounded-lg shadow-lg shadow-indigo-500/25 transition-all hover:-translate-y-0.5"
           >
             Start Free Trial
           </Link>
@@ -71,14 +71,14 @@ export default function Home() {
               Trusted by 2,500+ Teachers
             </div>
 
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 leading-tight">
+            <h1 className="text-6xl md:text-6xl lg:text-7xl font-black text-white mb-6 leading-tight">
               Make Learning{' '}
               <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
                 Unforgettable
               </span>
             </h1>
 
-            <p className="text-lg md:text-xl text-gray-300 mb-8 leading-relaxed">
+            <p className="text-xl md:text-2xl text-gray-300 mb-8 leading-relaxed">
               Engage your students with live polls, quizzes, and interactive games. 
               Transform your classroom into an exciting learning experience.
             </p>
@@ -86,13 +86,13 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-4">
               <Link 
                 href="/signup"
-                className="px-8 py-4 text-center font-bold text-white bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-all hover:-translate-y-1"
+                className="px-10 py-5 text-center font-bold text-white bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-all hover:-translate-y-1"
               >
                 Get Started Free
               </Link>
               <Link 
                 href="/login"
-                className="px-8 py-4 text-center font-semibold text-white border border-white/20 rounded-xl hover:bg-white/5 transition-all"
+                className="px-10 py-5 text-center font-semibold text-white border border-white/20 rounded-xl hover:bg-white/5 transition-all"
               >
                 Watch Demo
               </Link>
@@ -155,7 +155,7 @@ export default function Home() {
       {/* Features Section */}
       <div className="relative z-10 container mx-auto px-6 py-20">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+          <h2 className="text-3xl md:text-6xl font-bold text-white mb-4">
             Everything You Need to{' '}
             <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
               Engage Students
@@ -172,11 +172,11 @@ export default function Home() {
               key={i}
               className="group p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-indigo-500/50 hover:bg-white/10 transition-all duration-300"
             >
-              <div className="w-14 h-14 mb-4 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+              <div className="w-20 h-20 mb-4 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center text-6xl group-hover:scale-110 transition-transform">
                 {feature.icon}
               </div>
-              <h3 className="text-lg font-semibold text-white mb-2">{feature.title}</h3>
-              <p className="text-gray-400 text-sm leading-relaxed">{feature.desc}</p>
+              <h3 className="text-2xl font-bold text-white whitespace-nowrap mb-2">{feature.title}</h3>
+              <p className="text-gray-300 text-base leading-relaxed">{feature.desc}</p>
             </div>
           ))}
         </div>
@@ -187,15 +187,15 @@ export default function Home() {
         <div className="max-w-4xl mx-auto bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-10">
           <div className="grid grid-cols-3 gap-8 text-center">
             <div>
-              <div className="text-4xl font-black text-white mb-2">10K+</div>
+              <div className="text-6xl font-black text-white mb-2">10K+</div>
               <div className="text-sm text-gray-400 uppercase tracking-wide">Classrooms</div>
             </div>
             <div className="border-x border-white/10">
-              <div className="text-4xl font-black text-white mb-2">500K+</div>
+              <div className="text-6xl font-black text-white mb-2">500K+</div>
               <div className="text-sm text-gray-400 uppercase tracking-wide">Students</div>
             </div>
             <div>
-              <div className="text-4xl font-black text-white mb-2">1M+</div>
+              <div className="text-6xl font-black text-white mb-2">1M+</div>
               <div className="text-sm text-gray-400 uppercase tracking-wide">Questions</div>
             </div>
           </div>
@@ -205,7 +205,7 @@ export default function Home() {
       {/* CTA Section */}
       <div className="relative z-10 container mx-auto px-6 py-20">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+          <h2 className="text-3xl md:text-6xl font-bold text-white mb-6">
             Ready to Transform Your Classroom?
           </h2>
           <p className="text-gray-400 text-lg mb-8">
@@ -223,7 +223,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="relative z-10 border-t border-white/10 py-8">
         <div className="container mx-auto px-6 text-center text-gray-500 text-sm">
-          <p>© 2026 ClassDash. Making learning fun, one question at a time.</p>
+          <p>© 2026 Trainer-Toolbox. Making learning fun, one question at a time.</p>
         </div>
       </footer>
     </main>
