@@ -248,7 +248,7 @@ export default function HostMenu({ currentPage = '', classId, className = '' }: 
             {/* Hamburger Button - Right Side */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className={`fixed top-4 right-4 w-12 h-12 bg-white dark:bg-slate-800 shadow-xl border-2 border-indigo-500 rounded-full flex flex-col items-center justify-center gap-1 z-[2000] hover:scale-110 transition-all duration-300 focus:outline-none ${className}`}
+                className={`fixed top-4 right-4 w-12 h-12 bg-slate-800 shadow-xl border-2 border-indigo-500 rounded-full flex flex-col items-center justify-center gap-1 z-[2000] hover:scale-110 transition-all duration-300 focus:outline-none ${className}`}
                 aria-label="Menu"
             >
                 {unansweredCount > 0 && (

@@ -181,16 +181,16 @@ export default function AlbumPlayerContent({ id: propId }: { id?: string }) {
     };
 
     return (
-        <div className="min-h-screen bg-[#F3F4F6] text-gray-900 flex flex-col md:flex-row font-sans">
+        <div className="min-h-screen bg-slate-900 text-white flex flex-col md:flex-row font-sans">
 
             {/* 1. Sidebar Navigation */}
-            <aside className="w-full md:w-72 bg-white text-gray-900 border-r border-gray-200 flex flex-col h-auto md:h-screen sticky top-0">
-                <div className="p-6 border-b border-gray-100">
-                    <button onClick={() => router.back()} className="text-sm text-gray-500 hover:text-gray-900 mb-4 flex items-center gap-1">
+            <aside className="w-full md:w-72 bg-slate-800/80 text-white border-r border-white/10 flex flex-col h-auto md:h-screen sticky top-0">
+                <div className="p-6 border-b border-white/10">
+                    <button onClick={() => router.back()} className="text-sm text-white/60 hover:text-white mb-4 flex items-center gap-1">
                         <ChevronLeft className="w-4 h-4" /> Back to Class
                     </button>
-                    <h1 className="font-bold text-xl text-gray-900 leading-tight">{assignment.title}</h1>
-                    <div className="mt-2 w-full bg-gray-100 rounded-full h-2">
+                    <h1 className="font-bold text-xl text-white leading-tight">{assignment.title}</h1>
+                    <div className="mt-2 w-full bg-white/10 rounded-full h-2">
                         <div
                             className="bg-green-500 h-2 rounded-full transition-all duration-500"
                             style={{ width: `${progress.percentComplete}%` }}
@@ -207,7 +207,7 @@ export default function AlbumPlayerContent({ id: propId }: { id?: string }) {
                             <button
                                 key={page.id}
                                 onClick={() => setActivePageId(page.id)}
-                                className={`w-full text-left p-3 rounded-lg flex items-start gap-3 transition-all ${isActive ? 'bg-blue-50 text-blue-800' : 'hover:bg-gray-50 text-gray-600'
+                                className={`w-full text-left p-3 rounded-lg flex items-start gap-3 transition-all ${isActive ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/10 text-white/60'
                                     }`}
                             >
                                 <div className={`mt-0.5 ${isActive ? 'text-blue-600' : 'text-gray-400'}`}>
@@ -228,15 +228,15 @@ export default function AlbumPlayerContent({ id: propId }: { id?: string }) {
                 <div className="max-w-3xl mx-auto py-12 px-6 pb-32">
 
                     <header className="mb-10">
-                        <h2 className="text-3xl font-extrabold text-gray-900">{activePage.title}</h2>
+                        <h2 className="text-3xl font-extrabold text-white">{activePage.title}</h2>
                     </header>
 
                     <div className="space-y-8">
                         {activePage.blocks.map((block) => (
-                            <div key={block.id} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                            <div key={block.id} className="bg-white/5 p-6 rounded-2xl shadow-sm border border-white/10">
                                 {/* Type: Text */}
                                 {block.type === 'text' && (
-                                    <div className="prose prose-lg text-gray-700 max-w-none whitespace-pre-wrap">
+                                    <div className="prose prose-lg text-white/80 max-w-none whitespace-pre-wrap">
                                         {block.content}
                                     </div>
                                 )}
@@ -256,7 +256,7 @@ export default function AlbumPlayerContent({ id: propId }: { id?: string }) {
                                             <span className="text-gray-400 text-xs">{block.points} pts</span>
                                         </div>
 
-                                        <h3 className="text-lg font-medium text-gray-900">{block.content}</h3>
+                                        <h3 className="text-lg font-medium text-white">{block.content}</h3>
 
                                         {/* Short Answer (Fill in the Blank) */}
                                         {(block.questionType === 'short_answer' || !block.questionType) && (
@@ -265,7 +265,7 @@ export default function AlbumPlayerContent({ id: propId }: { id?: string }) {
                                                     type="text"
                                                     value={getSavedAnswer(block.id)}
                                                     onChange={(e) => handleAnswerChange(block.id, e.target.value)}
-                                                    className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent font-medium text-gray-800"
+                                                    className="w-full p-4 border border-white/20 rounded-xl bg-white/5 focus:ring-2 focus:ring-indigo-500 focus:border-transparent font-medium text-white"
                                                     placeholder="Type your answer here..."
                                                 />
                                                 <div className="mt-2 flex justify-end">
@@ -309,7 +309,7 @@ export default function AlbumPlayerContent({ id: propId }: { id?: string }) {
                                                     const isCorrectOption = option === block.correctAnswerHash;
 
                                                     // Determine styling based on state
-                                                    let buttonStyle = "border-gray-100 bg-gray-50 text-gray-700";
+                                                    let buttonStyle = "border-white/10 bg-white/5 text-white/70";
                                                     let icon = null;
 
                                                     if (hasSubmitted) {
@@ -320,13 +320,13 @@ export default function AlbumPlayerContent({ id: propId }: { id?: string }) {
                                                             buttonStyle = "border-red-500 bg-red-50 text-red-800 ring-1 ring-red-500";
                                                             icon = <XCircle className="w-5 h-5 text-red-600" />;
                                                         } else {
-                                                            buttonStyle = "border-gray-100 bg-gray-50 text-gray-400 opacity-60";
+                                                            buttonStyle = "border-white/10 bg-white/5 text-white/40 opacity-60";
                                                         }
                                                     } else {
                                                         // Interactive state
                                                         buttonStyle = isSelected
-                                                            ? 'border-blue-500 bg-blue-50 text-blue-800'
-                                                            : 'border-gray-100 bg-gray-50 hover:border-blue-200 hover:bg-white text-gray-700';
+                                                            ? 'border-blue-500 bg-indigo-500/20 text-indigo-300'
+                                                            : 'border-white/10 bg-white/5 hover:border-indigo-400 hover:bg-white/10 text-white/70';
                                                         if (isSelected) icon = <CheckCircle className="w-5 h-5 text-blue-600" />;
                                                     }
 
@@ -377,11 +377,11 @@ export default function AlbumPlayerContent({ id: propId }: { id?: string }) {
                     </div>
 
                     {/* Navigation Footer */}
-                    <div className="mt-16 flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                    <div className="mt-16 flex justify-between items-center bg-white/5 p-4 rounded-2xl shadow-sm border border-white/10">
                         <button
                             disabled={isFirstPage}
                             onClick={() => setActivePageId(template.pages[activePageIndex - 1].id)}
-                            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${isFirstPage ? 'opacity-50 cursor-not-allowed text-gray-400' : 'text-gray-700 hover:bg-gray-50'
+                            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${isFirstPage ? 'opacity-50 cursor-not-allowed text-white/40' : 'text-white/70 hover:bg-white/10'
                                 }`}
                         >
                             <ChevronLeft className="w-5 h-5" /> Previous

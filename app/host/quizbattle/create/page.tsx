@@ -484,7 +484,7 @@ function CreateQuizContent() {
                         />
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                             <span style={{
-                                backgroundColor: '#E3F2FD',
+                                backgroundColor: 'rgba(255,255,255,0.08)',
                                 padding: '8px 16px',
                                 borderRadius: '20px',
                                 fontSize: '14px',
@@ -777,7 +777,7 @@ function CreateQuizContent() {
                             padding: '12px 32px',
                             fontSize: '16px',
                             fontWeight: '600',
-                            backgroundColor: (!userId || uploading) ? '#ccc' : '#4CAF50',
+                            backgroundColor: (!userId || uploading) ? 'rgba(255,255,255,0.1)' : '#4CAF50',
                             color: '#ffffff',
                             border: 'none',
                             borderRadius: '8px',
@@ -855,7 +855,7 @@ function CreateQuizContent() {
                                 disabled={giphyLoading}
                                 style={{
                                     padding: '12px 24px',
-                                    backgroundColor: giphyLoading ? '#ccc' : '#4A90E2',
+                                    backgroundColor: giphyLoading ? 'rgba(255,255,255,0.1)' : '#4A90E2',
                                     color: '#ffffff',
                                     border: 'none',
                                     borderRadius: '8px',

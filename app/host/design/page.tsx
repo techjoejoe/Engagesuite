@@ -95,7 +95,7 @@ export default function AlbumDesignerDashboard() {
     const displayedAlbums = activeTab === 'my' ? albums : libraryAlbums;
 
     return (
-        <div className="min-h-screen bg-[#F3F4F6] p-8 font-sans">
+        <div className="min-h-screen bg-slate-900 p-8 font-sans">
             <div className="max-w-6xl mx-auto">
                 <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
                     <div>
@@ -135,12 +135,12 @@ export default function AlbumDesignerDashboard() {
                 {loading ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {[1, 2, 3].map(i => (
-                            <div key={i} className="h-48 bg-gray-200 rounded-2xl animate-pulse"></div>
+                            <div key={i} className="h-48 bg-white/10 rounded-2xl animate-pulse"></div>
                         ))}
                     </div>
                 ) : displayedAlbums.length === 0 ? (
                     <div className="text-center py-20 bg-white/10 backdrop-blur-sm rounded-3xl border border-white/10">
-                        <div className="bg-blue-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <div className="bg-blue-500/20 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
                             <BookOpen className="w-10 h-10 text-blue-500" />
                         </div>
                         <h3 className="text-xl font-bold text-white mb-2">
@@ -176,7 +176,7 @@ export default function AlbumDesignerDashboard() {
                                         <div className={`absolute top-0 left-0 w-2 h-full opacity-0 group-hover:opacity-100 transition-opacity ${isMyAlbum ? 'bg-blue-500' : 'bg-green-500'}`} />
 
                                         <div className="flex justify-between items-start mb-4">
-                                            <div className={`p-3 rounded-xl ${isMyAlbum ? 'bg-blue-500/20 text-blue-400' : 'bg-green-50 text-green-600'}`}>
+                                            <div className={`p-3 rounded-xl ${isMyAlbum ? 'bg-blue-500/20 text-blue-400' : 'bg-green-500/20 text-green-400'}`}>
                                                 {isMyAlbum ? <BookOpen className="w-6 h-6" /> : <Globe className="w-6 h-6" />}
                                             </div>
                                             {isMyAlbum && (
@@ -184,21 +184,21 @@ export default function AlbumDesignerDashboard() {
                                                     <button className="p-2 hover:bg-gray-100 rounded-lg text-white/70">
                                                         <Edit className="w-4 h-4" />
                                                     </button>
-                                                    <button className="p-2 hover:bg-red-50 text-red-500 rounded-lg">
+                                                    <button className="p-2 hover:bg-red-500/20 text-red-400 rounded-lg">
                                                         <Trash2 className="w-4 h-4" />
                                                     </button>
                                                 </div>
                                             )}
                                         </div>
 
-                                        <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-600 transition-colors">
+                                        <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">
                                             {album.title || "Untitled Album"}
                                         </h3>
                                         <p className="text-sm text-gray-400 mb-4 line-clamp-2">
                                             {album.description || "No description added."}
                                         </p>
 
-                                        <div className="flex items-center justify-between text-xs font-medium text-gray-400 border-t border-gray-50 pt-4 mb-4">
+                                        <div className="flex items-center justify-between text-xs font-medium text-gray-400 border-t border-white/10 pt-4 mb-4">
                                             {isMyAlbum ? (
                                                 <span className={album.isPublished ? "text-green-500" : "text-gray-400"}>
                                                     {album.isPublished ? "Published" : "Draft"}
@@ -215,7 +215,7 @@ export default function AlbumDesignerDashboard() {
                                             e.stopPropagation();
                                             openAssignModal(album.id);
                                         }}
-                                        className="w-full py-2 bg-blue-500/20 text-blue-400 font-bold rounded-lg hover:bg-blue-100 transition-colors"
+                                        className="w-full py-2 bg-blue-500/20 text-blue-400 font-bold rounded-lg hover:bg-blue-500/30 transition-colors"
                                     >
                                         Assign to Class
                                     </button>
@@ -241,7 +241,7 @@ export default function AlbumDesignerDashboard() {
                                     key={cls.id}
                                     onClick={() => handleAssignToClass(cls.id)}
                                     disabled={!!assigningClassId}
-                                    className="w-full text-left p-3 rounded-lg border border-white/10 hover:bg-blue-50 hover:border-blue-200 transition-all font-medium flex justify-between group"
+                                    className="w-full text-left p-3 rounded-lg border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all font-medium flex justify-between group"
                                 >
                                     <span>{cls.name}</span>
                                     {assigningClassId === cls.id ? (
