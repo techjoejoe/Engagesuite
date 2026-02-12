@@ -157,7 +157,7 @@ export default function QuizLobbyPage() {
                             group relative px-16 py-6 rounded-full text-2xl font-black tracking-wide shadow-2xl transition-all duration-300 transform hover:scale-105 active:scale-95
                             ${playerCount > 0
                                 ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:shadow-green-500/40'
-                                : 'bg-white/5 text-gray-500 cursor-not-allowed border border-white/5'}
+                                : 'bg-white/5 text-white/60 cursor-not-allowed border border-white/5'}
                         `}
                     >
                         <span className="relative z-10 flex items-center gap-3">

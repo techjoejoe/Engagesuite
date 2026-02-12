@@ -97,14 +97,14 @@ function LaunchPicPickContent() {
 
     if (!classData) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-900">
-                <div className="animate-pulse text-xl font-semibold text-gray-600 dark:text-gray-300">Loading...</div>
+            <div className="min-h-screen flex items-center justify-center bg-transparent">
+                <div className="animate-pulse text-xl font-semibold text-white/70 dark:text-gray-300">Loading...</div>
             </div>
         );
     }
 
     return (
-        <main className="min-h-screen bg-gray-50 dark:bg-slate-900 p-6 transition-colors duration-300">
+        <main className="min-h-screen bg-transparent p-6 transition-colors duration-300">
             <HostMenu currentPage="PicPick" classId={classId || undefined} />
             <div className="max-w-2xl mx-auto">
                 {/* Back Button */}
@@ -117,14 +117,14 @@ function LaunchPicPickContent() {
                     ← Back to Class
                 </Button>
 
-                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-gray-100 dark:border-slate-700 p-8">
+                <div className="bg-white/10 backdrop-blur-sm rounded-2xl shadow-lg border border-white/10 dark:border-slate-700 p-8">
                     {/* Header */}
                     <div className="text-center mb-8">
                         <div className="text-6xl mb-4">📸</div>
-                        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                        <h1 className="text-3xl font-bold text-white dark:text-white mb-2">
                             Launch PicPick
                         </h1>
-                        <p className="text-gray-500 dark:text-gray-400">
+                        <p className="text-white/60 dark:text-gray-400">
                             Start a photo contest for <span className="font-semibold text-gray-700 dark:text-gray-300">{classData.name}</span>
                         </p>
                     </div>
@@ -140,7 +140,7 @@ function LaunchPicPickContent() {
                                 value={formData.name}
                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                 required
-                                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+                                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-white dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
                                 placeholder="e.g., Holiday Photo Contest"
                             />
                         </div>
@@ -153,7 +153,7 @@ function LaunchPicPickContent() {
                                 value={formData.description}
                                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                 rows={3}
-                                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition-all resize-none"
+                                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-white dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition-all resize-none"
                                 placeholder="What's this contest about?"
                             />
                         </div>
@@ -181,7 +181,7 @@ function LaunchPicPickContent() {
                                 onClick={() => router.push(`/picpick/admin?classId=${classId}`)}
                                 disabled={creating}
                                 type="button"
-                                className="flex-1 bg-white dark:bg-slate-700 text-gray-900 dark:text-white border-gray-300 dark:border-slate-600 hover:bg-gray-100 dark:hover:bg-slate-600"
+                                className="flex-1 bg-white dark:bg-slate-700 text-white dark:text-white border-gray-300 dark:border-slate-600 hover:bg-gray-100 dark:hover:bg-slate-600"
                             >
                                 📋 Existing Galleries
                             </Button>
@@ -204,8 +204,8 @@ function LaunchPicPickContent() {
 export default function LaunchPicPick() {
     return (
         <Suspense fallback={
-            <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-900">
-                <div className="animate-pulse text-xl font-semibold text-gray-600 dark:text-gray-300">Loading...</div>
+            <div className="min-h-screen flex items-center justify-center bg-transparent">
+                <div className="animate-pulse text-xl font-semibold text-white/70 dark:text-gray-300">Loading...</div>
             </div>
         }>
             <LaunchPicPickContent />

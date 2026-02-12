@@ -135,7 +135,7 @@ function BuzzerLaunchContent() {
                             </div>
 
                             {state.buzzes.length === 0 ? (
-                                <div className="flex-1 flex flex-col items-center justify-center text-gray-500 opacity-50">
+                                <div className="flex-1 flex flex-col items-center justify-center text-white/60 opacity-50">
                                     <div className="text-6xl mb-4">🔇</div>
                                     <div className="text-xl font-medium">Waiting for buzzes...</div>
                                 </div>
@@ -173,7 +173,7 @@ function BuzzerLaunchContent() {
                                                     </div>
                                                     <div className="text-xs text-gray-400 font-mono">
                                                         {new Date(buzz.timestamp).toLocaleTimeString().split(' ')[0]}.
-                                                        <span className="text-gray-500">{new Date(buzz.timestamp).getMilliseconds()}ms</span>
+                                                        <span className="text-white/60">{new Date(buzz.timestamp).getMilliseconds()}ms</span>
                                                     </div>
                                                 </div>
                                             </div>

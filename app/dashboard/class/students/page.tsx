@@ -220,8 +220,8 @@ function StudentsManagementContent() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-900">
-                <div className="animate-pulse text-xl font-semibold text-gray-600 dark:text-gray-300">Loading Students...</div>
+            <div className="min-h-screen flex items-center justify-center bg-transparent">
+                <div className="animate-pulse text-xl font-semibold text-white/70 dark:text-gray-300">Loading Students...</div>
             </div>
         );
     }
@@ -229,7 +229,7 @@ function StudentsManagementContent() {
     if (!classData) return null;
 
     return (
-        <main className="min-h-screen bg-gray-50 dark:bg-slate-900 p-6 overflow-y-auto transition-colors duration-300">
+        <main className="min-h-screen bg-transparent p-6 overflow-y-auto transition-colors duration-300">
             <HostMenu currentPage="Students" classId={classId || undefined} />
             <div className="container mx-auto max-w-6xl">
                 {/* Header */}
@@ -255,7 +255,7 @@ function StudentsManagementContent() {
                         >
                             ✨ Add Points to All
                         </Button>
-                        <Button variant="secondary" onClick={() => router.push(`/dashboard/class?id=${classId}`)} className="!text-black bg-white border border-gray-200 hover:bg-gray-50 !bg-none">
+                        <Button variant="secondary" onClick={() => router.push(`/dashboard/class?id=${classId}`)} className="!text-black bg-white border border-white/20 hover:bg-white/5 !bg-none">
                             ← Back to Class
                         </Button>
                     </div>
@@ -264,11 +264,11 @@ function StudentsManagementContent() {
                 {/* Bulk Points Modal */}
                 {showBulkModal && (
                     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-md w-full p-6 border border-gray-100 dark:border-slate-700 animate-scale-in">
-                            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                        <div className="bg-white/10 backdrop-blur-sm rounded-2xl shadow-2xl max-w-md w-full p-6 border border-white/10 dark:border-slate-700 animate-scale-in">
+                            <h2 className="text-2xl font-bold text-white dark:text-white mb-2">
                                 Add Points to Everyone
                             </h2>
-                            <p className="text-gray-500 dark:text-gray-400 mb-6">
+                            <p className="text-white/60 dark:text-gray-400 mb-6">
                                 This will add (or subtract) points for all {students.length} students in the class.
                             </p>
 
@@ -281,7 +281,7 @@ function StudentsManagementContent() {
                                     value={bulkPointsInput}
                                     onChange={(e) => setBulkPointsInput(e.target.value)}
                                     placeholder="e.g. 100 or -50"
-                                    className="w-full p-3 rounded-xl border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none text-lg"
+                                    className="w-full p-3 rounded-xl border border-white/20 dark:border-slate-600 bg-white/10 backdrop-blur-sm text-white dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none text-lg"
                                     style={{ color: '#000', backgroundColor: '#fff' }}
                                     autoFocus
                                 />
@@ -295,7 +295,7 @@ function StudentsManagementContent() {
                                         setBulkPointsInput('');
                                     }}
                                     disabled={processing}
-                                    className="!bg-transparent !text-gray-500 hover:!text-gray-700 hover:!bg-gray-100 dark:hover:!bg-slate-700"
+                                    className="!bg-transparent !text-white/60 hover:!text-gray-700 hover:!bg-gray-100 dark:hover:!bg-slate-700"
                                 >
                                     Cancel
                                 </Button>
@@ -315,25 +315,25 @@ function StudentsManagementContent() {
                 {/* History Modal */}
                 {showHistoryModal && viewingStudent && (
                     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-2xl w-full p-6 border border-gray-100 dark:border-slate-700 animate-scale-in flex flex-col max-h-[80vh]">
+                        <div className="bg-white/10 backdrop-blur-sm rounded-2xl shadow-2xl max-w-2xl w-full p-6 border border-white/10 dark:border-slate-700 animate-scale-in flex flex-col max-h-[80vh]">
                             <div className="flex justify-between items-center mb-6">
                                 <div>
-                                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                                    <h2 className="text-2xl font-bold text-white dark:text-white">
                                         Point History
                                     </h2>
-                                    <p className="text-gray-500 dark:text-gray-400 text-sm">
+                                    <p className="text-white/60 dark:text-gray-400 text-sm">
                                         For {viewingStudent.nickname}
                                     </p>
                                 </div>
                                 <button
                                     onClick={() => setShowHistoryModal(false)}
-                                    className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-2xl"
+                                    className="text-gray-400 hover:text-white/70 dark:hover:text-gray-200 text-2xl"
                                 >
                                     ✕
                                 </button>
                             </div>
 
-                            <div className="flex-1 overflow-y-auto custom-scrollbar border rounded-xl border-gray-100 dark:border-slate-700">
+                            <div className="flex-1 overflow-y-auto custom-scrollbar border rounded-xl border-white/10 dark:border-slate-700">
                                 {historyLoading ? (
                                     <div className="flex items-center justify-center p-12 text-gray-400">Loading history...</div>
                                 ) : historyData.length === 0 ? (
@@ -343,20 +343,20 @@ function StudentsManagementContent() {
                                     </div>
                                 ) : (
                                     <table className="w-full text-left">
-                                        <thead className="bg-gray-50 dark:bg-slate-900 sticky top-0">
+                                        <thead className="bg-transparent sticky top-0">
                                             <tr>
-                                                <th className="p-4 text-xs font-semibold text-gray-500 uppercase">Time</th>
-                                                <th className="p-4 text-xs font-semibold text-gray-500 uppercase">Create/Reason</th>
-                                                <th className="p-4 text-xs font-semibold text-gray-500 uppercase text-right">Points</th>
+                                                <th className="p-4 text-xs font-semibold text-white/60 uppercase">Time</th>
+                                                <th className="p-4 text-xs font-semibold text-white/60 uppercase">Create/Reason</th>
+                                                <th className="p-4 text-xs font-semibold text-white/60 uppercase text-right">Points</th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
                                             {historyData.map((h, i) => (
-                                                <tr key={h.id || i} className="hover:bg-gray-50 dark:hover:bg-slate-700/50">
-                                                    <td className="p-4 text-sm text-gray-600 dark:text-gray-300">
+                                                <tr key={h.id || i} className="hover:bg-white/5 dark:hover:bg-slate-700/50">
+                                                    <td className="p-4 text-sm text-white/70 dark:text-gray-300">
                                                         {new Date(h.timestamp).toLocaleString()}
                                                     </td>
-                                                    <td className="p-4 text-sm text-gray-900 dark:text-white font-medium">
+                                                    <td className="p-4 text-sm text-white dark:text-white font-medium">
                                                         {h.reason}
                                                     </td>
                                                     <td className={`p-4 text-sm font-bold text-right ${h.points > 0 ? 'text-green-500' : 'text-red-500'}`}>
@@ -382,19 +382,19 @@ function StudentsManagementContent() {
                 )}
 
                 {/* Students List */}
-                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden">
+                <div className="bg-white/10 backdrop-blur-sm rounded-2xl shadow-sm border border-white/10 dark:border-slate-700 overflow-hidden">
                     {students.length === 0 ? (
                         <div className="text-center py-16">
                             <div className="text-6xl mb-4">👥</div>
-                            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">No Students Yet</h3>
-                            <p className="text-gray-500 dark:text-gray-400">
+                            <h3 className="text-xl font-bold text-white dark:text-white mb-2">No Students Yet</h3>
+                            <p className="text-white/60 dark:text-gray-400">
                                 Students will appear here when they join your class
                             </p>
                         </div>
                     ) : (
                         <div className="overflow-x-auto">
                             <table className="w-full">
-                                <thead className="bg-gray-50 dark:bg-slate-900/50 border-b border-gray-200 dark:border-slate-700">
+                                <thead className="bg-transparent/50 border-b border-white/20 dark:border-slate-700">
                                     <tr>
                                         <th className="px-6 py-4 text-left text-xs font-semibold text-black dark:text-gray-400 uppercase tracking-wider">
                                             Rank
@@ -421,7 +421,7 @@ function StudentsManagementContent() {
                                         return (
                                             <tr
                                                 key={student.userId}
-                                                className={`hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors ${isTop3 ? 'bg-yellow-50/50 dark:bg-yellow-900/10' : ''
+                                                className={`hover:bg-white/5 dark:hover:bg-slate-700/50 transition-colors ${isTop3 ? 'bg-yellow-50/50 dark:bg-yellow-900/10' : ''
                                                     }`}
                                             >
                                                 <td className="px-6 py-4 whitespace-nowrap">
@@ -455,7 +455,7 @@ function StudentsManagementContent() {
                                                                 value={adjustmentReason}
                                                                 onChange={(e) => setAdjustmentReason(e.target.value)}
                                                                 placeholder="Reason (required)"
-                                                                className="w-32 px-3 py-1 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white text-sm"
+                                                                className="w-32 px-3 py-1 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-white dark:text-white text-sm"
                                                                 style={{ color: '#000', backgroundColor: '#fff' }}
                                                                 disabled={processing}
                                                             />
@@ -464,7 +464,7 @@ function StudentsManagementContent() {
                                                                 value={pointsInput}
                                                                 onChange={(e) => setPointsInput(e.target.value)}
                                                                 placeholder="±points"
-                                                                className="w-24 px-3 py-1 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white text-sm"
+                                                                className="w-24 px-3 py-1 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-white dark:text-white text-sm"
                                                                 style={{ color: '#000', backgroundColor: '#fff' }}
                                                                 disabled={processing}
                                                             />
@@ -485,7 +485,7 @@ function StudentsManagementContent() {
                                                                     setAdjustmentReason('');
                                                                 }}
                                                                 disabled={processing}
-                                                                className="!bg-transparent !text-gray-500 hover:!text-gray-700 hover:!bg-gray-100 dark:hover:!bg-slate-700"
+                                                                className="!bg-transparent !text-white/60 hover:!text-gray-700 hover:!bg-gray-100 dark:hover:!bg-slate-700"
                                                             >
                                                                 Cancel
                                                             </Button>
@@ -540,7 +540,7 @@ function StudentsManagementContent() {
                                                                     setPointsInput('');
                                                                 }}
                                                                 disabled={processing}
-                                                                className="!text-black !bg-gray-100 border border-gray-200 hover:!bg-gray-200 !bg-none"
+                                                                className="!text-black !bg-gray-100 border border-white/20 hover:!bg-gray-200 !bg-none"
                                                             >
                                                                 Custom
                                                             </Button>
@@ -566,19 +566,19 @@ function StudentsManagementContent() {
 
                 {/* Quick Stats */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-                    <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-gray-100 dark:border-slate-700">
-                        <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">Total Students</div>
-                        <div className="text-3xl font-black text-gray-900 dark:text-white">{students.length}</div>
+                    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/10 dark:border-slate-700">
+                        <div className="text-sm text-white/60 dark:text-gray-400 mb-2">Total Students</div>
+                        <div className="text-3xl font-black text-white dark:text-white">{students.length}</div>
                     </div>
-                    <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-gray-100 dark:border-slate-700">
-                        <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">Total Class Points</div>
+                    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/10 dark:border-slate-700">
+                        <div className="text-sm text-white/60 dark:text-gray-400 mb-2">Total Class Points</div>
                         <div className="text-3xl font-black text-indigo-600 dark:text-indigo-400">
                             {students.reduce((sum, s) => sum + s.score, 0)}
                         </div>
                     </div>
-                    <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-gray-100 dark:border-slate-700">
-                        <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">Avg Points/Student</div>
-                        <div className="text-3xl font-black text-gray-900 dark:text-white">
+                    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/10 dark:border-slate-700">
+                        <div className="text-sm text-white/60 dark:text-gray-400 mb-2">Avg Points/Student</div>
+                        <div className="text-3xl font-black text-white dark:text-white">
                             {students.length > 0 ? Math.round(students.reduce((sum, s) => sum + s.score, 0) / students.length) : 0}
                         </div>
                     </div>
@@ -587,9 +587,9 @@ function StudentsManagementContent() {
                 {/* Badge Award Modal */}
                 {showBadgeModal && studentToAward && (
                     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-2xl w-full p-6 border border-gray-100 dark:border-slate-700 animate-scale-in flex flex-col max-h-[80vh]">
+                        <div className="bg-white/10 backdrop-blur-sm rounded-2xl shadow-2xl max-w-2xl w-full p-6 border border-white/10 dark:border-slate-700 animate-scale-in flex flex-col max-h-[80vh]">
                             <div className="flex justify-between items-center mb-6">
-                                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                                <h2 className="text-2xl font-bold text-white dark:text-white">
                                     Award Badge to <span className="text-indigo-500">{studentToAward.nickname}</span>
                                 </h2>
                                 <button onClick={() => setShowBadgeModal(false)} className="text-gray-400 hover:text-white">✕</button>
@@ -597,7 +597,7 @@ function StudentsManagementContent() {
 
                             <div className="overflow-y-auto p-2 grid grid-cols-2 sm:grid-cols-4 gap-4">
                                 {hostBadges.length === 0 ? (
-                                    <div className="col-span-full text-center py-8 text-gray-500">
+                                    <div className="col-span-full text-center py-8 text-white/60">
                                         No badges found. <a href="/host/badges" className="text-indigo-400 font-bold hover:underline">Create some badges first!</a>
                                     </div>
                                 ) : (
@@ -606,10 +606,10 @@ function StudentsManagementContent() {
                                             key={badge.id}
                                             onClick={() => handleAwardBadge(studentToAward.userId, badge.id)}
                                             disabled={processing}
-                                            className="flex flex-col items-center p-4 bg-gray-50 dark:bg-slate-900 rounded-xl border-2 border-transparent hover:border-indigo-500 transition-all hover:scale-105"
+                                            className="flex flex-col items-center p-4 bg-transparent rounded-xl border-2 border-transparent hover:border-indigo-500 transition-all hover:scale-105"
                                         >
                                             <img src={badge.imageUrl} alt={badge.name} className="w-16 h-16 object-contain mb-2" />
-                                            <div className="font-bold text-sm text-gray-900 dark:text-white">{badge.name}</div>
+                                            <div className="font-bold text-sm text-white dark:text-white">{badge.name}</div>
                                         </button>
                                     ))
                                 )}
@@ -625,8 +625,8 @@ function StudentsManagementContent() {
 export default function StudentsManagement() {
     return (
         <Suspense fallback={
-            <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-900">
-                <div className="animate-pulse text-xl font-semibold text-gray-600 dark:text-gray-300">Loading...</div>
+            <div className="min-h-screen flex items-center justify-center bg-transparent">
+                <div className="animate-pulse text-xl font-semibold text-white/70 dark:text-gray-300">Loading...</div>
             </div>
         }>
             <StudentsManagementContent />

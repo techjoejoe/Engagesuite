@@ -101,11 +101,11 @@ function CreatePollContent() {
     };
 
     return (
-        <main className="min-h-screen bg-gray-50 dark:bg-slate-900 p-6 transition-colors duration-300">
+        <main className="min-h-screen bg-transparent p-6 transition-colors duration-300">
             <HostMenu currentPage="LiveVote" classId={classId || undefined} />
 
             <div className="max-w-3xl mx-auto pt-10">
-                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-8 border border-gray-100 dark:border-slate-700">
+                <div className="bg-white/10 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-white/10 dark:border-slate-700">
                     <div className="flex flex-col gap-4 mb-8">
                         {classId && (
                             <button
@@ -120,8 +120,8 @@ function CreatePollContent() {
                                 <span className="text-3xl">📊</span>
                             </div>
                             <div>
-                                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Create LiveVote</h1>
-                                <p className="text-gray-500 dark:text-gray-400">Ask your class a question and get real-time feedback.</p>
+                                <h1 className="text-2xl font-bold text-white dark:text-white">Create LiveVote</h1>
+                                <p className="text-white/60 dark:text-gray-400">Ask your class a question and get real-time feedback.</p>
                             </div>
                         </div>
                     </div>
@@ -137,7 +137,7 @@ function CreatePollContent() {
                                 value={question}
                                 onChange={(e) => setQuestion(e.target.value)}
                                 placeholder="e.g., What is the capital of France?"
-                                className="w-full p-4 text-lg rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 outline-none transition-all"
+                                className="w-full p-4 text-lg rounded-xl border border-white/20 dark:border-slate-600 bg-transparent text-white dark:text-white focus:ring-2 focus:ring-green-500 outline-none transition-all"
                             />
                         </div>
 
@@ -156,7 +156,7 @@ function CreatePollContent() {
                                         value={option.text}
                                         onChange={(e) => handleOptionChange(index, e.target.value)}
                                         placeholder={`Option ${index + 1}`}
-                                        className="flex-1 p-3 rounded-lg border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 outline-none"
+                                        className="flex-1 p-3 rounded-lg border border-white/20 dark:border-slate-600 bg-white/10 backdrop-blur-sm text-white dark:text-white focus:ring-2 focus:ring-green-500 outline-none"
                                     />
                                     {options.length > 2 && (
                                         <button
@@ -175,7 +175,7 @@ function CreatePollContent() {
                         {options.length < 6 && (
                             <button
                                 onClick={handleAddOption}
-                                className="w-full py-3 border-2 border-dashed border-gray-300 dark:border-slate-600 rounded-xl text-gray-500 dark:text-gray-400 font-medium hover:border-green-500 hover:text-green-500 transition-all flex items-center justify-center gap-2"
+                                className="w-full py-3 border-2 border-dashed border-gray-300 dark:border-slate-600 rounded-xl text-white/60 dark:text-gray-400 font-medium hover:border-green-500 hover:text-green-500 transition-all flex items-center justify-center gap-2"
                             >
                                 <Icons.Plus className="w-5 h-5" />
                                 Add Option
@@ -201,7 +201,7 @@ function CreatePollContent() {
 
 export default function CreatePollPage() {
     return (
-        <Suspense fallback={<div className="min-h-screen bg-gray-50 dark:bg-slate-900" />}>
+        <Suspense fallback={<div className="min-h-screen bg-transparent" />}>
             <CreatePollContent />
         </Suspense>
     );

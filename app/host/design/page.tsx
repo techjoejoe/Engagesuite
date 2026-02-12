@@ -102,21 +102,21 @@ export default function AlbumDesignerDashboard() {
                         <button onClick={() => router.push('/dashboard')} className="text-sm font-bold text-blue-600 hover:underline mb-2 flex items-center gap-1">
                             &larr; Back to Dashboard
                         </button>
-                        <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Designer Studio</h1>
-                        <p className="text-gray-500 mt-1">Create interactive workbooks for your classes.</p>
+                        <h1 className="text-3xl font-extrabold text-white tracking-tight">Designer Studio</h1>
+                        <p className="text-white/60 mt-1">Create interactive workbooks for your classes.</p>
                     </div>
 
-                    <div className="flex bg-white p-1 rounded-xl shadow-sm border border-gray-200">
+                    <div className="flex bg-white/10 backdrop-blur-sm p-1 rounded-xl border border-white/20">
                         <button
                             onClick={() => setActiveTab('my')}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === 'my' ? 'bg-blue-50 text-blue-600' : 'text-gray-500 hover:bg-gray-50'
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === 'my' ? 'bg-blue-500/20 text-blue-400' : 'text-white/60 hover:bg-white/5'
                                 }`}
                         >
                             <BookOpen className="w-4 h-4" /> My Workbooks
                         </button>
                         <button
                             onClick={() => setActiveTab('library')}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === 'library' ? 'bg-blue-50 text-blue-600' : 'text-gray-500 hover:bg-gray-50'
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === 'library' ? 'bg-blue-500/20 text-blue-400' : 'text-white/60 hover:bg-white/5'
                                 }`}
                         >
                             <Globe className="w-4 h-4" /> Public Library
@@ -139,14 +139,14 @@ export default function AlbumDesignerDashboard() {
                         ))}
                     </div>
                 ) : displayedAlbums.length === 0 ? (
-                    <div className="text-center py-20 bg-white rounded-3xl shadow-sm border border-gray-100">
+                    <div className="text-center py-20 bg-white/10 backdrop-blur-sm rounded-3xl border border-white/10">
                         <div className="bg-blue-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
                             <BookOpen className="w-10 h-10 text-blue-500" />
                         </div>
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">
+                        <h3 className="text-xl font-bold text-white mb-2">
                             {activeTab === 'my' ? "No Workbooks Yet" : "Library is Empty"}
                         </h3>
-                        <p className="text-gray-500 max-w-md mx-auto mb-8">
+                        <p className="text-white/60 max-w-md mx-auto mb-8">
                             {activeTab === 'my'
                                 ? "Get started by creating your first interactive workbook."
                                 : "No published workbooks found from other designers."}
@@ -167,7 +167,7 @@ export default function AlbumDesignerDashboard() {
                             return (
                                 <div
                                     key={album.id}
-                                    className="group bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all border border-gray-100 relative overflow-hidden flex flex-col justify-between"
+                                    className="group bg-white/10 backdrop-blur-sm rounded-2xl p-6 hover:shadow-xl transition-all border border-white/10 relative overflow-hidden flex flex-col justify-between"
                                 >
                                     <div
                                         className="cursor-pointer"
@@ -176,12 +176,12 @@ export default function AlbumDesignerDashboard() {
                                         <div className={`absolute top-0 left-0 w-2 h-full opacity-0 group-hover:opacity-100 transition-opacity ${isMyAlbum ? 'bg-blue-500' : 'bg-green-500'}`} />
 
                                         <div className="flex justify-between items-start mb-4">
-                                            <div className={`p-3 rounded-xl ${isMyAlbum ? 'bg-blue-50 text-blue-600' : 'bg-green-50 text-green-600'}`}>
+                                            <div className={`p-3 rounded-xl ${isMyAlbum ? 'bg-blue-500/20 text-blue-400' : 'bg-green-50 text-green-600'}`}>
                                                 {isMyAlbum ? <BookOpen className="w-6 h-6" /> : <Globe className="w-6 h-6" />}
                                             </div>
                                             {isMyAlbum && (
                                                 <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <button className="p-2 hover:bg-gray-100 rounded-lg text-gray-600">
+                                                    <button className="p-2 hover:bg-gray-100 rounded-lg text-white/70">
                                                         <Edit className="w-4 h-4" />
                                                     </button>
                                                     <button className="p-2 hover:bg-red-50 text-red-500 rounded-lg">
@@ -191,7 +191,7 @@ export default function AlbumDesignerDashboard() {
                                             )}
                                         </div>
 
-                                        <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+                                        <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-600 transition-colors">
                                             {album.title || "Untitled Album"}
                                         </h3>
                                         <p className="text-sm text-gray-400 mb-4 line-clamp-2">
@@ -215,7 +215,7 @@ export default function AlbumDesignerDashboard() {
                                             e.stopPropagation();
                                             openAssignModal(album.id);
                                         }}
-                                        className="w-full py-2 bg-blue-50 text-blue-600 font-bold rounded-lg hover:bg-blue-100 transition-colors"
+                                        className="w-full py-2 bg-blue-500/20 text-blue-400 font-bold rounded-lg hover:bg-blue-100 transition-colors"
                                     >
                                         Assign to Class
                                     </button>
@@ -229,9 +229,9 @@ export default function AlbumDesignerDashboard() {
             {/* Simple Modal */}
             {assignModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-                    <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl animate-fade-in-up">
+                    <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 max-w-md w-full shadow-2xl animate-fade-in-up">
                         <h3 className="text-xl font-bold mb-4">Assign to Class</h3>
-                        <p className="text-gray-500 mb-4 text-sm">Select a class to assign this workbook to. Students will see it on their dashboard immediately.</p>
+                        <p className="text-white/60 mb-4 text-sm">Select a class to assign this workbook to. Students will see it on their dashboard immediately.</p>
 
                         <div className="space-y-2 max-h-60 overflow-y-auto mb-6">
                             {myClasses.length === 0 ? (
@@ -241,7 +241,7 @@ export default function AlbumDesignerDashboard() {
                                     key={cls.id}
                                     onClick={() => handleAssignToClass(cls.id)}
                                     disabled={!!assigningClassId}
-                                    className="w-full text-left p-3 rounded-lg border border-gray-100 hover:bg-blue-50 hover:border-blue-200 transition-all font-medium flex justify-between group"
+                                    className="w-full text-left p-3 rounded-lg border border-white/10 hover:bg-blue-50 hover:border-blue-200 transition-all font-medium flex justify-between group"
                                 >
                                     <span>{cls.name}</span>
                                     {assigningClassId === cls.id ? (
@@ -255,7 +255,7 @@ export default function AlbumDesignerDashboard() {
 
                         <button
                             onClick={() => setAssignModalOpen(false)}
-                            className="w-full py-2 text-gray-500 font-medium hover:text-gray-800"
+                            className="w-full py-2 text-white/60 font-medium hover:text-gray-800"
                         >
                             Cancel
                         </button>

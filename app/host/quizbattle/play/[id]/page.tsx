@@ -104,7 +104,7 @@ export default function HostPlayPage() {
     };
 
     if (!game || !quiz) return (
-        <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex items-center justify-center text-gray-600 dark:text-gray-400">
+        <div className="min-h-screen bg-transparent flex items-center justify-center text-white/70 dark:text-gray-400">
             Loading...
         </div>
     );
@@ -164,22 +164,22 @@ export default function HostPlayPage() {
     const answerLabels = ['A', 'B', 'C', 'D'];
 
     return (
-        <main className="min-h-screen bg-gray-50 dark:bg-slate-900 font-sans flex flex-col p-6 transition-colors duration-300">
+        <main className="min-h-screen bg-transparent font-sans flex flex-col p-6 transition-colors duration-300">
             <HamburgerMenu currentPage="QuizBattle" />
 
             {/* Header */}
             <div className="flex justify-between items-center mb-10 px-5">
                 <div>
-                    <div className="text-gray-500 dark:text-gray-400 text-sm font-semibold uppercase tracking-widest">
+                    <div className="text-white/60 dark:text-gray-400 text-sm font-semibold uppercase tracking-widest">
                         Question {game.currentQuestionIndex + 1} of {quiz.questions.length}
                     </div>
-                    <div className="text-2xl font-bold text-gray-900 dark:text-white">{quiz.title}</div>
+                    <div className="text-2xl font-bold text-white dark:text-white">{quiz.title}</div>
                 </div>
                 <div className="text-center">
-                    <div className={`text-5xl font-bold tabular-nums ${timeLeft <= 5 ? 'text-red-500' : 'text-gray-900 dark:text-white'}`}>
+                    <div className={`text-5xl font-bold tabular-nums ${timeLeft <= 5 ? 'text-red-500' : 'text-white dark:text-white'}`}>
                         {timeLeft}
                     </div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400 font-semibold">SECONDS</div>
+                    <div className="text-sm text-white/60 dark:text-gray-400 font-semibold">SECONDS</div>
                 </div>
                 <div className="text-right flex flex-col items-end gap-2.5">
                     <Button
@@ -190,8 +190,8 @@ export default function HostPlayPage() {
                         ← Back to Class
                     </Button>
                     <div>
-                        <div className="text-gray-500 dark:text-gray-400 text-sm font-semibold uppercase tracking-widest">Players</div>
-                        <div className="text-2xl font-bold text-gray-900 dark:text-white">{playerCount}</div>
+                        <div className="text-white/60 dark:text-gray-400 text-sm font-semibold uppercase tracking-widest">Players</div>
+                        <div className="text-2xl font-bold text-white dark:text-white">{playerCount}</div>
                     </div>
                 </div>
             </div>
@@ -200,7 +200,7 @@ export default function HostPlayPage() {
             <div className="flex-1 flex flex-col items-center max-w-[1200px] mx-auto w-full">
 
                 {/* Question Card */}
-                <div className="bg-white dark:bg-slate-800 rounded-3xl p-10 shadow-sm w-full text-center mb-10 min-h-[200px] flex flex-col items-center justify-center border border-gray-100 dark:border-slate-700">
+                <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-10 shadow-sm w-full text-center mb-10 min-h-[200px] flex flex-col items-center justify-center border border-white/10 dark:border-slate-700">
                     {currentQuestion?.mediaUrl && (
                         <div className="mb-6 max-h-[400px] w-full flex justify-center">
                             <img
@@ -210,7 +210,7 @@ export default function HostPlayPage() {
                             />
                         </div>
                     )}
-                    <h2 className="text-4xl font-bold text-gray-900 dark:text-white leading-tight">
+                    <h2 className="text-4xl font-bold text-white dark:text-white leading-tight">
                         {currentQuestion?.text}
                     </h2>
                 </div>
@@ -326,9 +326,9 @@ export default function HostPlayPage() {
             </div>
 
             {/* Footer Controls */}
-            <div className="mt-10 flex justify-between items-center p-5 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700">
-                <div className="text-base text-gray-600 dark:text-gray-400">
-                    <span className="font-bold text-gray-900 dark:text-white">{responseCount}</span> of <span className="font-bold text-gray-900 dark:text-white">{playerCount}</span> answered
+            <div className="mt-10 flex justify-between items-center p-5 bg-white/10 backdrop-blur-sm rounded-2xl shadow-sm border border-white/10 dark:border-slate-700">
+                <div className="text-base text-white/70 dark:text-gray-400">
+                    <span className="font-bold text-white dark:text-white">{responseCount}</span> of <span className="font-bold text-white dark:text-white">{playerCount}</span> answered
                 </div>
                 <button
                     onClick={handleNext}

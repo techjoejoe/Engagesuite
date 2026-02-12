@@ -406,7 +406,7 @@ export default function WorkbookGradebook() {
                                                 {pIdx + 1}
                                             </span>
                                             <span className="font-semibold text-white">{page.title}</span>
-                                            <span className="text-xs text-gray-500">
+                                            <span className="text-xs text-white/60">
                                                 ({pageQuestions.length} question{pageQuestions.length !== 1 ? 's' : ''})
                                             </span>
                                         </div>
@@ -417,7 +417,7 @@ export default function WorkbookGradebook() {
                                     {isExpanded && (
                                         <div className="px-6 pb-6 space-y-6 border-t border-white/10">
                                             {pageQuestions.length === 0 ? (
-                                                <p className="text-sm text-gray-500 italic py-4">No questions on this page.</p>
+                                                <p className="text-sm text-white/60 italic py-4">No questions on this page.</p>
                                             ) : (
                                                 pageQuestions.map(block => {
                                                     const answerData = studentProgress?.answers?.[block.id];
@@ -429,15 +429,15 @@ export default function WorkbookGradebook() {
                                                             {/* Question Header */}
                                                             <div className="flex items-start justify-between mb-4">
                                                                 <div>
-                                                                    <span className="text-xs text-gray-500 uppercase font-semibold">
+                                                                    <span className="text-xs text-white/60 uppercase font-semibold">
                                                                         {block.questionType?.replace('_', ' ') || 'Question'}
                                                                     </span>
-                                                                    <span className="text-xs text-gray-600 ml-2">
+                                                                    <span className="text-xs text-white/70 ml-2">
                                                                         • {block.points || 0} pts
                                                                     </span>
                                                                 </div>
                                                                 {hasAnswer && answerData.submittedAt && (
-                                                                    <span className="text-xs text-gray-500 flex items-center gap-1">
+                                                                    <span className="text-xs text-white/60 flex items-center gap-1">
                                                                         <Clock className="w-3 h-3" />
                                                                         {new Date(answerData.submittedAt).toLocaleString()}
                                                                     </span>
@@ -450,11 +450,11 @@ export default function WorkbookGradebook() {
                                                             {/* Answer Display */}
                                                             {hasAnswer ? (
                                                                 <div className="bg-black/20 rounded-lg p-4 mb-4 border border-white/10">
-                                                                    <span className="text-xs text-gray-500 block mb-2">Student Answer:</span>
+                                                                    <span className="text-xs text-white/60 block mb-2">Student Answer:</span>
                                                                     <p className="text-gray-200">{String(answerData.answer)}</p>
                                                                 </div>
                                                             ) : (
-                                                                <div className="bg-black/20 rounded-lg p-4 mb-4 border border-white/10 text-gray-500 italic">
+                                                                <div className="bg-black/20 rounded-lg p-4 mb-4 border border-white/10 text-white/60 italic">
                                                                     No answer submitted
                                                                 </div>
                                                             )}
@@ -623,7 +623,7 @@ export default function WorkbookGradebook() {
                 <div className="glass-card p-4 mb-6">
                     <div className="flex flex-wrap items-center gap-4">
                         <div className="relative flex-1 min-w-[200px]">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/60" />
                             <input
                                 type="text"
                                 placeholder="Search students..."
@@ -663,7 +663,7 @@ export default function WorkbookGradebook() {
                         <tbody className="divide-y divide-white/5">
                             {filteredStudents.length === 0 ? (
                                 <tr>
-                                    <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                                    <td colSpan={6} className="px-6 py-12 text-center text-white/60">
                                         {students.length === 0 ? 'No students enrolled' : 'No students match your filters'}
                                     </td>
                                 </tr>
@@ -684,7 +684,7 @@ export default function WorkbookGradebook() {
                                                     </div>
                                                     <div>
                                                         <div className="font-medium text-white">{student.displayName}</div>
-                                                        <div className="text-xs text-gray-500">{student.email}</div>
+                                                        <div className="text-xs text-white/60">{student.email}</div>
                                                     </div>
                                                 </div>
                                             </td>
@@ -704,7 +704,7 @@ export default function WorkbookGradebook() {
                                             </td>
                                             <td className="px-6 py-4 text-center">
                                                 <span className="text-white font-medium">{prog?.currentPointsEarned || 0}</span>
-                                                <span className="text-gray-500">/{assignment.totalPointsAvailable}</span>
+                                                <span className="text-white/60">/{assignment.totalPointsAvailable}</span>
                                             </td>
                                             <td className="px-6 py-4 text-center text-sm text-gray-400">
                                                 {prog?.lastAccessedAt
@@ -759,7 +759,7 @@ function StatusBadge({ status, needsGrading }: { status: string; needsGrading?: 
         );
     }
     return (
-        <span className="inline-flex items-center gap-1 bg-gray-500/20 text-gray-400 px-2.5 py-0.5 rounded-full text-xs font-bold border border-gray-500/30">
+        <span className="inline-flex items-center gap-1 bg-white/50/20 text-gray-400 px-2.5 py-0.5 rounded-full text-xs font-bold border border-gray-500/30">
             Not Started
         </span>
     );

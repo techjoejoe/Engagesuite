@@ -147,12 +147,12 @@ export default function BadgeLibrary() {
                                 <img src={badge.imageUrl} alt={badge.name} className="w-full h-full object-contain" />
                             </div>
                             <h3 className="font-bold text-lg mb-1">{badge.name}</h3>
-                            <p className="text-xs text-gray-500 line-clamp-2">{badge.description}</p>
+                            <p className="text-xs text-white/60 line-clamp-2">{badge.description}</p>
                         </Card>
                     ))}
 
                     {badges.length === 0 && (
-                        <div className="col-span-full text-center py-12 text-gray-500 border-2 border-dashed border-gray-700 rounded-2xl">
+                        <div className="col-span-full text-center py-12 text-white/60 border-2 border-dashed border-gray-700 rounded-2xl">
                             <p>No badges created yet. Click "Create Badge" to start.</p>
                         </div>
                     )}

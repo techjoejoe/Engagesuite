@@ -145,7 +145,7 @@ function PlayGameContent() {
                         <div className="text-xl font-extrabold text-gray-800">
                             {playerName}
                         </div>
-                        <div className="text-sm font-semibold text-gray-500">
+                        <div className="text-sm font-semibold text-white/60">
                             Room: {roomCode}
                         </div>
                     </div>
@@ -162,7 +162,7 @@ function PlayGameContent() {
                         <h2 className="text-4xl md:text-5xl mb-4 font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-600">
                             Get Ready!
                         </h2>
-                        <p className="text-gray-500 text-lg md:text-xl font-semibold mb-10">
+                        <p className="text-white/60 text-lg md:text-xl font-semibold mb-10">
                             The game starts soon...
                         </p>
                         <div className="inline-block px-6 py-4 bg-gray-100 rounded-2xl text-lg font-bold text-gray-700">
@@ -174,11 +174,11 @@ function PlayGameContent() {
                 {gameState.status === 'active' && currentQuestion && !showResult && (
                     <div className="animate-fade-in">
                         <div className="bg-white/95 backdrop-blur-sm p-8 rounded-3xl mb-8 text-center shadow-2xl">
-                            <div className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-6">
+                            <div className="text-sm font-bold text-white/60 uppercase tracking-widest mb-6">
                                 Question {gameState.currentQuestionIndex + 1} of {gameState.questions.length}
                             </div>
 
-                            <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-8 leading-tight">
+                            <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-8 leading-tight">
                                 {currentQuestion.question}
                             </h2>
 
@@ -261,7 +261,7 @@ function PlayGameContent() {
                                                 ? 'bg-gradient-to-r from-indigo-100 to-purple-100 border-2 border-indigo-400'
                                                 : isTop3
                                                     ? 'bg-gradient-to-r from-amber-50 to-yellow-50'
-                                                    : 'bg-gray-50'
+                                                    : 'bg-white/5'
                                             }
                                             ${isTop3 ? 'shadow-lg scale-[1.02]' : ''}
                                         `}

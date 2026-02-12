@@ -196,7 +196,7 @@ export default function ProfilePage() {
     const lifetimePoints = profile.lifetimePoints || 0;
 
     return (
-        <main className="min-h-screen bg-gray-50 dark:bg-slate-900 p-8 overflow-y-auto transition-colors duration-300">
+        <main className="min-h-screen bg-transparent p-8 overflow-y-auto transition-colors duration-300">
             {profile.role === 'host' ? <HostMenu currentPage="Profile" /> : <StudentMenu currentPage="Profile" />}
 
             {cropImageSrc && (
@@ -210,7 +210,7 @@ export default function ProfilePage() {
             <div className="container mx-auto max-w-4xl pb-24">
                 <div className="animate-fade-in">
                     <div className="flex justify-between items-center mb-8">
-                        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">My Profile</h1>
+                        <h1 className="text-3xl font-bold text-white dark:text-white">My Profile</h1>
                         <div className="flex items-center gap-2">
                             <Button variant="secondary" onClick={() => router.push(profile.role === 'host' ? '/dashboard' : '/student/dashboard')}>
                                 Dashboard
@@ -223,13 +223,13 @@ export default function ProfilePage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {/* Profile Card */}
-                        <Card className="md:col-span-1 flex flex-col items-center text-center gap-4 p-6 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 h-fit">
+                        <Card className="md:col-span-1 flex flex-col items-center text-center gap-4 p-6 bg-white/10 backdrop-blur-sm border border-white/20 dark:border-slate-700 h-fit">
                             <div className="relative group">
                                 <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-indigo-500 shadow-lg relative bg-gray-800">
                                     {profile.photoURL ? (
                                         <img src={profile.photoURL} alt="Profile" className="w-full h-full object-cover" />
                                     ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-4xl text-gray-500">
+                                        <div className="w-full h-full flex items-center justify-center text-4xl text-white/60">
                                             {(profile.displayName || 'U').charAt(0).toUpperCase()}
                                         </div>
                                     )}
@@ -249,21 +249,21 @@ export default function ProfilePage() {
                                 {isEditing ? (
                                     <div className="space-y-3 w-full">
                                         <div>
-                                            <label className="text-xs text-gray-500 uppercase font-bold self-start">Display Name</label>
+                                            <label className="text-xs text-white/60 uppercase font-bold self-start">Display Name</label>
                                             <input
                                                 type="text"
                                                 value={editName}
                                                 onChange={(e) => setEditName(e.target.value)}
-                                                className="w-full p-2 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded text-center text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 mb-2"
+                                                className="w-full p-2 bg-white/5 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded text-center text-white dark:text-white focus:ring-2 focus:ring-indigo-500 mb-2"
                                             />
                                         </div>
                                         <div>
-                                            <label className="text-xs text-gray-500 uppercase font-bold self-start">Email</label>
+                                            <label className="text-xs text-white/60 uppercase font-bold self-start">Email</label>
                                             <input
                                                 type="email"
                                                 value={editEmail}
                                                 onChange={(e) => setEditEmail(e.target.value)}
-                                                className="w-full p-2 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded text-center text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500"
+                                                className="w-full p-2 bg-white/5 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded text-center text-white dark:text-white focus:ring-2 focus:ring-indigo-500"
                                             />
                                         </div>
                                         <div className="flex gap-2 justify-center">
@@ -273,28 +273,28 @@ export default function ProfilePage() {
                                     </div>
                                 ) : (
                                     <>
-                                        <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center justify-center gap-2">
+                                        <h2 className="text-xl font-bold text-white dark:text-white flex items-center justify-center gap-2">
                                             {profile.displayName || 'User'}
                                             <button onClick={() => setIsEditing(true)} className="text-gray-400 hover:text-indigo-400">
                                                 <Icons.Edit className="w-4 h-4" />
                                             </button>
                                         </h2>
-                                        <p className="text-sm text-gray-500 dark:text-gray-400 capitalize">{profile.role || 'player'}</p>
-                                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{profile.email}</p>
+                                        <p className="text-sm text-white/60 dark:text-gray-400 capitalize">{profile.role || 'player'}</p>
+                                        <p className="text-xs text-gray-400 dark:text-white/60 mt-1">{profile.email}</p>
                                     </>
                                 )}
                             </div>
 
-                            <hr className="w-full border-gray-200 dark:border-slate-700 my-2" />
+                            <hr className="w-full border-white/20 dark:border-slate-700 my-2" />
 
                             <div className="w-full text-left">
-                                <h3 className="text-xs font-bold text-gray-500 uppercase mb-2">Account</h3>
+                                <h3 className="text-xs font-bold text-white/60 uppercase mb-2">Account</h3>
                                 {resetSent ? (
                                     <div className="text-sm text-green-500 font-bold bg-green-500/10 p-2 rounded text-center">✓ Email Sent</div>
                                 ) : (
                                     <button
                                         onClick={handlePasswordReset}
-                                        className="w-full py-2 px-3 text-sm text-center border border-gray-300 dark:border-slate-600 rounded hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-600 dark:text-gray-300 transition-colors"
+                                        className="w-full py-2 px-3 text-sm text-center border border-gray-300 dark:border-slate-600 rounded hover:bg-white/5 dark:hover:bg-slate-700 text-white/70 dark:text-gray-300 transition-colors"
                                     >
                                         Reset Password
                                     </button>
@@ -304,35 +304,35 @@ export default function ProfilePage() {
 
                         {/* Stats Card */}
                         <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <Card className="col-span-1 sm:col-span-3 p-6 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700">
-                                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Total Points</h3>
+                            <Card className="col-span-1 sm:col-span-3 p-6 bg-white/10 backdrop-blur-sm border border-white/20 dark:border-slate-700">
+                                <h3 className="text-lg font-bold text-white dark:text-white mb-4">Total Points</h3>
                                 <div className="flex items-end gap-2">
                                     <span className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-600">
                                         {lifetimePoints.toLocaleString()}
                                     </span>
-                                    <span className="text-gray-500 dark:text-gray-400 mb-1">pts</span>
+                                    <span className="text-white/60 dark:text-gray-400 mb-1">pts</span>
                                 </div>
                             </Card>
 
                             {/* Badges Section */}
-                            <Card className="col-span-1 sm:col-span-3 p-6 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700">
-                                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                            <Card className="col-span-1 sm:col-span-3 p-6 bg-white/10 backdrop-blur-sm border border-white/20 dark:border-slate-700">
+                                <h3 className="text-lg font-bold text-white dark:text-white mb-4 flex items-center gap-2">
                                     <span>🏅</span> My Badges
-                                    <span className="text-sm bg-gray-100 dark:bg-slate-700 px-2 py-0.5 rounded-full text-gray-500 dark:text-gray-400">{badges.length}</span>
+                                    <span className="text-sm bg-gray-100 dark:bg-slate-700 px-2 py-0.5 rounded-full text-white/60 dark:text-gray-400">{badges.length}</span>
                                 </h3>
 
                                 {badges.length === 0 ? (
-                                    <div className="text-center py-8 text-gray-500 dark:text-gray-400 border-2 border-dashed border-gray-100 dark:border-slate-700 rounded-xl">
+                                    <div className="text-center py-8 text-white/60 dark:text-gray-400 border-2 border-dashed border-white/10 dark:border-slate-700 rounded-xl">
                                         <p>No badges earned yet. Keep playing to unlock trophies!</p>
                                     </div>
                                 ) : (
                                     <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
                                         {badges.map((b, idx) => (
-                                            <div key={idx} className="group relative bg-gray-50 dark:bg-slate-900 p-4 rounded-xl flex flex-col items-center text-center transition-all hover:scale-105 hover:shadow-lg border border-transparent hover:border-indigo-500/30">
+                                            <div key={idx} className="group relative bg-transparent p-4 rounded-xl flex flex-col items-center text-center transition-all hover:scale-105 hover:shadow-lg border border-transparent hover:border-indigo-500/30">
                                                 <div className="w-20 h-20 mb-3 relative drop-shadow-md">
                                                     <img src={b.details?.imageUrl} alt={b.details?.name} className="w-full h-full object-contain" />
                                                 </div>
-                                                <h4 className="font-bold text-sm text-gray-900 dark:text-white mb-1 line-clamp-1">{b.details?.name}</h4>
+                                                <h4 className="font-bold text-sm text-white dark:text-white mb-1 line-clamp-1">{b.details?.name}</h4>
 
                                                 {/* Tooltip Description */}
                                                 <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-black/90 text-white text-xs p-3 rounded-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-all z-20 shadow-xl">

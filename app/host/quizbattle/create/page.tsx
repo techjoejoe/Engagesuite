@@ -334,7 +334,7 @@ function CreateQuizContent() {
     ];
 
     return (
-        <main className="min-h-screen bg-gray-50 dark:bg-slate-900 transition-colors duration-300">
+        <main className="min-h-screen bg-transparent transition-colors duration-300">
             <HostMenu currentPage="QuizBattle" classId={classIdParam || undefined} />
             {/* Top Navigation */}
             <div style={{ backgroundColor: '#4A90E2', padding: '12px 24px', borderBottom: '1px solid #3a7bc8', display: 'flex', alignItems: 'center', gap: '16px' }}>

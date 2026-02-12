@@ -67,9 +67,9 @@ export default function AnalyticsDashboard() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-900">
+            <div className="min-h-screen flex items-center justify-center bg-transparent">
                 <HostMenu currentPage="Analytics" />
-                <div className="animate-pulse text-xl font-semibold text-gray-600 dark:text-gray-300">Loading Report...</div>
+                <div className="animate-pulse text-xl font-semibold text-white/70 dark:text-gray-300">Loading Report...</div>
             </div>
         );
     }
@@ -102,16 +102,16 @@ export default function AnalyticsDashboard() {
     };
 
     return (
-        <main className="min-h-screen bg-gray-50 dark:bg-slate-900 p-6 transition-colors duration-300">
+        <main className="min-h-screen bg-transparent p-6 transition-colors duration-300">
             <HostMenu currentPage="Analytics" />
 
             <div className="container mx-auto max-w-6xl mt-8 pb-20">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                     <div>
-                        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                        <h1 className="text-3xl font-bold text-white dark:text-white">
                             Super Admin Analytics
                         </h1>
-                        <p className="text-gray-500 dark:text-gray-400">System-wide performance metrics</p>
+                        <p className="text-white/60 dark:text-gray-400">System-wide performance metrics</p>
                     </div>
 
                     <div className="flex gap-2">
@@ -121,7 +121,7 @@ export default function AnalyticsDashboard() {
                                 onClick={() => setFilter(r)}
                                 className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${filter === r
                                     ? 'bg-indigo-600 text-white'
-                                    : 'bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700'
+                                    : 'bg-white/10 backdrop-blur-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700'
                                     }`}
                             >
                                 {r.toUpperCase()}
@@ -130,7 +130,7 @@ export default function AnalyticsDashboard() {
                         <Button
                             variant="secondary"
                             onClick={downloadCSV}
-                            className="ml-2 !bg-slate-800 !text-white hover:!bg-slate-700 dark:!bg-white dark:!text-slate-900 border border-slate-700 dark:border-gray-200"
+                            className="ml-2 !bg-slate-800 !text-white hover:!bg-slate-700 dark:!bg-white dark:!text-slate-900 border border-slate-700 dark:border-white/20"
                         >
                             ⬇ Export CSV
                         </Button>
@@ -139,38 +139,38 @@ export default function AnalyticsDashboard() {
 
                 {/* Key Metrics Grid */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-                    <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700">
+                    <div className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl shadow-sm border border-white/10 dark:border-slate-700">
                         <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Total Users</div>
-                        <div className="text-3xl font-black text-gray-900 dark:text-white">{stats.totalUsers}</div>
+                        <div className="text-3xl font-black text-white dark:text-white">{stats.totalUsers}</div>
                         <div className="text-sm text-green-500 font-bold">+{stats.newUsers} new</div>
                     </div>
-                    <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700">
+                    <div className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl shadow-sm border border-white/10 dark:border-slate-700">
                         <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Active Classes</div>
                         <div className="text-3xl font-black text-indigo-600 dark:text-indigo-400">{stats.classes.active}</div>
-                        <div className="text-sm text-gray-500">of {stats.classes.total} total</div>
+                        <div className="text-sm text-white/60">of {stats.classes.total} total</div>
                     </div>
-                    <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700">
+                    <div className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl shadow-sm border border-white/10 dark:border-slate-700">
                         <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Expired Classes</div>
                         <div className="text-3xl font-black text-red-500">{stats.classes.expired}</div>
-                        <div className="text-sm text-gray-500">Archived</div>
+                        <div className="text-sm text-white/60">Archived</div>
                     </div>
-                    <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700">
+                    <div className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl shadow-sm border border-white/10 dark:border-slate-700">
                         <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Points Awarded</div>
                         <div className="text-3xl font-black text-yellow-500">{stats.pointStats.total}</div>
-                        <div className="text-sm text-gray-500">in selected period</div>
+                        <div className="text-sm text-white/60">in selected period</div>
                     </div>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                     {/* Points Over Time */}
-                    <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700">
-                        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Points Awarded (Daily)</h3>
+                    <div className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl shadow-sm border border-white/10 dark:border-slate-700">
+                        <h3 className="text-lg font-bold text-white dark:text-white mb-4">Points Awarded (Daily)</h3>
                         <BarChart data={stats.pointStats.byDate} color="bg-yellow-400" label="Points" />
                     </div>
 
                     {/* Activity Launches */}
-                    <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700">
-                        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Activities Launched (Daily)</h3>
+                    <div className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl shadow-sm border border-white/10 dark:border-slate-700">
+                        <h3 className="text-lg font-bold text-white dark:text-white mb-4">Activities Launched (Daily)</h3>
                         {/* We need to aggregate all activities by date for this simple chart */}
                         <BarChart
                             data={Object.entries(stats.activityStats.byDate).reduce((acc: Record<string, number>, [date, types]: [string, any]) => {
@@ -185,15 +185,15 @@ export default function AnalyticsDashboard() {
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     {/* Activity Breakdown */}
-                    <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700">
-                        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6">Activity Popularity</h3>
+                    <div className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl shadow-sm border border-white/10 dark:border-slate-700">
+                        <h3 className="text-lg font-bold text-white dark:text-white mb-6">Activity Popularity</h3>
                         <div className="space-y-4">
-                            {Object.entries(stats.activityStats.byType).length === 0 && <p className="text-gray-500 italic">No activity data.</p>}
+                            {Object.entries(stats.activityStats.byType).length === 0 && <p className="text-white/60 italic">No activity data.</p>}
                             {Object.entries(stats.activityStats.byType).map(([type, count]: [string, any]) => (
                                 <div key={type}>
                                     <div className="flex justify-between text-sm mb-1">
                                         <span className="font-medium text-gray-700 dark:text-gray-300 capitalize">{type}</span>
-                                        <span className="text-gray-500 dark:text-gray-400 font-mono">{count}</span>
+                                        <span className="text-white/60 dark:text-gray-400 font-mono">{count}</span>
                                     </div>
                                     <div className="w-full bg-gray-100 dark:bg-slate-700 rounded-full h-2">
                                         <div className="bg-indigo-500 h-full rounded-full" style={{ width: `${(count / Math.max(...Object.values(stats.activityStats.byType) as number[], 1)) * 100}%` }} />
@@ -204,11 +204,11 @@ export default function AnalyticsDashboard() {
                     </div>
 
                     {/* Top Scanners */}
-                    <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden">
-                        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6">Top Scanners (Lifetime)</h3>
+                    <div className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl shadow-sm border border-white/10 dark:border-slate-700 overflow-hidden">
+                        <h3 className="text-lg font-bold text-white dark:text-white mb-6">Top Scanners (Lifetime)</h3>
                         <div className="overflow-x-auto">
                             <table className="w-full text-sm text-left">
-                                <thead className="text-xs text-gray-500 uppercase bg-gray-50 dark:bg-slate-700/50">
+                                <thead className="text-xs text-white/60 uppercase bg-white/5 dark:bg-slate-700/50">
                                     <tr>
                                         <th className="px-4 py-3 rounded-l-lg">Rank</th>
                                         <th className="px-4 py-3">Student</th>
@@ -217,12 +217,12 @@ export default function AnalyticsDashboard() {
                                 </thead>
                                 <tbody>
                                     {stats.topScanners.length === 0 && (
-                                        <tr><td colSpan={3} className="text-center py-4 text-gray-500">No scanner data available.</td></tr>
+                                        <tr><td colSpan={3} className="text-center py-4 text-white/60">No scanner data available.</td></tr>
                                     )}
                                     {stats.topScanners.map((student: any, index: number) => (
-                                        <tr key={index} className="border-b border-gray-100 dark:border-slate-700 last:border-0 hover:bg-gray-50 dark:hover:bg-slate-700/30 transition-colors">
+                                        <tr key={index} className="border-b border-white/10 dark:border-slate-700 last:border-0 hover:bg-white/5 dark:hover:bg-slate-700/30 transition-colors">
                                             <td className="px-4 py-3 font-bold text-gray-400">#{index + 1}</td>
-                                            <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">{student.name}</td>
+                                            <td className="px-4 py-3 font-medium text-white dark:text-white">{student.name}</td>
                                             <td className="px-4 py-3 text-right font-mono font-bold text-indigo-600 dark:text-indigo-400">{student.points}</td>
                                         </tr>
                                     ))}

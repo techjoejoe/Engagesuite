@@ -123,17 +123,17 @@ export default function WordStormHostPage() {
     };
 
     return (
-        <main className="min-h-screen bg-gray-50 dark:bg-slate-900 p-6 transition-colors duration-300">
+        <main className="min-h-screen bg-transparent p-6 transition-colors duration-300">
             <HostMenu currentPage="WordStorm" classId={classId || undefined} />
 
             <div className="max-w-[1400px] mx-auto">
                 {/* Header Section */}
-                <div className="bg-white dark:bg-slate-800 rounded-xl p-6 mb-6 shadow-sm flex flex-wrap justify-between items-center gap-5 border border-gray-100 dark:border-slate-700">
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 mb-6 shadow-sm flex flex-wrap justify-between items-center gap-5 border border-white/10 dark:border-slate-700">
                     <div>
                         <h1 className="text-3xl font-bold text-blue-500 dark:text-blue-400 mb-1 flex items-center gap-2">
                             ☁️ Word Storm
                         </h1>
-                        <p className="text-gray-500 dark:text-gray-400 text-sm">
+                        <p className="text-white/60 dark:text-gray-400 text-sm">
                             Live Word Cloud • {words.length} submission{words.length !== 1 ? 's' : ''}
                         </p>
                     </div>
@@ -167,7 +167,7 @@ export default function WordStormHostPage() {
                     {/* Word Cloud Section */}
                     <div
                         id="word-cloud-container"
-                        className="bg-white dark:bg-slate-800 rounded-xl p-10 shadow-sm min-h-[600px] flex items-center justify-center border border-gray-100 dark:border-slate-700"
+                        className="bg-white/10 backdrop-blur-sm rounded-xl p-10 shadow-sm min-h-[600px] flex items-center justify-center border border-white/10 dark:border-slate-700"
                     >
                         {aggregatedWords.length > 0 ? (
                             <WordCloud words={aggregatedWords} width={900} height={550} />

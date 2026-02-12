@@ -166,7 +166,7 @@ export default function GradesDashboard() {
         switch (status) {
             case 'completed': return 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30';
             case 'in_progress': return 'bg-blue-500/20 text-blue-300 border-blue-500/30';
-            default: return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+            default: return 'bg-white/50/20 text-gray-400 border-gray-500/30';
         }
     };
 
@@ -285,7 +285,7 @@ export default function GradesDashboard() {
                                 title={`In Progress: ${summary.inProgressCount}`}
                             />
                             <div
-                                className="bg-gray-500 transition-all duration-500"
+                                className="bg-white/50 transition-all duration-500"
                                 style={{ width: `${(summary.notStartedCount / (summary.completedCount + summary.inProgressCount + summary.notStartedCount)) * 100}%` }}
                                 title={`Not Started: ${summary.notStartedCount}`}
                             />
@@ -300,7 +300,7 @@ export default function GradesDashboard() {
                                 <span className="text-gray-400">In Progress ({summary.inProgressCount})</span>
                             </div>
                             <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 rounded-full bg-gray-500" />
+                                <div className="w-3 h-3 rounded-full bg-white/50" />
                                 <span className="text-gray-400">Not Started ({summary.notStartedCount})</span>
                             </div>
                         </div>
@@ -374,7 +374,7 @@ export default function GradesDashboard() {
                     <div className="flex flex-wrap items-center gap-4">
                         {/* Search */}
                         <div className="relative flex-1 min-w-[200px]">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/60" />
                             <input
                                 type="text"
                                 placeholder="Search students..."
@@ -433,7 +433,7 @@ export default function GradesDashboard() {
                             <tbody className="divide-y divide-white/5">
                                 {processedEntries.length === 0 ? (
                                     <tr>
-                                        <td colSpan={assignments.length + 2} className="px-6 py-12 text-center text-gray-500">
+                                        <td colSpan={assignments.length + 2} className="px-6 py-12 text-center text-white/60">
                                             {entries.length === 0
                                                 ? 'No students enrolled yet'
                                                 : 'No students match your filters'
@@ -454,14 +454,14 @@ export default function GradesDashboard() {
                                                     </div>
                                                     <div>
                                                         <div className="font-medium text-white">{entry.studentName}</div>
-                                                        <div className="text-xs text-gray-500">{entry.studentEmail}</div>
+                                                        <div className="text-xs text-white/60">{entry.studentEmail}</div>
                                                     </div>
                                                 </div>
                                             </td>
                                             {assignments.map(a => {
                                                 const data = entry.assignments[a.id];
                                                 if (!data) {
-                                                    return <td key={a.id} className="px-4 py-4 text-center text-gray-500">-</td>;
+                                                    return <td key={a.id} className="px-4 py-4 text-center text-white/60">-</td>;
                                                 }
 
                                                 return (
@@ -489,7 +489,7 @@ export default function GradesDashboard() {
                                                 <div className={`text-xl font-bold ${getGradeColor(entry.overallGrade)}`}>
                                                     {entry.overallGrade}%
                                                 </div>
-                                                <div className="text-xs text-gray-500">
+                                                <div className="text-xs text-white/60">
                                                     {entry.totalPointsEarned}/{entry.totalPointsPossible} pts
                                                 </div>
                                             </td>

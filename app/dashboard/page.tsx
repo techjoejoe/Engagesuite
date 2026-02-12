@@ -112,8 +112,8 @@ export default function Dashboard() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-900">
-                <div className="animate-pulse text-xl font-semibold text-gray-600 dark:text-gray-300">Loading Dashboard...</div>
+            <div className="min-h-screen flex items-center justify-center bg-transparent">
+                <div className="animate-pulse text-xl font-semibold text-white/70 dark:text-gray-300">Loading Dashboard...</div>
             </div>
         );
     }

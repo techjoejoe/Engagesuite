@@ -225,12 +225,12 @@ export default function HostLeaderGridPage() {
         }
     };
 
-    if (loading) return <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-900 text-gray-500">Loading...</div>;
+    if (loading) return <div className="min-h-screen flex items-center justify-center bg-transparent text-white/60">Loading...</div>;
 
     const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
 
     return (
-        <main className="min-h-screen bg-gray-50 dark:bg-slate-900 transition-colors duration-300">
+        <main className="min-h-screen bg-transparent transition-colors duration-300">
             <HostMenu currentPage="Leader Grid" classId={classId} />
 
             <div className="max-w-6xl mx-auto p-6 pt-10">
@@ -242,8 +242,8 @@ export default function HostLeaderGridPage() {
                                 <span className="text-3xl">🏆</span>
                             </div>
                             <div>
-                                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Leader Grid Dashboard</h1>
-                                <p className="text-gray-500 dark:text-gray-400">Manage redemption codes and student points.</p>
+                                <h1 className="text-2xl font-bold text-white dark:text-white">Leader Grid Dashboard</h1>
+                                <p className="text-white/60 dark:text-gray-400">Manage redemption codes and student points.</p>
                             </div>
                         </div>
                         <button
@@ -255,12 +255,12 @@ export default function HostLeaderGridPage() {
                     </div>
 
                     {/* Tabs */}
-                    <div className="flex gap-4 border-b border-gray-200 dark:border-slate-700">
+                    <div className="flex gap-4 border-b border-white/20 dark:border-slate-700">
                         <button
                             onClick={() => setActiveTab('codes')}
                             className={`pb-3 px-4 text-sm font-medium transition-colors relative ${activeTab === 'codes'
                                 ? 'text-indigo-600 dark:text-indigo-400'
-                                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                                : 'text-white/60 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                                 }`}
                         >
                             Manage QR Codes
@@ -272,7 +272,7 @@ export default function HostLeaderGridPage() {
                             onClick={() => setActiveTab('points')}
                             className={`pb-3 px-4 text-sm font-medium transition-colors relative ${activeTab === 'points'
                                 ? 'text-indigo-600 dark:text-indigo-400'
-                                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                                : 'text-white/60 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                                 }`}
                         >
                             Manage Student Points
@@ -294,7 +294,7 @@ export default function HostLeaderGridPage() {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {codes.map((code) => (
-                                <div key={code.id} className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col relative group hover:shadow-md transition-all">
+                                <div key={code.id} className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-white/10 dark:border-slate-700 flex flex-col relative group hover:shadow-md transition-all">
                                     {code.classId === null && (
                                         <div className="absolute top-4 right-4 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 text-xs font-bold px-2 py-1 rounded-full">
                                             Universal
@@ -302,7 +302,7 @@ export default function HostLeaderGridPage() {
                                     )}
 
                                     <div className="flex items-center gap-4 mb-4">
-                                        <div id={`qr-canvas-${code.id}`} className="bg-white p-2 rounded-lg border border-gray-100 shadow-sm cursor-pointer" onClick={() => setShowQRModal(code)}>
+                                        <div id={`qr-canvas-${code.id}`} className="bg-white p-2 rounded-lg border border-white/10 shadow-sm cursor-pointer" onClick={() => setShowQRModal(code)}>
                                             <QRCodeCanvas
                                                 value={`${baseUrl}/redeem?code=${code.code}`}
                                                 size={64}
@@ -310,7 +310,7 @@ export default function HostLeaderGridPage() {
                                             />
                                         </div>
                                         <div>
-                                            <h3 className="font-bold text-lg text-gray-900 dark:text-white">{code.name}</h3>
+                                            <h3 className="font-bold text-lg text-white dark:text-white">{code.name}</h3>
                                             <div className="text-2xl font-black text-indigo-600 dark:text-indigo-400">
                                                 {code.points} <span className="text-sm font-medium text-gray-400">pts</span>
                                             </div>
@@ -318,16 +318,16 @@ export default function HostLeaderGridPage() {
                                     </div>
 
                                     <div className="space-y-2 mb-6 flex-1">
-                                        <p className="text-sm text-gray-600 dark:text-gray-300 italic mb-2">
+                                        <p className="text-sm text-white/70 dark:text-gray-300 italic mb-2">
                                             "{code.description}"
                                         </p>
                                         <div className="flex justify-between text-sm">
-                                            <span className="text-gray-500">Code:</span>
-                                            <span className="font-mono font-bold bg-gray-100 dark:bg-slate-700 text-gray-900 dark:text-white px-2 rounded">{code.code}</span>
+                                            <span className="text-white/60">Code:</span>
+                                            <span className="font-mono font-bold bg-gray-100 dark:bg-slate-700 text-white dark:text-white px-2 rounded">{code.code}</span>
                                         </div>
                                         <div className="flex justify-between text-sm">
-                                            <span className="text-gray-500">Scans:</span>
-                                            <span className="font-medium text-gray-900 dark:text-white">
+                                            <span className="text-white/60">Scans:</span>
+                                            <span className="font-medium text-white dark:text-white">
                                                 {code.currentScans} / {code.maxScans === null ? '∞' : code.maxScans}
                                             </span>
                                         </div>
@@ -349,7 +349,7 @@ export default function HostLeaderGridPage() {
                                         </Button>
                                         <button
                                             onClick={() => downloadQR(code)}
-                                            className="p-2 bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors"
+                                            className="p-2 bg-gray-100 dark:bg-slate-700 text-white/70 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors"
                                             title="Download QR"
                                         >
                                             <Icons.Download className="w-5 h-5" />
@@ -367,10 +367,10 @@ export default function HostLeaderGridPage() {
                         </div>
 
                         {codes.length === 0 && (
-                            <div className="text-center py-20 bg-white dark:bg-slate-800 rounded-3xl border border-dashed border-gray-300 dark:border-slate-600">
+                            <div className="text-center py-20 bg-white/10 backdrop-blur-sm rounded-3xl border border-dashed border-gray-300 dark:border-slate-600">
                                 <div className="text-6xl mb-4 opacity-50">🏷️</div>
-                                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">No Codes Yet</h3>
-                                <p className="text-gray-500 dark:text-gray-400 mb-6">Create your first QR code to award points!</p>
+                                <h3 className="text-xl font-bold text-white dark:text-white mb-2">No Codes Yet</h3>
+                                <p className="text-white/60 dark:text-gray-400 mb-6">Create your first QR code to award points!</p>
                                 <Button variant="primary" onClick={() => setShowCreateModal(true)}>
                                     Create Code
                                 </Button>
@@ -381,7 +381,7 @@ export default function HostLeaderGridPage() {
                     <div className="animate-fade-in">
                         {/* Header Actions */}
                         <div className="flex justify-between items-center mb-6">
-                            <p className="text-gray-500 dark:text-gray-400">
+                            <p className="text-white/60 dark:text-gray-400">
                                 {students.length} student{students.length !== 1 ? 's' : ''} in class
                             </p>
                             <Button
@@ -396,11 +396,11 @@ export default function HostLeaderGridPage() {
                         {/* Bulk Points Modal */}
                         {showBulkModal && (
                             <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
-                                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-md w-full p-6 border border-gray-100 dark:border-slate-700 animate-scale-in">
-                                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                                <div className="bg-white/10 backdrop-blur-sm rounded-2xl shadow-2xl max-w-md w-full p-6 border border-white/10 dark:border-slate-700 animate-scale-in">
+                                    <h2 className="text-2xl font-bold text-white dark:text-white mb-2">
                                         Add Points to Everyone
                                     </h2>
-                                    <p className="text-gray-500 dark:text-gray-400 mb-6">
+                                    <p className="text-white/60 dark:text-gray-400 mb-6">
                                         This will add (or subtract) points for all {students.length} students in the class.
                                     </p>
 
@@ -413,7 +413,7 @@ export default function HostLeaderGridPage() {
                                             value={bulkPointsInput}
                                             onChange={(e) => setBulkPointsInput(e.target.value)}
                                             placeholder="e.g. 100 or -50"
-                                            className="w-full p-3 rounded-xl border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none text-lg"
+                                            className="w-full p-3 rounded-xl border border-white/20 dark:border-slate-600 bg-white/10 backdrop-blur-sm text-white dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none text-lg"
                                             style={{ color: '#000', backgroundColor: '#fff' }}
                                             autoFocus
                                         />
@@ -447,10 +447,10 @@ export default function HostLeaderGridPage() {
                         {/* Students List */}
                         <div className="bg-transparent">
                             {students.length === 0 ? (
-                                <div className="text-center py-16 bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700">
+                                <div className="text-center py-16 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/10 dark:border-slate-700">
                                     <div className="text-6xl mb-4">👥</div>
-                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">No Students Yet</h3>
-                                    <p className="text-gray-500 dark:text-gray-400">
+                                    <h3 className="text-xl font-bold text-white dark:text-white mb-2">No Students Yet</h3>
+                                    <p className="text-white/60 dark:text-gray-400">
                                         Students will appear here when they join your class
                                     </p>
                                 </div>
@@ -463,7 +463,7 @@ export default function HostLeaderGridPage() {
                                         return (
                                             <div
                                                 key={student.userId}
-                                                className={`relative bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col items-center text-center transition-all hover:shadow-lg hover:-translate-y-1 group ${isTop3 ? 'ring-2 ring-yellow-400/50 dark:ring-yellow-500/30' : ''
+                                                className={`relative bg-white/10 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-white/10 dark:border-slate-700 flex flex-col items-center text-center transition-all hover:shadow-lg hover:-translate-y-1 group ${isTop3 ? 'ring-2 ring-yellow-400/50 dark:ring-yellow-500/30' : ''
                                                     }`}
                                             >
                                                 {/* Rank Badge */}
@@ -473,7 +473,7 @@ export default function HostLeaderGridPage() {
 
                                                 {/* Profile Image */}
                                                 <div className="relative mb-4">
-                                                    <div className={`w-24 h-24 rounded-full overflow-hidden border-4 ${isTop3 ? 'border-yellow-400' : 'border-gray-100 dark:border-slate-700'} shadow-lg`}>
+                                                    <div className={`w-24 h-24 rounded-full overflow-hidden border-4 ${isTop3 ? 'border-yellow-400' : 'border-white/10 dark:border-slate-700'} shadow-lg`}>
                                                         {student.photoURL ? (
                                                             <img src={student.photoURL} alt={student.nickname} className="w-full h-full object-cover" />
                                                         ) : (
@@ -490,10 +490,10 @@ export default function HostLeaderGridPage() {
                                                 </div>
 
                                                 {/* Name & Email */}
-                                                <h3 className="font-bold text-lg text-gray-900 dark:text-white truncate w-full mb-1">
+                                                <h3 className="font-bold text-lg text-white dark:text-white truncate w-full mb-1">
                                                     {student.nickname}
                                                 </h3>
-                                                <p className="text-xs text-gray-500 dark:text-gray-400 truncate w-full mb-4">
+                                                <p className="text-xs text-white/60 dark:text-gray-400 truncate w-full mb-4">
                                                     {student.email}
                                                 </p>
 
@@ -507,8 +507,8 @@ export default function HostLeaderGridPage() {
                                                             Class Pts
                                                         </div>
                                                     </div>
-                                                    <div className="bg-gray-50 dark:bg-slate-700/50 p-2 rounded-xl">
-                                                        <div className="text-lg font-bold text-gray-600 dark:text-gray-300">
+                                                    <div className="bg-white/5 dark:bg-slate-700/50 p-2 rounded-xl">
+                                                        <div className="text-lg font-bold text-white/70 dark:text-gray-300">
                                                             {student.lifetimePoints}
                                                         </div>
                                                         <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
@@ -518,7 +518,7 @@ export default function HostLeaderGridPage() {
                                                 </div>
 
                                                 {/* Actions */}
-                                                <div className="w-full mt-auto pt-4 border-t border-gray-100 dark:border-slate-700">
+                                                <div className="w-full mt-auto pt-4 border-t border-white/10 dark:border-slate-700">
                                                     {selectedStudent === student.userId ? (
                                                         <div className="flex flex-col gap-2 animate-fade-in">
                                                             <div className="flex gap-2">
@@ -527,7 +527,7 @@ export default function HostLeaderGridPage() {
                                                                     value={pointsInput}
                                                                     onChange={(e) => setPointsInput(e.target.value)}
                                                                     placeholder="±pts"
-                                                                    className="w-full px-3 py-1.5 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-sm"
+                                                                    className="w-full px-3 py-1.5 rounded-lg border border-gray-300 dark:border-slate-600 bg-white/10 backdrop-blur-sm text-sm"
                                                                     autoFocus
                                                                 />
                                                             </div>
@@ -587,7 +587,7 @@ export default function HostLeaderGridPage() {
                                                             <button
                                                                 onClick={() => handleRemoveStudent(student.userId)}
                                                                 disabled={processing}
-                                                                className="col-span-1 bg-gray-100 hover:bg-red-100 dark:bg-slate-700 dark:hover:bg-red-900/30 text-gray-400 hover:text-red-600 dark:text-gray-500 dark:hover:text-red-400 rounded-lg py-1.5 flex items-center justify-center transition-colors"
+                                                                className="col-span-1 bg-gray-100 hover:bg-red-100 dark:bg-slate-700 dark:hover:bg-red-900/30 text-gray-400 hover:text-red-600 dark:text-white/60 dark:hover:text-red-400 rounded-lg py-1.5 flex items-center justify-center transition-colors"
                                                                 title="Remove Student"
                                                             >
                                                                 <Icons.Trash className="w-3.5 h-3.5" />
@@ -609,8 +609,8 @@ export default function HostLeaderGridPage() {
             {showCreateModal && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowCreateModal(false)} />
-                    <div className="relative bg-white dark:bg-slate-800 rounded-2xl p-8 w-full max-w-md shadow-2xl animate-bounce-in">
-                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Create New Code</h2>
+                    <div className="relative bg-white/10 backdrop-blur-sm rounded-2xl p-8 w-full max-w-md shadow-2xl animate-bounce-in">
+                        <h2 className="text-2xl font-bold text-white dark:text-white mb-6">Create New Code</h2>
                         <form onSubmit={handleCreate} className="space-y-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name</label>
@@ -620,7 +620,7 @@ export default function HostLeaderGridPage() {
                                     value={newName}
                                     onChange={(e) => setNewName(e.target.value)}
                                     placeholder="e.g. Early Bird Bonus"
-                                    className="w-full p-3 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                    className="w-full p-3 rounded-xl border border-white/20 dark:border-slate-600 bg-transparent text-white dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
                                 />
                             </div>
                             <div>
@@ -631,7 +631,7 @@ export default function HostLeaderGridPage() {
                                     value={newDescription}
                                     onChange={(e) => setNewDescription(e.target.value)}
                                     placeholder="e.g. Arrive before 9:00 AM"
-                                    className="w-full p-3 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                    className="w-full p-3 rounded-xl border border-white/20 dark:border-slate-600 bg-transparent text-white dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
                                 />
                             </div>
                             <div>
@@ -642,7 +642,7 @@ export default function HostLeaderGridPage() {
                                     min="1"
                                     value={newPoints}
                                     onChange={(e) => setNewPoints(parseInt(e.target.value))}
-                                    className="w-full p-3 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                    className="w-full p-3 rounded-xl border border-white/20 dark:border-slate-600 bg-transparent text-white dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
                                 />
                             </div>
                             <div>
@@ -653,7 +653,7 @@ export default function HostLeaderGridPage() {
                                     value={newMaxScans}
                                     onChange={(e) => setNewMaxScans(e.target.value)}
                                     placeholder="Leave empty for unlimited"
-                                    className="w-full p-3 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                    className="w-full p-3 rounded-xl border border-white/20 dark:border-slate-600 bg-transparent text-white dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
                                 />
                             </div>
                             <div>
@@ -662,7 +662,7 @@ export default function HostLeaderGridPage() {
                                     type="datetime-local"
                                     value={newExpiresAt}
                                     onChange={(e) => setNewExpiresAt(e.target.value)}
-                                    className="w-full p-3 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                                    className="w-full p-3 rounded-xl border border-white/20 dark:border-slate-600 bg-transparent text-white dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
                                 />
                             </div>
                             <div className="flex items-center gap-2 pt-2">
@@ -729,7 +729,7 @@ export default function HostLeaderGridPage() {
                             Close Projection
                         </button>
 
-                        <div className="mt-8 text-sm text-gray-500">
+                        <div className="mt-8 text-sm text-white/60">
                             Scans: {showQRModal.currentScans} / {showQRModal.maxScans === null ? '∞' : showQRModal.maxScans}
                         </div>
                     </div>

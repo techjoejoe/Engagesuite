@@ -143,7 +143,7 @@ export default function Home() {
                         {option.text}
                       </span>
                     </div>
-                    <span className="text-gray-500 text-sm">{option.votes} votes</span>
+                    <span className="text-white/60 text-sm">{option.votes} votes</span>
                   </div>
                 ))}
               </div>
@@ -222,7 +222,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="relative z-10 border-t border-white/10 py-8">
-        <div className="container mx-auto px-6 text-center text-gray-500 text-sm">
+        <div className="container mx-auto px-6 text-center text-white/60 text-sm">
           <p>© 2026 Trainer-Toolbox. Making learning fun, one question at a time.</p>
         </div>
       </footer>

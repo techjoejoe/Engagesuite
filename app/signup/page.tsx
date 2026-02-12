@@ -144,7 +144,7 @@ export default function SignupPage() {
                 minLength={6}
                 className="w-full px-4 py-3 bg-[#0f172a]/50 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
               />
-              <p className="text-xs text-gray-500 mt-1">Must be at least 6 characters</p>
+              <p className="text-xs text-white/60 mt-1">Must be at least 6 characters</p>
             </div>
 
             <div>
@@ -182,7 +182,7 @@ export default function SignupPage() {
           </form>
 
           {/* Terms */}
-          <p className="mt-6 text-xs text-gray-500 text-center">
+          <p className="mt-6 text-xs text-white/60 text-center">
             By signing up, you agree to our{' '}
             <Link href="/terms" className="text-indigo-400 hover:text-indigo-300">
               Terms of Service
@@ -204,7 +204,7 @@ export default function SignupPage() {
 
         {/* Back to Home */}
         <p className="mt-6 text-center">
-          <Link href="/" className="text-gray-500 hover:text-gray-400 text-sm transition-colors">
+          <Link href="/" className="text-white/60 hover:text-gray-400 text-sm transition-colors">
             ← Back to home
           </Link>
         </p>

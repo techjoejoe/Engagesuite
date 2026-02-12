@@ -77,8 +77,8 @@ function ClassDashboardContent() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-900">
-                <div className="animate-pulse text-xl font-semibold text-gray-600 dark:text-gray-300">Loading Class...</div>
+            <div className="min-h-screen flex items-center justify-center bg-transparent">
+                <div className="animate-pulse text-xl font-semibold text-white/70 dark:text-gray-300">Loading Class...</div>
             </div>
         );
     }
@@ -405,20 +405,20 @@ const AssignmentModal = ({ isOpen, onClose, classId }: { isOpen: boolean, onClos
             <div className="bg-white rounded-2xl p-6 w-full max-w-2xl max-h-[80vh] flex flex-col shadow-2xl animate-fade-in-up">
 
                 <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl font-bold text-gray-900">Manage Workbooks</h2>
-                    <button onClick={onClose} className="text-gray-400 hover:text-gray-600">✕</button>
+                    <h2 className="text-xl font-bold text-white">Manage Workbooks</h2>
+                    <button onClick={onClose} className="text-gray-400 hover:text-white/70">✕</button>
                 </div>
 
-                <div className="flex gap-4 border-b border-gray-100 mb-4 pb-1">
+                <div className="flex gap-4 border-b border-white/10 mb-4 pb-1">
                     <button
                         onClick={() => setTab('assign')}
-                        className={`pb-2 text-sm font-bold transition-colors ${tab === 'assign' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-400 hover:text-gray-600'}`}
+                        className={`pb-2 text-sm font-bold transition-colors ${tab === 'assign' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-400 hover:text-white/70'}`}
                     >
                         Assign New
                     </button>
                     <button
                         onClick={() => setTab('manage')}
-                        className={`pb-2 text-sm font-bold transition-colors ${tab === 'manage' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-400 hover:text-gray-600'}`}
+                        className={`pb-2 text-sm font-bold transition-colors ${tab === 'manage' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-400 hover:text-white/70'}`}
                     >
                         Active Assignments ({activeAssignments.length})
                     </button>
@@ -430,12 +430,12 @@ const AssignmentModal = ({ isOpen, onClose, classId }: { isOpen: boolean, onClos
                     ) : tab === 'assign' ? (
                         albums.length === 0 ? (
                             <div className="text-center py-10">
-                                <p className="text-gray-500 mb-4">You haven't designed any workbooks yet.</p>
+                                <p className="text-white/60 mb-4">You haven't designed any workbooks yet.</p>
                                 <Button variant="primary" onClick={() => window.location.href = '/host/design'}>Go to Designer</Button>
                             </div>
                         ) : (
                             albums.map(album => (
-                                <div key={album.id} className="border border-gray-100 p-4 rounded-xl flex justify-between items-center hover:bg-gray-50 transition-colors">
+                                <div key={album.id} className="border border-white/10 p-4 rounded-xl flex justify-between items-center hover:bg-white/5 transition-colors">
                                     <div>
                                         <h3 className="font-bold text-gray-800">{album.title}</h3>
                                         <p className="text-sm text-gray-400">{album.pages?.length || 0} Pages • {album.totalPointsAvailable} Pts</p>
@@ -494,8 +494,8 @@ const AssignmentModal = ({ isOpen, onClose, classId }: { isOpen: boolean, onClos
                             <div className="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
                                 <span className="text-3xl">⚠️</span>
                             </div>
-                            <h3 className="text-xl font-bold text-gray-900 mb-2">Unassign Workbook?</h3>
-                            <p className="text-gray-600 mb-6">
+                            <h3 className="text-xl font-bold text-white mb-2">Unassign Workbook?</h3>
+                            <p className="text-white/70 mb-6">
                                 This will remove the workbook from the class. <br />
                                 <strong className="text-green-600">Student progress will be kept.</strong>
                             </p>

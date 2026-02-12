@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 
 const AlbumPlayerContent = dynamic(() => import('@/components/AlbumPlayerContent'), {
     ssr: false,
-    loading: () => <div className="min-h-screen flex items-center justify-center bg-gray-50 text-gray-500">Loading Workbook...</div>
+    loading: () => <div className="min-h-screen flex items-center justify-center bg-transparent text-white/60">Loading Workbook...</div>
 });
 
 function WorkbookWrapper() {
@@ -20,7 +20,7 @@ function WorkbookWrapper() {
 
 export default function WorkbookPage() {
     return (
-        <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-gray-50 text-gray-500">Loading...</div>}>
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-transparent text-white/60">Loading...</div>}>
             <WorkbookWrapper />
         </Suspense>
     );

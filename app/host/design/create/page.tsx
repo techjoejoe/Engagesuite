@@ -163,10 +163,10 @@ function EditorContent() {
     return (
         <div className="flex h-screen bg-[#F8F9FA] overflow-hidden">
             {/* Sidebar - Page Navigation */}
-            <aside className="w-64 bg-white border-r border-gray-200 flex flex-col z-10">
-                <div className="p-4 border-b border-gray-100 flex items-center gap-3">
+            <aside className="w-64 bg-white/10 backdrop-blur-sm border-r border-white/20 flex flex-col z-10">
+                <div className="p-4 border-b border-white/10 flex items-center gap-3">
                     <button onClick={() => router.back()} className="hover:bg-gray-100 p-1 rounded-md">
-                        <ArrowLeft className="w-5 h-5 text-gray-500" />
+                        <ArrowLeft className="w-5 h-5 text-white/60" />
                     </button>
                     <h2 className="font-bold text-gray-800 truncate">{album.title}</h2>
                 </div>
@@ -178,7 +178,7 @@ function EditorContent() {
                             onClick={() => setActivePageId(page.id)}
                             className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${activePageId === page.id
                                 ? 'bg-blue-50 text-blue-700'
-                                : 'text-gray-600 hover:bg-gray-50'
+                                : 'text-white/70 hover:bg-white/5'
                                 }`}
                         >
                             <span className="text-xs opacity-50 w-4">{idx + 1}.</span>
@@ -188,13 +188,13 @@ function EditorContent() {
 
                     <button
                         onClick={addPage}
-                        className="w-full mt-4 flex items-center justify-center gap-2 py-2 border border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-blue-400 hover:text-blue-500 text-sm transition-all"
+                        className="w-full mt-4 flex items-center justify-center gap-2 py-2 border border-dashed border-gray-300 rounded-lg text-white/60 hover:border-blue-400 hover:text-blue-500 text-sm transition-all"
                     >
                         <Plus className="w-4 h-4" /> Add Page
                     </button>
                 </div>
 
-                <div className="p-4 border-t border-gray-200 text-xs text-center text-gray-400">
+                <div className="p-4 border-t border-white/20 text-xs text-center text-gray-400">
                     {saving ? 'Saving changes...' : 'All changes saved'}
                 </div>
             </aside>
@@ -204,12 +204,12 @@ function EditorContent() {
                 <div className="max-w-3xl mx-auto py-12 px-8 pb-32">
 
                     {/* Album Meta */}
-                    <div className="mb-12 border-b border-gray-200 pb-8">
+                    <div className="mb-12 border-b border-white/20 pb-8">
                         <div className="flex justify-between items-start mb-4">
                             <input
                                 value={album.title}
                                 onChange={(e) => handleSave({ ...album, title: e.target.value })}
-                                className="text-4xl font-extrabold text-gray-900 w-full bg-transparent border-none focus:ring-0 placeholder-gray-300"
+                                className="text-4xl font-extrabold text-white w-full bg-transparent border-none focus:ring-0 placeholder-gray-300"
                                 placeholder="Untitled Workbook"
                             />
 
@@ -225,7 +225,7 @@ function EditorContent() {
                                 }}
                                 className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all ${album.isPublished
                                     ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                                    : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                                    : 'bg-gray-100 text-white/60 hover:bg-gray-200'
                                     }`}
                                 title={album.isPublished ? "Published: Edits are Live" : "Draft: Edits are Hidden"}
                             >
@@ -237,7 +237,7 @@ function EditorContent() {
                             <input
                                 value={album.description}
                                 onChange={(e) => handleSave({ ...album, description: e.target.value })}
-                                className="text-lg text-gray-500 w-full bg-transparent border-none focus:ring-0 placeholder-gray-300 flex-1"
+                                className="text-lg text-white/60 w-full bg-transparent border-none focus:ring-0 placeholder-gray-300 flex-1"
                                 placeholder="Add a description for your students..."
                             />
                             <div className="bg-green-50 rounded-lg px-3 py-1 flex flex-col items-center border border-green-100 min-w-[120px]">
@@ -274,18 +274,18 @@ function EditorContent() {
                             </div>
 
                             {activePage.blocks.length === 0 && (
-                                <div className="text-center py-10 border-2 border-dashed border-gray-200 rounded-xl text-gray-400">
+                                <div className="text-center py-10 border-2 border-dashed border-white/20 rounded-xl text-gray-400">
                                     Start adding content to this page
                                 </div>
                             )}
 
                             {activePage.blocks.map((block) => (
-                                <div key={block.id} className="group relative bg-white border border-transparent hover:border-gray-200 hover:shadow-sm rounded-xl p-1 transition-all">
+                                <div key={block.id} className="group relative bg-white/10 border border-transparent hover:border-white/20 hover:shadow-sm rounded-xl p-1 transition-all">
                                     {/* Component for Loop */}
                                     <BlockEditor block={block} updateBlock={updateBlock} />
 
                                     {/* Hover Actions */}
-                                    <div className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 flex items-center gap-1 bg-white shadow-sm border border-gray-100 rounded-lg p-1">
+                                    <div className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 flex items-center gap-1 bg-white/10 backdrop-blur-sm shadow-sm border border-white/10 rounded-lg p-1">
                                         <div className="text-xs font-semibold text-blue-600 px-2 bg-blue-50 rounded line-clamp-1 mr-2">
                                             {block.points > 0 ? `${block.points} pts` : ''}
                                         </div>
@@ -324,7 +324,7 @@ function FloatingActionButton({ icon, label, onClick }: { icon: any, label: stri
     return (
         <button
             onClick={onClick}
-            className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-300 hover:text-blue-600 transition-all text-gray-600 text-sm font-medium"
+            className="flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full shadow-sm hover:shadow-md hover:border-blue-300 hover:text-blue-600 transition-all text-white/70 text-sm font-medium"
         >
             {icon}
             {label}
@@ -335,14 +335,14 @@ function FloatingActionButton({ icon, label, onClick }: { icon: any, label: stri
 function BlockEditor({ block, updateBlock }: { block: AlbumBlock, updateBlock: (id: string, data: Partial<AlbumBlock>) => void }) {
     if (block.type === 'text') {
         return (
-            <div className="relative group p-2 hover:bg-gray-50 rounded-xl transition-colors">
-                <div className="flex justify-between items-center mb-2 opacity-0 group-hover:opacity-100 transition-opacity absolute -top-3 right-0 bg-white shadow-sm border border-gray-100 rounded-lg px-2 py-1 z-10">
+            <div className="relative group p-2 hover:bg-white/5 rounded-xl transition-colors">
+                <div className="flex justify-between items-center mb-2 opacity-0 group-hover:opacity-100 transition-opacity absolute -top-3 right-0 bg-white/10 backdrop-blur-sm shadow-sm border border-white/10 rounded-lg px-2 py-1 z-10">
                     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mr-2">Points</span>
                     <input
                         type="number"
                         value={block.points || 0}
                         onChange={(e) => updateBlock(block.id, { points: parseInt(e.target.value) || 0 })}
-                        className="w-12 text-right text-xs border-none p-0 focus:ring-0 font-bold text-gray-600 bg-transparent"
+                        className="w-12 text-right text-xs border-none p-0 focus:ring-0 font-bold text-white/70 bg-transparent"
                         placeholder="0"
                     />
                 </div>
@@ -369,7 +369,7 @@ function BlockEditor({ block, updateBlock }: { block: AlbumBlock, updateBlock: (
                             type="number"
                             value={block.points}
                             onChange={(e) => updateBlock(block.id, { points: parseInt(e.target.value) || 0 })}
-                            className="w-16 text-right text-sm border-gray-200 rounded-md focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+                            className="w-16 text-right text-sm border-white/20 rounded-md focus:ring-blue-500 focus:border-blue-500 text-white"
                             placeholder="Points"
                         />
                     </div>
@@ -386,7 +386,7 @@ function BlockEditor({ block, updateBlock }: { block: AlbumBlock, updateBlock: (
                     <select
                         value={block.questionType}
                         onChange={(e) => updateBlock(block.id, { questionType: e.target.value as any })}
-                        className="text-sm border-gray-200 rounded-lg bg-white text-gray-600 focus:ring-blue-500 focus:border-blue-500"
+                        className="text-sm border-white/20 rounded-lg bg-white/10 text-white/70 focus:ring-blue-500 focus:border-blue-500"
                     >
                         <option value="short_answer">Short Answer</option>
                         <option value="essay">Long Essay</option>
@@ -423,7 +423,7 @@ function BlockEditor({ block, updateBlock }: { block: AlbumBlock, updateBlock: (
                                         }
                                         updateBlock(block.id, updates);
                                     }}
-                                    className="flex-1 text-sm border-gray-200 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+                                    className="flex-1 text-sm border-white/20 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-white"
                                     placeholder={`Option ${idx + 1}`}
                                 />
                                 <button
@@ -455,14 +455,14 @@ function BlockEditor({ block, updateBlock }: { block: AlbumBlock, updateBlock: (
 
     if (block.type === 'image') {
         return (
-            <div className="p-4 bg-gray-50 rounded-xl border border-dashed border-gray-200 relative group">
-                <div className="flex justify-between items-center mb-2 opacity-0 group-hover:opacity-100 transition-opacity absolute -top-3 right-4 bg-white shadow-sm border border-gray-100 rounded-lg px-2 py-1 z-10">
+            <div className="p-4 bg-white/5 rounded-xl border border-dashed border-white/20 relative group">
+                <div className="flex justify-between items-center mb-2 opacity-0 group-hover:opacity-100 transition-opacity absolute -top-3 right-4 bg-white/10 backdrop-blur-sm shadow-sm border border-white/10 rounded-lg px-2 py-1 z-10">
                     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mr-2">Points</span>
                     <input
                         type="number"
                         value={block.points || 0}
                         onChange={(e) => updateBlock(block.id, { points: parseInt(e.target.value) || 0 })}
-                        className="w-12 text-right text-xs border-none p-0 focus:ring-0 font-bold text-gray-600 bg-transparent"
+                        className="w-12 text-right text-xs border-none p-0 focus:ring-0 font-bold text-white/70 bg-transparent"
                         placeholder="0"
                     />
                 </div>

@@ -25,19 +25,19 @@ export default function QuizResultsPage() {
     }, [id]);
 
     if (!game) return (
-        <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex items-center justify-center text-gray-600 dark:text-gray-400">
+        <div className="min-h-screen bg-transparent flex items-center justify-center text-white/70 dark:text-gray-400">
             Loading...
         </div>
     );
 
     return (
-        <main className="min-h-screen bg-gray-50 dark:bg-slate-900 font-sans flex flex-col p-6 transition-colors duration-300">
+        <main className="min-h-screen bg-transparent font-sans flex flex-col p-6 transition-colors duration-300">
             <HamburgerMenu currentPage="QuizBattle" />
 
             <div className="max-w-[1000px] mx-auto w-full flex flex-col items-center">
 
                 {/* Title */}
-                <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-12 text-center">
+                <h1 className="text-5xl font-bold text-white dark:text-white mb-12 text-center">
                     Final Results
                 </h1>
 

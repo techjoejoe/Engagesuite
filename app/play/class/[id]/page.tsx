@@ -76,7 +76,7 @@ export default function StudentClassDashboard() {
             <div className="min-h-screen bg-[#F3F4F6] flex items-center justify-center">
                 <div className="flex flex-col items-center gap-4">
                     <div className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
-                    <p className="text-gray-500 font-medium animate-pulse">Loading Class...</p>
+                    <p className="text-white/60 font-medium animate-pulse">Loading Class...</p>
                 </div>
             </div>
         );
@@ -85,10 +85,10 @@ export default function StudentClassDashboard() {
     if (!classData) {
         return (
             <div className="min-h-screen bg-[#F3F4F6] flex items-center justify-center p-4">
-                <div className="bg-white p-8 rounded-[2rem] shadow-xl text-center max-w-sm w-full border border-gray-100">
+                <div className="bg-white p-8 rounded-[2rem] shadow-xl text-center max-w-sm w-full border border-white/10">
                     <div className="text-4xl mb-4">😕</div>
-                    <h2 className="text-xl font-bold text-gray-900 mb-2">Class Not Found</h2>
-                    <p className="text-gray-500">This class doesn't exist or has been removed.</p>
+                    <h2 className="text-xl font-bold text-white mb-2">Class Not Found</h2>
+                    <p className="text-white/60">This class doesn't exist or has been removed.</p>
                 </div>
             </div>
         );
