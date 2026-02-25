@@ -3,7 +3,7 @@
 import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Button from '@/components/Button';
-import { signInWithEmail, signInWithGoogle } from '@/lib/auth';
+import { signInWithEmail, signInWithGoogle, getUserProfile } from '@/lib/auth';
 
 function LoginContent() {
     const router = useRouter();
@@ -26,11 +26,16 @@ function LoginContent() {
         setError('');
 
         try {
-            await signInWithEmail(email, password);
+            const user = await signInWithEmail(email, password);
             if (redirectUrl) {
                 router.push(decodeURIComponent(redirectUrl));
             } else {
-                router.push('/dashboard');
+                const profile = await getUserProfile(user.uid);
+                if (profile?.role === 'host') {
+                    router.push('/dashboard');
+                } else {
+                    router.push('/student/dashboard');
+                }
             }
         } catch (err: any) {
             console.error('Login error:', err);
@@ -44,11 +49,16 @@ function LoginContent() {
         setError('');
 
         try {
-            await signInWithGoogle();
+            const gUser = await signInWithGoogle();
             if (redirectUrl) {
                 router.push(decodeURIComponent(redirectUrl));
             } else {
-                router.push('/dashboard');
+                const gProfile = await getUserProfile(gUser.uid);
+                if (gProfile?.role === 'host') {
+                    router.push('/dashboard');
+                } else {
+                    router.push('/student/dashboard');
+                }
             }
         } catch (err: any) {
             console.error('Google login error:', err);

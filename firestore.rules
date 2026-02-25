@@ -43,6 +43,16 @@ service cloud.firestore {
       }
     }
 
+    // ACCESS CODES (Trainer Verification)
+    // Read: unauthenticated allowed (validated during signup before user exists)
+    // Write: authenticated users only
+    match /accessCodes/{codeId} {
+      allow read: if true;
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated();
+      allow delete: if isAuthenticated();
+    }
+
     // BADGES COLLECTION (Global Library)
     match /badges/{badgeId} {
       allow read: if isAuthenticated();
