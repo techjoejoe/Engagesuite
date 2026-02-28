@@ -3,23 +3,18 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   // Build optimization
   reactStrictMode: true,
-  
+
   // Prevent build hangs
   experimental: {
     workerThreads: false,
     cpus: 1,
   },
-  
+
   // TypeScript configuration  
   typescript: {
     ignoreBuildErrors: false,
   },
-  
-  // ESLint configuration
-  eslint: {
-    ignoreDuringBuilds: false,
-  },
-  
+
   images: {
     unoptimized: true,
     remotePatterns: [
@@ -30,43 +25,9 @@ const nextConfig: NextConfig = {
     ],
   },
 
-  // Webpack optimization for stability
-  webpack: (config, { isServer }) => {
-    config.optimization = {
-      ...config.optimization,
-      moduleIds: 'deterministic',
-      runtimeChunk: isServer ? undefined : 'single',
-      splitChunks: {
-        chunks: 'all',
-        cacheGroups: {
-          default: false,
-          vendors: false,
-          vendor: {
-            name: 'vendor',
-            chunks: 'all',
-            test: /node_modules/,
-            priority: 20,
-          },
-          common: {
-            name: 'common',
-            minChunks: 2,
-            chunks: 'all',
-            priority: 10,
-            reuseExistingChunk: true,
-            enforce: true,
-          },
-        },
-      },
-    };
+  // Turbopack configuration (Next.js 16+)
+  turbopack: {},
 
-    config.stats = {
-      ...config.stats,
-      warningsFilter: [/Circular dependency/],
-    };
-
-    return config;
-  },
-  
   output: 'standalone',
 
   // Security headers for production
@@ -108,8 +69,6 @@ const nextConfig: NextConfig = {
           },
           {
             // Content Security Policy
-            // Note: 'unsafe-inline' and 'unsafe-eval' needed for Next.js dev mode
-            // In production, consider using nonces for inline scripts
             key: 'Content-Security-Policy',
             value: process.env.NODE_ENV === 'production'
               ? [
@@ -125,7 +84,7 @@ const nextConfig: NextConfig = {
                 "form-action 'self'",
                 "frame-ancestors 'self'",
               ].join('; ')
-              : '', // Don't apply CSP in development (causes issues with hot reload)
+              : '',
           },
         ],
       },

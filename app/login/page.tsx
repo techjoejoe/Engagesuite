@@ -26,18 +26,13 @@ function LoginContent() {
         setError('');
 
         try {
-            const user = const user = await signInWithEmail(email, password);
+            const user = await signInWithEmail(email, password);
             if (redirectUrl) {
                 router.push(decodeURIComponent(redirectUrl));
             } else {
                 const profile = await getUserProfile(user.uid);
                 if (profile?.role === 'host') {
-                const profile = await getUserProfile(user.uid);
-                if (profile?.role === 'host') {
                     router.push('/dashboard');
-                } else {
-                    router.push('/student/dashboard');
-                }
                 } else {
                     router.push('/student/dashboard');
                 }
@@ -54,18 +49,13 @@ function LoginContent() {
         setError('');
 
         try {
-            const gUser = const gUser = await signInWithGoogle();
+            const gUser = await signInWithGoogle();
             if (redirectUrl) {
                 router.push(decodeURIComponent(redirectUrl));
             } else {
                 const gProfile = await getUserProfile(gUser.uid);
                 if (gProfile?.role === 'host') {
-                const gProfile = await getUserProfile(gUser.uid);
-                if (gProfile?.role === 'host') {
                     router.push('/dashboard');
-                } else {
-                    router.push('/student/dashboard');
-                }
                 } else {
                     router.push('/student/dashboard');
                 }
