@@ -23,8 +23,9 @@ service firebase.storage {
         && isValidSize()
         && request.resource.contentType in ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
       
-      // Users can delete their own uploads or host can delete
-      allow delete: if request.auth != null;
+      // Only the uploader can delete their own photos (filename starts with their uid)
+      allow delete: if request.auth != null
+        && filename.matches(request.auth.uid.concat('.*'));
     }
     
     // User profile photos

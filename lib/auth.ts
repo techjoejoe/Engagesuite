@@ -12,6 +12,19 @@ if (typeof window !== 'undefined') {
     });
 }
 
+// Cookie management for middleware auth detection
+function setAuthCookie() {
+    if (typeof document !== 'undefined') {
+        document.cookie = 'firebaseAuth=true; path=/; max-age=604800; SameSite=Lax';
+    }
+}
+
+function clearAuthCookie() {
+    if (typeof document !== 'undefined') {
+        document.cookie = 'firebaseAuth=; path=/; max-age=0';
+    }
+}
+
 const googleProvider = new GoogleAuthProvider();
 
 // User Profile Interface
@@ -37,10 +50,8 @@ export async function signUpWithEmail(email: string, password: string, displayNa
     // Create user profile in Firestore
     await createUserProfile(user.uid, email, displayName, role);
 
-    // Update Auth profile
-    // We import updateProfile dynamically to avoid circular dependencies if any, 
-    // but here we can just use the firebase/auth import if we add it.
-    // For now, let's just rely on Firestore, but ideally we should update Auth too.
+    // Set auth cookie for middleware
+    setAuthCookie();
 
     return user;
 }
@@ -68,6 +79,9 @@ export async function signInWithEmail(email: string, password: string): Promise<
         // Don't block login if profile update fails
     }
 
+    // Set auth cookie for middleware
+    setAuthCookie();
+
     return user;
 }
 
@@ -84,6 +98,9 @@ export async function signInWithGoogle(role: 'host' | 'player' = 'player'): Prom
         await updateLastActive(user.uid);
     }
 
+    // Set auth cookie for middleware
+    setAuthCookie();
+
     return user;
 }
 
@@ -97,11 +114,15 @@ export async function signInAnonymouslyUser(displayName: string): Promise<User> 
     // Create user profile
     await createUserProfile(user.uid, '', displayName, 'player');
 
+    // Set auth cookie for middleware
+    setAuthCookie();
+
     return user;
 }
 
 // Sign out
 export async function signOutUser(): Promise<void> {
+    clearAuthCookie();
     await signOut(auth);
 }
 
@@ -198,7 +219,14 @@ export async function getLifetimeLeaderboard(limit: number = 100): Promise<UserP
 
 // Auth state listener
 export function onAuthStateChange(callback: (user: User | null) => void): () => void {
-    return onAuthStateChanged(auth, callback);
+    return onAuthStateChanged(auth, (user) => {
+        if (user) {
+            setAuthCookie();
+        } else {
+            clearAuthCookie();
+        }
+        callback(user);
+    });
 }
 
 // Get current user
