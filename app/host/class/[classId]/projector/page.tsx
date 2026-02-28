@@ -105,7 +105,7 @@ export default function ProjectorPage() {
                 <div className="bg-black/60 backdrop-blur-xl rounded-full px-10 py-5 border border-white/10 shadow-2xl flex flex-col md:flex-row items-center gap-4 md:gap-8 text-center">
                     <div className="flex items-center gap-3">
                         <span className="text-2xl text-gray-400 font-light">Go to</span>
-                        <span className="text-3xl font-bold text-white tracking-tight">quiz.app/join</span>
+                        <span className="text-3xl font-bold text-white tracking-tight">trainer-toolbox.com/join</span>
                     </div>
                     <div className="hidden md:block h-8 w-px bg-white/20"></div>
                     <div className="flex items-center gap-3">

@@ -25,7 +25,7 @@ export const PhotoCard = ({ photo, onVote, votingOpen, canVote, hasVoted, showVo
                     <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-white/10 hover:border-purple-500/50 transition-all duration-300 hover:scale-105 shadow-xl hover:shadow-purple-500/30">
                         <img
                             src={photo.imageUrl}
-                            alt="Contest photo"
+                            alt={`Photo by ${photo.userName || 'contestant'}`}
                             className="w-full h-full object-cover"
                         />
                     </div>
@@ -58,10 +58,10 @@ export const PhotoCard = ({ photo, onVote, votingOpen, canVote, hasVoted, showVo
                         onClick={() => onVote(photo.id)}
                         disabled={!canVote || hasVoted}
                         className={`px-6 py-2 rounded-full font-semibold transition-all text-sm ${hasVoted
-                                ? 'bg-green-500/20 text-green-400 border border-green-500/30 cursor-default'
-                                : canVote
-                                    ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg hover:shadow-purple-500/50 hover:scale-105 active:scale-95'
-                                    : 'bg-white/10 text-white/40 cursor-not-allowed'
+                            ? 'bg-green-500/20 text-green-400 border border-green-500/30 cursor-default'
+                            : canVote
+                                ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg hover:shadow-purple-500/50 hover:scale-105 active:scale-95'
+                                : 'bg-white/10 text-white/40 cursor-not-allowed'
                             }`}
                     >
                         {hasVoted ? (

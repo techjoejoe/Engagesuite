@@ -6,7 +6,8 @@ import { useRouter, useParams } from 'next/navigation';
 import { doc, collection, onSnapshot, deleteDoc, getDoc, orderBy, query, addDoc, serverTimestamp, writeBatch, getDocs } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '@/lib/firebase';
-import { toggleVoting, toggleVoteCounts, toggleUploads } from '@/lib/picpick';
+import { toggleVoting, toggleVoteCounts, toggleUploads, deleteGallery as deleteGalleryFn } from '@/lib/picpick';
+import { onAuthStateChange } from '@/lib/auth';
 import { Icons } from '@/components/picpick/Icons';
 import { Spinner, Toast } from '@/components/picpick/UI';
 import { ImageUpload } from '@/components/picpick/ImageUpload';
@@ -40,10 +41,23 @@ export default function AdminGalleryPage() {
     const router = useRouter();
     const [currentGallery, setCurrentGallery] = useState<any>(null);
     const [photos, setPhotos] = useState<any[]>([]);
+    const [user, setUser] = useState<any>(null);
     const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
     const [copied, setCopied] = useState(false);
     const [uploading, setUploading] = useState(false);
     const [loading, setLoading] = useState(true);
+
+    // Auth check
+    useEffect(() => {
+        const unsubscribe = onAuthStateChange((currentUser) => {
+            if (!currentUser) {
+                router.push('/login');
+            } else {
+                setUser(currentUser);
+            }
+        });
+        return () => unsubscribe();
+    }, [router]);
 
     // Load gallery with real-time updates
     useEffect(() => {
@@ -112,7 +126,7 @@ export default function AdminGalleryPage() {
     const handleUpload = async (blob: Blob) => {
         setUploading(true);
         try {
-            const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.jpg`;
+            const fileName = `${user?.uid || 'admin'}_${Date.now()}_${Math.random().toString(36).substring(7)}.jpg`;
             const storageRef = ref(storage, `galleries/${currentGallery.id}/${fileName}`);
 
             // Upload blob directly
@@ -121,6 +135,8 @@ export default function AdminGalleryPage() {
 
             await addDoc(collection(db, 'galleries', currentGallery.id, 'photos'), {
                 imageUrl,
+                userId: user?.uid || '',
+                userName: user?.displayName || 'Admin',
                 uploadedBy: 'Admin',
                 uploadedAt: serverTimestamp(),
                 votes: 0
@@ -151,16 +167,11 @@ export default function AdminGalleryPage() {
         }
     };
 
-    const deleteGallery = async () => {
+    const handleDeleteGallery = async () => {
         if (!confirm('Delete this entire gallery? This cannot be undone.')) return;
         try {
-            const photosSnapshot = await getDocs(collection(db, 'galleries', currentGallery.id, 'photos'));
-            const batch = writeBatch(db);
-            photosSnapshot.docs.forEach(doc => batch.delete(doc.ref));
-            batch.delete(doc(db, 'galleries', currentGallery.id));
-            await batch.commit();
-
-            router.push('/picpick/admin');
+            await deleteGalleryFn(currentGallery.id);
+            router.push(`/picpick/admin?classId=${currentGallery.classId}`);
         } catch (err) {
             setToast({ message: 'Failed to delete gallery', type: 'error' });
         }
@@ -184,12 +195,12 @@ export default function AdminGalleryPage() {
             <div className="sticky top-0 z-40 bg-black/30 backdrop-blur-xl border-b border-white/5">
                 <div className="max-w-4xl mx-auto px-4 py-4">
                     <div className="flex items-center justify-between">
-                        <Link href="/picpick/admin">
+                        <Link href={`/picpick/admin?classId=${currentGallery.classId}`}>
                             <Button variant="glass" size="sm" className="gap-2">
                                 <Icons.Back /> Back
                             </Button>
                         </Link>
-                        <Button variant="danger" size="sm" onClick={deleteGallery} className="p-2">
+                        <Button variant="danger" size="sm" onClick={handleDeleteGallery} className="p-2">
                             <Icons.Trash />
                         </Button>
                     </div>

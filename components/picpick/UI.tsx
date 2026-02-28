@@ -18,7 +18,7 @@ export const Toast = ({ message, type = 'success', onClose }: { message: string;
 
     const bgColor = type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-indigo-500';
     return (
-        <div className={`fixed bottom-6 right-6 ${bgColor} text-white px-6 py-3 rounded-xl shadow-lg z-50 animate-pulse`}>
+        <div className={`fixed bottom-6 right-6 ${bgColor} text-white px-6 py-3 rounded-xl shadow-lg z-50 animate-fade-in`}>
             {message}
         </div>
     );

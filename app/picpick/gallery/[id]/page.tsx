@@ -69,11 +69,10 @@ export default function GalleryPage() {
         return () => unsubscribe();
     }, [router]);
 
-    // Load gallery
+    // Load gallery with real-time updates (so host toggles reflect instantly)
     useEffect(() => {
-        const fetchGallery = async () => {
-            const docRef = doc(db, 'galleries', id);
-            const docSnap = await getDoc(docRef);
+        const galleryRef = doc(db, 'galleries', id);
+        const unsubscribe = onSnapshot(galleryRef, (docSnap) => {
             if (docSnap.exists()) {
                 setCurrentGallery({ id: docSnap.id, ...docSnap.data() });
             } else {
@@ -81,8 +80,8 @@ export default function GalleryPage() {
                 setTimeout(() => router.push('/picpick'), 2000);
             }
             setLoading(false);
-        };
-        fetchGallery();
+        });
+        return () => unsubscribe();
     }, [id, router]);
 
     // Load user's votes
@@ -138,12 +137,18 @@ export default function GalleryPage() {
             return;
         }
 
+        // Prevent voting for own photo
+        const photo = photos.find(p => p.id === photoId);
+        if (photo && photo.userId === user.uid) {
+            setToast({ message: 'You cannot vote for your own photo', type: 'error' });
+            return;
+        }
+
         // Check if already voted for this photo
         if (votedPhotoIds.has(photoId)) {
             setToast({ message: 'You already voted for this photo', type: 'error' });
             return;
         }
-
 
         // Check vote limit (4 votes total)
         if (userVoteCount >= 4) {
@@ -188,7 +193,7 @@ export default function GalleryPage() {
 
         setUploading(true);
         try {
-            const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.jpg`;
+            const fileName = `${user.uid}_${Date.now()}_${Math.random().toString(36).substring(7)}.jpg`;
             const storageRef = ref(storage, `galleries/${currentGallery.id}/${fileName}`);
             await uploadBytes(storageRef, blob);
             const imageUrl = await getDownloadURL(storageRef);
@@ -274,8 +279,8 @@ export default function GalleryPage() {
                             <div className="flex flex-col items-center transform translate-y-8 transition-transform hover:-translate-y-2 duration-500">
                                 <WinnerBadge photo={photos[1]} rank={2} size="md" />
                             </div>
-                            <div className="flex flex-col items-center z-10 transform hover:-translate-y-4 duration-500">
-                                <div className="absolute -top-12 animate-bounce text-4xl">👑</div>
+                            <div className="flex flex-col items-center z-10 transform hover:-translate-y-4 duration-500 relative">
+                                <div className="absolute -top-10 left-1/2 -translate-x-1/2 animate-bounce text-4xl">👑</div>
                                 <WinnerBadge photo={photos[0]} rank={1} size="lg" />
                             </div>
                             <div className="flex flex-col items-center transform translate-y-12 transition-transform hover:-translate-y-2 duration-500">
@@ -308,7 +313,7 @@ export default function GalleryPage() {
                                     photo={photo}
                                     onVote={handleVote}
                                     votingOpen={currentGallery.votingOpen}
-                                    canVote={userVoteCount < 4}
+                                    canVote={userVoteCount < 4 && photo.userId !== user?.uid}
                                     hasVoted={votedPhotoIds.has(photo.id)}
                                     showVoteCounts={currentGallery.showVoteCounts}
                                 />
