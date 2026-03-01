@@ -49,7 +49,7 @@ export default function StudentWorkbooksPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+            <div className="min-h-screen bg-transparent flex items-center justify-center">
                 <div className="text-center">
                     <div className="animate-spin text-5xl mb-4">📚</div>
                     <p className="text-slate-400">Loading workbooks...</p>
@@ -60,7 +60,7 @@ export default function StudentWorkbooksPage() {
 
     if (!userProfile?.joinedClassId) {
         return (
-            <div className="min-h-screen bg-slate-900 flex items-center justify-center p-6">
+            <div className="min-h-screen bg-transparent flex items-center justify-center p-6">
                 <div className="text-center max-w-md">
                     <div className="text-6xl mb-6">📚</div>
                     <h1 className="text-2xl font-bold text-white mb-4">No Class Joined</h1>
@@ -76,7 +76,7 @@ export default function StudentWorkbooksPage() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-900 p-6">
+        <div className="min-h-screen bg-transparent p-6">
             {/* Background Blobs */}
             <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
                 <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-600/20 rounded-full blur-[120px] animate-blob" />

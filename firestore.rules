@@ -300,10 +300,10 @@ service cloud.firestore {
       // Students can UPDATE their own progress (answering questions)
       allow update: if isAuthenticated() && resource.data.studentId == request.auth.uid;
       
-      // Trainers can update to grade answers (only the answers field)
+      // Trainers can update to grade answers (answers + recalculated points)
       allow update: if isAuthenticated() && 
         get(/databases/$(database)/documents/class_albums/$(resource.data.classAlbumId)).data.assignedByUserId == request.auth.uid &&
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['answers']);
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['answers', 'currentPointsEarned', 'lastAccessedAt']);
     }
     
     // ANALYTICS (Strict)

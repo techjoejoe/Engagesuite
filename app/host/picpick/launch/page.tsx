@@ -124,15 +124,15 @@ function LaunchPicPickContent() {
                         <h1 className="text-3xl font-bold text-white dark:text-white mb-2">
                             Launch PicPick
                         </h1>
-                        <p className="text-white/60 dark:text-gray-400">
-                            Start a photo contest for <span className="font-semibold text-gray-700 dark:text-gray-300">{classData.name}</span>
+                        <p className="text-white/60">
+                            Start a photo contest for <span className="font-semibold text-white">{classData.name}</span>
                         </p>
                     </div>
 
                     {/* Form */}
                     <form onSubmit={handleLaunch} className="space-y-6">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <label className="block text-sm font-medium text-white/80 mb-2">
                                 Gallery Name
                             </label>
                             <input
@@ -140,31 +140,31 @@ function LaunchPicPickContent() {
                                 value={formData.name}
                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                 required
-                                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-white dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+                                className="w-full px-4 py-3 rounded-lg border border-white/20 bg-white/10 text-white placeholder-white/40 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
                                 placeholder="e.g., Holiday Photo Contest"
                             />
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <label className="block text-sm font-medium text-white/80 mb-2">
                                 Description
                             </label>
                             <textarea
                                 value={formData.description}
                                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                 rows={3}
-                                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-white dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition-all resize-none"
+                                className="w-full px-4 py-3 rounded-lg border border-white/20 bg-white/10 text-white placeholder-white/40 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all resize-none"
                                 placeholder="What's this contest about?"
                             />
                         </div>
 
                         {/* Info Box */}
-                        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                        <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-lg p-4">
                             <div className="flex items-start gap-3">
                                 <div className="text-2xl">ℹ️</div>
                                 <div className="flex-1">
-                                    <h4 className="font-semibold text-blue-900 dark:text-blue-300 mb-1">How it works:</h4>
-                                    <ul className="text-sm text-blue-800 dark:text-blue-400 space-y-1">
+                                    <h4 className="font-semibold text-indigo-300 mb-1">How it works:</h4>
+                                    <ul className="text-sm text-indigo-200/80 space-y-1">
                                         <li>• Students will see the gallery on their dashboard</li>
                                         <li>• You control when uploads and voting are open</li>
                                         <li>• Toggle upload/voting on or off at any time</li>
@@ -181,7 +181,7 @@ function LaunchPicPickContent() {
                                 onClick={() => router.push(`/picpick/admin?classId=${classId}`)}
                                 disabled={creating}
                                 type="button"
-                                className="flex-1 bg-white dark:bg-slate-700 text-white dark:text-white border-gray-300 dark:border-slate-600 hover:bg-gray-100 dark:hover:bg-slate-600"
+                                className="flex-1 bg-white/10 text-white border-white/20 hover:bg-white/20"
                             >
                                 📋 Existing Galleries
                             </Button>

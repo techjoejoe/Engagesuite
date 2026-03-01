@@ -26,6 +26,8 @@ export default function AlbumPlayerContent({ id: propId }: { id?: string }) {
 
     // Local state for answers before they are saved/submitted
     const [localAnswers, setLocalAnswers] = useState<{ [key: string]: string }>({});
+    const [savingBlockId, setSavingBlockId] = useState<string | null>(null);
+    const [completionMessage, setCompletionMessage] = useState<string | null>(null);
 
     const [error, setError] = useState<string | null>(null);
 
@@ -151,27 +153,32 @@ export default function AlbumPlayerContent({ id: propId }: { id?: string }) {
         const val = localAnswers[block.id];
         if (val === undefined) return; // No change
 
-        const { submitAlbumAnswer } = await import('@/lib/albums');
+        setSavingBlockId(block.id);
+        try {
+            const { submitAlbumAnswer } = await import('@/lib/albums');
 
-        // Determine correctness (simple check for now)
-        await submitAlbumAnswer(progress.id, block.id, val, block.points, false);
+            // Determine correctness (simple check for now)
+            await submitAlbumAnswer(progress.id, block.id, val, block.points, false);
 
-        // Optimistic update
-        setProgress(prev => {
-            if (!prev) return null;
-            return {
-                ...prev,
-                answers: {
-                    ...prev.answers,
-                    [block.id]: {
-                        answer: val,
-                        submittedAt: Date.now(),
-                        awardedPoints: 0, // Pending grading
-                        isCorrect: false
+            // Optimistic update
+            setProgress(prev => {
+                if (!prev) return null;
+                return {
+                    ...prev,
+                    answers: {
+                        ...prev.answers,
+                        [block.id]: {
+                            answer: val,
+                            submittedAt: Date.now(),
+                            awardedPoints: 0, // Pending grading
+                            isCorrect: false
+                        }
                     }
-                }
-            };
-        });
+                };
+            });
+        } finally {
+            setSavingBlockId(null);
+        }
     };
 
     const getSavedAnswer = (blockId: string) => {
@@ -210,7 +217,7 @@ export default function AlbumPlayerContent({ id: propId }: { id?: string }) {
                                 className={`w-full text-left p-3 rounded-lg flex items-start gap-3 transition-all ${isActive ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-white/10 text-white/60'
                                     }`}
                             >
-                                <div className={`mt-0.5 ${isActive ? 'text-blue-600' : 'text-gray-400'}`}>
+                                <div className={`mt-0.5 ${isActive ? 'text-indigo-400' : 'text-gray-400'}`}>
                                     <Circle className="w-4 h-4" />
                                 </div>
                                 <div>
@@ -271,9 +278,11 @@ export default function AlbumPlayerContent({ id: propId }: { id?: string }) {
                                                 <div className="mt-2 flex justify-end">
                                                     <button
                                                         onClick={() => saveAnswer(block)}
-                                                        className="flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors"
+                                                        disabled={savingBlockId === block.id}
+                                                        className="flex items-center gap-2 text-sm font-medium text-indigo-300 hover:text-indigo-200 bg-indigo-500/20 hover:bg-indigo-500/30 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
                                                     >
-                                                        <Save className="w-4 h-4" /> Save
+                                                        <Save className="w-4 h-4" />
+                                                        {savingBlockId === block.id ? 'Saving...' : 'Save'}
                                                     </button>
                                                 </div>
                                             </div>
@@ -285,15 +294,17 @@ export default function AlbumPlayerContent({ id: propId }: { id?: string }) {
                                                 <textarea
                                                     value={getSavedAnswer(block.id)}
                                                     onChange={(e) => handleAnswerChange(block.id, e.target.value)}
-                                                    className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent min-h-[200px] leading-relaxed"
+                                                    className="w-full p-4 border border-white/20 rounded-xl bg-white/5 focus:ring-2 focus:ring-indigo-500 focus:border-transparent min-h-[200px] leading-relaxed text-white placeholder-white/40"
                                                     placeholder="Type your detailed response here..."
                                                 />
                                                 <div className="mt-2 flex justify-end">
                                                     <button
                                                         onClick={() => saveAnswer(block)}
-                                                        className="flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors"
+                                                        disabled={savingBlockId === block.id}
+                                                        className="flex items-center gap-2 text-sm font-medium text-indigo-300 hover:text-indigo-200 bg-indigo-500/20 hover:bg-indigo-500/30 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
                                                     >
-                                                        <Save className="w-4 h-4" /> Save
+                                                        <Save className="w-4 h-4" />
+                                                        {savingBlockId === block.id ? 'Saving...' : 'Save'}
                                                     </button>
                                                 </div>
                                             </div>
@@ -436,14 +447,14 @@ export default function AlbumPlayerContent({ id: propId }: { id?: string }) {
                                     if (percent === 100) {
                                         const { completeWorkbook } = await import('@/lib/albums');
                                         await completeWorkbook(progress.id, template.id);
-                                        alert(`Workbook Completed! You answered ${answeredQuestions}/${totalQuestions} questions and earned the completion bonus!`);
+                                        setCompletionMessage(`🎉 Workbook Complete! You answered ${answeredQuestions}/${totalQuestions} questions and earned the completion bonus!`);
                                     } else {
-                                        alert(`You have reached the end, but you've only completed ${percent}% of the questions.`);
+                                        setCompletionMessage(`You've reached the end, but only completed ${percent}% of questions. Go back and finish the rest!`);
                                     }
-                                    router.push('/student/dashboard');
+                                    setTimeout(() => router.push('/student/dashboard'), 3000);
                                 }
                             }}
-                            className="flex items-center gap-2 px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-lg shadow-blue-200 transition-all transform hover:translate-y-[-2px]"
+                            className="flex items-center gap-2 px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-lg shadow-indigo-500/20 transition-all transform hover:translate-y-[-2px]"
                         >
                             {isLastPage ? 'Finish Workbook' : 'Next Page'}
                             {!isLastPage && <ChevronRight className="w-5 h-5" />}
@@ -451,6 +462,17 @@ export default function AlbumPlayerContent({ id: propId }: { id?: string }) {
                     </div>
 
                 </div>
+
+                {/* Completion Message Overlay */}
+                {completionMessage && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+                        <div className="glass-card p-8 max-w-md mx-4 text-center">
+                            <div className="text-5xl mb-4">{completionMessage.includes('🎉') ? '🎉' : '📝'}</div>
+                            <p className="text-white text-lg font-medium mb-4">{completionMessage.replace('🎉 ', '')}</p>
+                            <p className="text-white/60 text-sm">Redirecting to dashboard...</p>
+                        </div>
+                    </div>
+                )}
             </main>
         </div>
     );

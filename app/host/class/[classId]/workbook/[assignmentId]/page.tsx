@@ -759,7 +759,7 @@ function StatusBadge({ status, needsGrading }: { status: string; needsGrading?: 
         );
     }
     return (
-        <span className="inline-flex items-center gap-1 bg-white/50/20 text-gray-400 px-2.5 py-0.5 rounded-full text-xs font-bold border border-gray-500/30">
+        <span className="inline-flex items-center gap-1 bg-gray-500/20 text-gray-400 px-2.5 py-0.5 rounded-full text-xs font-bold border border-gray-500/30">
             Not Started
         </span>
     );

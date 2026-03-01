@@ -166,7 +166,7 @@ export default function GradesDashboard() {
         switch (status) {
             case 'completed': return 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30';
             case 'in_progress': return 'bg-blue-500/20 text-blue-300 border-blue-500/30';
-            default: return 'bg-white/50/20 text-gray-400 border-gray-500/30';
+            default: return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
         }
     };
 
@@ -198,7 +198,7 @@ export default function GradesDashboard() {
                         <ChevronRight className="w-4 h-4" />
                         <span
                             className="cursor-pointer hover:text-white transition-colors"
-                            onClick={() => router.push(`/host/class/${classId}/projector`)}
+                            onClick={() => router.push(`/dashboard/class?id=${classId}`)}
                         >
                             {classData?.name}
                         </span>
