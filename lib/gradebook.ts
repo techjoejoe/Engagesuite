@@ -148,8 +148,8 @@ export async function calculateGradebookData(
 
         return {
             studentId: student.uid,
-            studentName: student.displayName,
-            studentEmail: student.email,
+            studentName: student.displayName || student.email || 'Unknown Student',
+            studentEmail: student.email || '',
             assignments: assignmentData,
             totalPointsEarned: studentTotalEarned,
             totalPointsPossible: totalPossiblePoints,

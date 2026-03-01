@@ -161,14 +161,14 @@ function EditorContent() {
     if (!album) return <div className="p-10 text-center">Loading Editor...</div>;
 
     return (
-        <div className="flex h-screen bg-[#F8F9FA] overflow-hidden">
+        <div className="flex h-screen bg-transparent overflow-hidden">
             {/* Sidebar - Page Navigation */}
             <aside className="w-64 bg-white/10 backdrop-blur-sm border-r border-white/20 flex flex-col z-10">
                 <div className="p-4 border-b border-white/10 flex items-center gap-3">
-                    <button onClick={() => router.back()} className="hover:bg-gray-100 p-1 rounded-md">
+                    <button onClick={() => router.back()} className="hover:bg-white/10 p-1 rounded-md">
                         <ArrowLeft className="w-5 h-5 text-white/60" />
                     </button>
-                    <h2 className="font-bold text-gray-800 truncate">{album.title}</h2>
+                    <h2 className="font-bold text-white truncate">{album.title}</h2>
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-2 space-y-1">
@@ -177,7 +177,7 @@ function EditorContent() {
                             key={page.id}
                             onClick={() => setActivePageId(page.id)}
                             className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${activePageId === page.id
-                                ? 'bg-blue-50 text-blue-700'
+                                ? 'bg-indigo-500/20 text-indigo-300'
                                 : 'text-white/70 hover:bg-white/5'
                                 }`}
                         >
@@ -188,7 +188,7 @@ function EditorContent() {
 
                     <button
                         onClick={addPage}
-                        className="w-full mt-4 flex items-center justify-center gap-2 py-2 border border-dashed border-gray-300 rounded-lg text-white/60 hover:border-blue-400 hover:text-blue-500 text-sm transition-all"
+                        className="w-full mt-4 flex items-center justify-center gap-2 py-2 border border-dashed border-white/20 rounded-lg text-white/60 hover:border-indigo-400 hover:text-indigo-400 text-sm transition-all"
                     >
                         <Plus className="w-4 h-4" /> Add Page
                     </button>
@@ -224,8 +224,8 @@ function EditorContent() {
                                     handleSave({ ...album, ...updates });
                                 }}
                                 className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all ${album.isPublished
-                                    ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                                    : 'bg-gray-100 text-white/60 hover:bg-gray-200'
+                                    ? 'bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30'
+                                    : 'bg-white/10 text-white/60 hover:bg-white/15'
                                     }`}
                                 title={album.isPublished ? "Published: Edits are Live" : "Draft: Edits are Hidden"}
                             >
@@ -240,18 +240,18 @@ function EditorContent() {
                                 className="text-lg text-white/60 w-full bg-transparent border-none focus:ring-0 placeholder-gray-300 flex-1"
                                 placeholder="Add a description for your students..."
                             />
-                            <div className="bg-green-50 rounded-lg px-3 py-1 flex flex-col items-center border border-green-100 min-w-[120px]">
-                                <span className="text-[10px] font-bold text-green-600 uppercase tracking-wider mb-1">Finish Bonus</span>
+                            <div className="bg-emerald-500/10 rounded-lg px-3 py-1 flex flex-col items-center border border-emerald-500/20 min-w-[120px]">
+                                <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider mb-1">Finish Bonus</span>
                                 <div className="flex items-center gap-1">
-                                    <span className="text-sm font-bold text-green-700">+</span>
+                                    <span className="text-sm font-bold text-emerald-400">+</span>
                                     <input
                                         type="number"
                                         value={album.completionPoints || 0}
                                         onChange={(e) => handleSave({ ...album, completionPoints: parseInt(e.target.value) || 0 })}
-                                        className="w-12 text-center font-bold text-green-700 bg-transparent border-none focus:ring-0 p-0 text-sm"
+                                        className="w-12 text-center font-bold text-emerald-400 bg-transparent border-none focus:ring-0 p-0 text-sm"
                                         placeholder="0"
                                     />
-                                    <span className="text-xs font-bold text-green-700">pts</span>
+                                    <span className="text-xs font-bold text-emerald-400">pts</span>
                                 </div>
                             </div>
                         </div>
@@ -269,7 +269,7 @@ function EditorContent() {
                                         );
                                         handleSave({ ...album, draftPages: updatedPages });
                                     }}
-                                    className="text-2xl font-bold text-gray-800 bg-transparent border-none focus:ring-0 w-full"
+                                    className="text-2xl font-bold text-white bg-transparent border-none focus:ring-0 w-full"
                                 />
                             </div>
 
@@ -286,13 +286,13 @@ function EditorContent() {
 
                                     {/* Hover Actions */}
                                     <div className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 flex items-center gap-1 bg-white/10 backdrop-blur-sm shadow-sm border border-white/10 rounded-lg p-1">
-                                        <div className="text-xs font-semibold text-blue-600 px-2 bg-blue-50 rounded line-clamp-1 mr-2">
+                                        <div className="text-xs font-semibold text-indigo-300 px-2 bg-indigo-500/20 rounded line-clamp-1 mr-2">
                                             {block.points > 0 ? `${block.points} pts` : ''}
                                         </div>
-                                        <button className="p-1 hover:bg-gray-100 rounded text-gray-400 hover:text-red-500" onClick={() => deleteBlock(block.id)}>
+                                        <button className="p-1 hover:bg-white/10 rounded text-gray-400 hover:text-red-400" onClick={() => deleteBlock(block.id)}>
                                             <Trash className="w-4 h-4" />
                                         </button>
-                                        <div className="cursor-grab p-1 hover:bg-gray-100 rounded text-gray-400">
+                                        <div className="cursor-grab p-1 hover:bg-white/10 rounded text-gray-400">
                                             <GripVertical className="w-4 h-4" />
                                         </div>
                                     </div>
@@ -303,7 +303,7 @@ function EditorContent() {
                             <div className="mt-8 flex justify-center gap-3 flex-wrap">
                                 <FloatingActionButton icon={<Type className="w-5 h-5" />} label="Text" onClick={() => addBlock('text')} />
                                 <FloatingActionButton icon={<ImageIcon className="w-5 h-5" />} label="Image" onClick={() => addBlock('image')} />
-                                <div className="w-px bg-gray-300 h-8 mx-2 self-center"></div>
+                                <div className="w-px bg-white/20 h-8 mx-2 self-center"></div>
                                 <FloatingActionButton icon={<HelpCircle className="w-5 h-5" />} label="Fill-in-Blank" onClick={() => addBlock('question', 'short_answer')} />
                                 <FloatingActionButton icon={<Layout className="w-5 h-5" />} label="Essay" onClick={() => addBlock('question', 'essay')} />
                                 <FloatingActionButton icon={<GripVertical className="w-5 h-5" />} label="Multiple Choice" onClick={() => addBlock('question', 'multiple_choice')} />
@@ -350,7 +350,7 @@ function BlockEditor({ block, updateBlock }: { block: AlbumBlock, updateBlock: (
                     value={block.content}
                     onChange={(e) => updateBlock(block.id, { content: e.target.value })}
                     placeholder="Type your content here..."
-                    className="w-full min-h-[100px] p-2 rounded-lg border-none focus:ring-0 resize-none text-gray-700 leading-relaxed bg-transparent"
+                    className="w-full min-h-[100px] p-2 rounded-lg border-none focus:ring-0 resize-none text-white/80 leading-relaxed bg-transparent placeholder-white/30"
                 />
             </div>
         );
@@ -358,18 +358,18 @@ function BlockEditor({ block, updateBlock }: { block: AlbumBlock, updateBlock: (
 
     if (block.type === 'question') {
         return (
-            <div className="p-6 bg-blue-50/50 rounded-xl border border-blue-100">
+            <div className="p-6 bg-indigo-500/10 rounded-xl border border-indigo-500/20">
                 <div className="flex justify-between items-start mb-4">
-                    <span className="text-xs font-bold text-blue-600 uppercase tracking-wider bg-blue-100 px-2 py-1 rounded">
+                    <span className="text-xs font-bold text-indigo-300 uppercase tracking-wider bg-indigo-500/20 px-2 py-1 rounded">
                         Question
                     </span>
                     <div className="flex items-center gap-2">
-                        <span className="text-xs text-blue-400 font-bold uppercase">Points</span>
+                        <span className="text-xs text-indigo-400 font-bold uppercase">Points</span>
                         <input
                             type="number"
                             value={block.points}
                             onChange={(e) => updateBlock(block.id, { points: parseInt(e.target.value) || 0 })}
-                            className="w-16 text-right text-sm border-white/20 rounded-md focus:ring-blue-500 focus:border-blue-500 text-white"
+                            className="w-16 text-right text-sm border-white/20 rounded-md focus:ring-indigo-500 focus:border-indigo-500 bg-white/5 text-white"
                             placeholder="Points"
                         />
                     </div>
@@ -379,14 +379,14 @@ function BlockEditor({ block, updateBlock }: { block: AlbumBlock, updateBlock: (
                     value={block.content}
                     onChange={(e) => updateBlock(block.id, { content: e.target.value })}
                     placeholder="Enter your question here..."
-                    className="w-full text-lg font-semibold bg-transparent border-none focus:ring-0 placeholder-blue-300 text-gray-800 mb-4"
+                    className="w-full text-lg font-semibold bg-transparent border-none focus:ring-0 placeholder-white/30 text-white mb-4"
                 />
 
                 <div className="flex gap-4">
                     <select
                         value={block.questionType}
                         onChange={(e) => updateBlock(block.id, { questionType: e.target.value as any })}
-                        className="text-sm border-white/20 rounded-lg bg-white/10 text-white/70 focus:ring-blue-500 focus:border-blue-500"
+                        className="text-sm border-white/20 rounded-lg bg-white/10 text-white/70 focus:ring-indigo-500 focus:border-indigo-500"
                     >
                         <option value="short_answer">Short Answer</option>
                         <option value="essay">Long Essay</option>
@@ -405,7 +405,7 @@ function BlockEditor({ block, updateBlock }: { block: AlbumBlock, updateBlock: (
                                     name={`correct_${block.id}`}
                                     checked={block.correctAnswerHash === opt}
                                     onChange={() => updateBlock(block.id, { correctAnswerHash: opt })} // Storing plain text answer for now
-                                    className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 cursor-pointer"
+                                    className="w-4 h-4 text-indigo-500 border-white/30 focus:ring-indigo-500 cursor-pointer bg-transparent"
                                 />
                                 <input
                                     type="text"
@@ -423,7 +423,7 @@ function BlockEditor({ block, updateBlock }: { block: AlbumBlock, updateBlock: (
                                         }
                                         updateBlock(block.id, updates);
                                     }}
-                                    className="flex-1 text-sm border-white/20 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-white"
+                                    className="flex-1 text-sm border-white/20 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-white/5 text-white"
                                     placeholder={`Option ${idx + 1}`}
                                 />
                                 <button
@@ -443,7 +443,7 @@ function BlockEditor({ block, updateBlock }: { block: AlbumBlock, updateBlock: (
                                 const newOptions = [...(block.options || ['Option 1', 'Option 2', 'Option 3', 'Option 4']), `Option ${(block.options?.length || 4) + 1}`];
                                 updateBlock(block.id, { options: newOptions });
                             }}
-                            className="text-xs font-bold text-blue-600 hover:text-blue-700 mt-2"
+                            className="text-xs font-bold text-indigo-400 hover:text-indigo-300 mt-2"
                         >
                             + Add Option
                         </button>
@@ -470,7 +470,7 @@ function BlockEditor({ block, updateBlock }: { block: AlbumBlock, updateBlock: (
                     value={block.mediaUrl || ''}
                     onChange={(e) => updateBlock(block.id, { mediaUrl: e.target.value })}
                     placeholder="Paste Image URL here..."
-                    className="w-full text-sm bg-transparent border-none focus:ring-0 text-blue-600 underline"
+                    className="w-full text-sm bg-transparent border-none focus:ring-0 text-indigo-400 underline placeholder-white/30"
                 />
                 {(block.mediaUrl) && (
                     <div className="mt-4 rounded-lg overflow-hidden shadow-sm max-h-64 bg-gray-200 flex items-center justify-center">

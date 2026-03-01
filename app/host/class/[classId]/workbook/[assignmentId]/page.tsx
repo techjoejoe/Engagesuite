@@ -680,7 +680,7 @@ export default function WorkbookGradebook() {
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-3">
                                                     <div className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold">
-                                                        {student.displayName.charAt(0).toUpperCase()}
+                                                        {(student.displayName || '?').charAt(0).toUpperCase()}
                                                     </div>
                                                     <div>
                                                         <div className="font-medium text-white">{student.displayName}</div>

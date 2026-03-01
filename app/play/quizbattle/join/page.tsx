@@ -73,7 +73,7 @@ function JoinQuizContent() {
                             🎮
                         </div>
                         <h1 style={{ fontSize: '32px', fontWeight: 'bold', color: '#1a1d21', marginBottom: '12px' }}>
-                            Join Quiz Battle
+                            Join Trivia
                         </h1>
                         <p style={{ fontSize: '16px', color: '#666', marginBottom: '32px' }}>
                             Enter your nickname to join the game

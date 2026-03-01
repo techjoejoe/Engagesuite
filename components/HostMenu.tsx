@@ -475,7 +475,7 @@ export default function HostMenu({ currentPage = '', classId, className = '' }: 
                         <span>Sign Out</span>
                     </button>
                     <div className="mt-4 text-center text-xs text-gray-500">
-                        Quiz Battle v2.0
+                        Trainer ToolBox v2.0
                     </div>
                 </div>
             </div>

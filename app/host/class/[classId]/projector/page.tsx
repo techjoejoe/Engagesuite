@@ -75,8 +75,8 @@ export default function ProjectorPage() {
                         {/* Branding */}
                         <div>
                             <div className="text-5xl font-black italic tracking-tighter flex items-center gap-2 drop-shadow-lg">
-                                <span className="text-white">Quiz</span>
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Battle</span>
+                                <span className="text-white">Trainer</span>
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">ToolBox</span>
                             </div>
                             <div className="text-sm font-bold text-indigo-200/70 mt-2 uppercase tracking-[0.3em] pl-1">
                                 Audience Engagement
@@ -93,7 +93,7 @@ export default function ProjectorPage() {
                                 <span className="text-base font-semibold text-indigo-300 tracking-wide">Session Active</span>
                             </div>
                             <div className="text-5xl md:text-6xl font-bold text-white drop-shadow-lg leading-tight">
-                                Beginning soon.
+                                Join Class
                             </div>
                         </div>
                     </div>

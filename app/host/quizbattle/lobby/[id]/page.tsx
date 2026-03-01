@@ -102,7 +102,7 @@ export default function QuizLobbyPage() {
                 {/* Header */}
                 <div className="text-center mt-8 mb-12">
                     <h1 className="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-4 drop-shadow-lg">
-                        {quiz?.title || 'Quiz Battle'}
+                        {quiz?.title || 'Trivia'}
                     </h1>
                     <p className="text-xl text-indigo-200/60 max-w-2xl mx-auto font-medium">
                         {quiz?.description || 'Get ready to play!'}
