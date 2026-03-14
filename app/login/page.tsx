@@ -26,7 +26,7 @@ function LoginContent() {
         setError('');
 
         try {
-            const user = const user = await signInWithEmail(email, password);
+            const user = await signInWithEmail(email, password);
             if (redirectUrl) {
                 router.push(decodeURIComponent(redirectUrl));
             } else {
@@ -54,7 +54,7 @@ function LoginContent() {
         setError('');
 
         try {
-            const gUser = const gUser = await signInWithGoogle();
+            const gUser = await signInWithGoogle();
             if (redirectUrl) {
                 router.push(decodeURIComponent(redirectUrl));
             } else {
