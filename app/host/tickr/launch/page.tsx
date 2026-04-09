@@ -44,6 +44,8 @@ function LaunchContent() {
     }, [classId, router]);
 
 
+
+
     if (!classId) {
         return <ClassSelector toolName="Tickr" toolIcon="⏰" />;
     }

@@ -122,6 +122,8 @@ function RandomizerContent() {
     };
 
 
+
+
     if (!classId) {
         return <ClassSelector toolName="Randomizer" toolIcon="🎲" />;
     }
