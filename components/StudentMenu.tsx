@@ -77,6 +77,13 @@ export default function StudentMenu({ currentPage = '', className = '', classId 
                             <span className="font-medium">Dashboard</span>
                         </Link>
                         <Link
+                            href="/pricing"
+                            className="w-full flex items-center gap-3 p-3 rounded-lg transition-all hover:bg-white/10 text-white/70"
+                        >
+                            <span className="text-xl">💰</span>
+                            <span className="font-medium">Pricing Plans</span>
+                        </Link>
+                        <Link
                             href="/profile"
                             onClick={() => setIsOpen(false)}
                             className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all ${currentPage === 'Profile'

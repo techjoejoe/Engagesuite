@@ -316,6 +316,14 @@ export default function HostMenu({ currentPage = '', classId, className = '' }: 
                             <span className="font-medium">My Profile</span>
                         </Link>
                         <Link
+                            href="/pricing"
+                            className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all ${currentPage === 'Pricing'
+                                ? 'bg-white/10 border border-indigo-500/50 text-white' : 'hover:bg-white/10 text-white/70'}`}
+                        >
+                            <span className="text-xl">💰</span>
+                            <span className="font-medium">Pricing Plans</span>
+                        </Link>
+                        <Link
                             href="/admin/analytics"
                             onClick={() => setIsOpen(false)}
                             className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all ${currentPage === 'Analytics'
