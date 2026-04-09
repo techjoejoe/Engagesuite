@@ -6,6 +6,7 @@ import { createPoll, PollOption } from '@/lib/poll';
 import { onAuthStateChange } from '@/lib/auth';
 import { updateClassActivity } from '@/lib/classes';
 import HostMenu from '@/components/HostMenu';
+import ClassSelector from '@/components/ClassSelector';
 import Button from '@/components/Button';
 import { Icons } from '@/components/picpick/Icons';
 
@@ -72,7 +73,7 @@ function CreatePollContent() {
         }
 
         if (!classId) {
-            alert('No class selected. Please launch this tool from the Dashboard or a specific Class page.');
+            // ClassSelector handles this
             return;
         }
 
@@ -99,6 +100,10 @@ function CreatePollContent() {
             setLoading(false);
         }
     };
+
+    if (!classId) {
+        return <ClassSelector toolName="Live Vote" toolIcon="📊" />;
+    }
 
     return (
         <main className="min-h-screen bg-transparent p-6 transition-colors duration-300">

@@ -3,6 +3,7 @@
 import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import HamburgerMenu from '@/components/HamburgerMenu';
+import ClassSelector from '@/components/ClassSelector';
 import { createTimer } from '@/lib/tickr';
 import { onAuthStateChange } from '@/lib/auth';
 
@@ -41,6 +42,11 @@ function LaunchContent() {
         });
         return () => unsubscribe();
     }, [classId, router]);
+
+
+    if (!classId) {
+        return <ClassSelector toolName="Tickr" toolIcon="⏰" />;
+    }
 
     if (error) {
         return (

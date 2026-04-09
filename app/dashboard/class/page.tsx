@@ -10,6 +10,7 @@ import { getClass, onClassChange, Class, updateClassActivity } from '@/lib/class
 import { User } from 'firebase/auth';
 import { logEvent } from '@/lib/analytics';
 import HostMenu from '@/components/HostMenu';
+import ShareClassModal from '@/components/ShareClassModal';
 import { getStudentAssignments, ClassAlbum } from '@/lib/albums';
 
 function ClassDashboardContent() {
@@ -22,6 +23,7 @@ function ClassDashboardContent() {
     const [user, setUser] = useState<User | null>(null);
     const [showAssignModal, setShowAssignModal] = useState(false);
     const [activeAssignments, setActiveAssignments] = useState<ClassAlbum[]>([]);
+    const [showShareModal, setShowShareModal] = useState(false);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChange((currentUser) => {
@@ -116,6 +118,9 @@ function ClassDashboardContent() {
                         </Button>
                         <Button variant="glass" onClick={() => router.push('/dashboard')}>
                             ← Back to All Classes
+                        </Button>
+                        <Button variant="glass" onClick={() => setShowShareModal(true)}>
+                            Share Code
                         </Button>
                     </div>
                 </div>
@@ -320,7 +325,16 @@ function ClassDashboardContent() {
                     classId={classId}
                 />
             )}
-        </main>
+        
+                {/* Share Class Modal */}
+                {showShareModal && classData && (
+                    <ShareClassModal
+                        classCode={classData.code}
+                        className={classData.name}
+                        onClose={() => setShowShareModal(false)}
+                    />
+                )}
+</main>
     );
 }
 

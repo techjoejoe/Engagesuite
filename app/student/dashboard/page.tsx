@@ -6,6 +6,8 @@ import Button from '@/components/Button';
 import Card from '@/components/Card';
 import { onAuthStateChange, signOutUser, getUserProfile, UserProfile } from '@/lib/auth';
 import { joinClass, getClass, Class, leaveClass, onClassChange } from '@/lib/classes';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 import { User } from 'firebase/auth';
 import UserDash from '@/components/student/UserDash';
 import StudentMenu from '@/components/StudentMenu';
@@ -19,6 +21,7 @@ export default function StudentDashboard() {
     const [classCode, setClassCode] = useState('');
     const [joining, setJoining] = useState(false);
     const [error, setError] = useState('');
+    const [enrolledClasses, setEnrolledClasses] = useState<Class[]>([]);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChange(async (currentUser) => {
@@ -35,6 +38,22 @@ export default function StudentDashboard() {
         });
         return () => unsubscribe();
     }, [router]);
+
+    // Load enrolled classes
+    useEffect(() => {
+        if (!user) return;
+        const loadEnrolledClasses = async () => {
+            try {
+                const classesRef = collection(db, 'classes');
+                const q = query(classesRef, where('memberIds', 'array-contains', user.uid));
+                const snapshot = await getDocs(q);
+                setEnrolledClasses(snapshot.docs.map(doc => doc.data() as Class));
+            } catch (err) {
+                console.error('Error loading enrolled classes:', err);
+            }
+        };
+        loadEnrolledClasses();
+    }, [user]);
 
     // Separate effect for real-time class subscription
     useEffect(() => {
@@ -134,6 +153,26 @@ export default function StudentDashboard() {
                         </p>
                     </div>
                 </div>
+
+                {/* Enrolled Classes */}
+                {enrolledClasses.length > 0 && (
+                    <div className="mb-6">
+                        <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'white' }}>My Classes</h2>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                            {enrolledClasses.map((cls) => (
+                                <div key={cls.id} onClick={async () => { const cd = await getClass(cls.id); setJoinedClass(cd); }}
+                                    className="glass-card glass-card-hover"
+                                    style={{ padding: '1rem 1.5rem', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <div>
+                                        <div style={{ fontWeight: 'bold', color: 'white' }}>{cls.name}</div>
+                                        <div style={{ color: '#94a3b8', fontSize: '0.75rem' }}>Code: {cls.code} | {cls.memberIds?.length || 0} members</div>
+                                    </div>
+                                    <div style={{ color: '#818cf8', fontWeight: '600', fontSize: '0.875rem' }}>Enter &rarr;</div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
 
                 <Card className="animate-fade-in" style={{ padding: '3rem', textAlign: 'center' }}>
                     <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🏫</div>

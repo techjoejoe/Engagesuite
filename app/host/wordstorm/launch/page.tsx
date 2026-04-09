@@ -6,6 +6,7 @@ import Button from '@/components/Button';
 import HamburgerMenu from '@/components/HamburgerMenu';
 import { createWordStorm } from '@/lib/wordstorm';
 import { onAuthStateChange } from '@/lib/auth';
+import ClassSelector from '@/components/ClassSelector';
 
 function LaunchContent() {
     const router = useRouter();
@@ -22,7 +23,7 @@ function LaunchContent() {
 
             if (!classId) {
                 console.error('WordStorm launch: No classId provided');
-                alert('Error: No class selected. Please try again from the class dashboard.');
+                // ClassSelector handles this
                 router.push('/dashboard');
                 return;
             }
@@ -43,6 +44,10 @@ function LaunchContent() {
                 router.push('/dashboard');
             }
         });
+    if (!classId) {
+        return <ClassSelector toolName="WordStorm" toolIcon="🌪️" />;
+    }
+
         return () => unsubscribe();
     }, [classId, router]);
 

@@ -1,4 +1,5 @@
 'use client';
+import ClassSelector from '@/components/ClassSelector';
 
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
@@ -79,6 +80,10 @@ function CommitmentWallContent() {
 
 
     if (!classId) return <div className="text-white p-8">Missing Class ID</div>;
+
+    if (!classId) {
+        return <ClassSelector toolName="Commitment Wall" toolIcon="🎯" />;
+    }
 
     return (
         <main className="min-h-screen bg-[#0f172a] text-white font-sans selection:bg-pink-500/30">

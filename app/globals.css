@@ -711,3 +711,32 @@
   border-color: rgba(99, 102, 241, 0.6) !important;
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
 }
+
+
+/* M3.5: Mobile Responsiveness */
+@media (max-width: 640px) {
+  .container { padding-left: 1rem; padding-right: 1rem; }
+  h1 { font-size: 1.5rem !important; }
+  h2 { font-size: 1.25rem !important; }
+
+  /* Ensure tap targets are at least 44px */
+  button, a, input, select, textarea {
+    min-height: 44px;
+  }
+
+  /* Fix tables on mobile */
+  table { font-size: 0.875rem; }
+  th, td { padding: 0.5rem; }
+}
+
+/* Smooth scrolling */
+html { scroll-behavior: smooth; }
+
+/* Touch optimizations */
+* { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+
+/* Safe area for notched phones */
+body {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}

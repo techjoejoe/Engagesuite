@@ -8,6 +8,7 @@ import Confetti from '@/components/Confetti';
 import { onAuthStateChange, UserProfile } from '@/lib/auth';
 import { getClass, getClassMembers, onClassChange, Class, updateClassActivity } from '@/lib/classes';
 import { User } from 'firebase/auth';
+import ClassSelector from '@/components/ClassSelector';
 
 function RandomizerContent() {
     const router = useRouter();
@@ -119,6 +120,11 @@ function RandomizerContent() {
             }
         }, interval);
     };
+
+
+    if (!classId) {
+        return <ClassSelector toolName="Randomizer" toolIcon="🎲" />;
+    }
 
     if (loading) {
         return (

@@ -10,6 +10,7 @@ import { User } from 'firebase/auth';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { getActiveStudentCount } from '@/lib/classStats';
 import HostMenu from '@/components/HostMenu';
+import ShareClassModal from '@/components/ShareClassModal';
 
 export default function Dashboard() {
     const router = useRouter();
@@ -24,6 +25,8 @@ export default function Dashboard() {
     const [endDate, setEndDate] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [error, setError] = useState('');
+    const [shareClass, setShareClass] = useState<Class | null>(null);
+    const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChange((user) => {
@@ -124,6 +127,18 @@ export default function Dashboard() {
         setEndDate('');
         setCreatingClass(false);
         setError('');
+    };
+
+    const handleCopyCode = (code: string, e: React.MouseEvent) => {
+        e.stopPropagation();
+        navigator.clipboard.writeText(code);
+        setCopiedCode(code);
+        setTimeout(() => setCopiedCode(null), 2000);
+    };
+
+    const handleShareClass = (cls: Class, e: React.MouseEvent) => {
+        e.stopPropagation();
+        setShareClass(cls);
     };
 
     const openCreateModal = () => {
@@ -256,10 +271,18 @@ export default function Dashboard() {
                                         </div>
                                     </div>
 
-                                    <div className="bg-black/20 p-4 rounded-xl text-center border border-white/5">
+                                    <div className="bg-black/20 p-4 rounded-xl text-center border border-white/5" onClick={(e) => e.stopPropagation()}>
                                         <div className="text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">CLASS CODE</div>
-                                        <div className="text-2xl font-black tracking-widest text-indigo-400">
+                                        <div className="text-2xl font-black tracking-widest text-indigo-400 mb-2">
                                             {cls.code}
+                                        </div>
+                                        <div className="flex gap-2 justify-center">
+                                            <button onClick={(e) => handleCopyCode(cls.code, e)} className="px-3 py-1 bg-white/10 rounded-lg text-xs text-white/70 hover:bg-white/20 transition-all">
+                                                {copiedCode === cls.code ? 'Copied!' : 'Copy'}
+                                            </button>
+                                            <button onClick={(e) => handleShareClass(cls, e)} className="px-3 py-1 bg-indigo-500/20 rounded-lg text-xs text-indigo-300 hover:bg-indigo-500/30 transition-all">
+                                                Share
+                                            </button>
                                         </div>
                                     </div>
 
@@ -349,6 +372,14 @@ export default function Dashboard() {
                         </form>
                     </div>
                 </div>
+            )}
+            {/* Share Class Modal */}
+            {shareClass && (
+                <ShareClassModal
+                    classCode={shareClass.code}
+                    className={shareClass.name}
+                    onClose={() => setShareClass(null)}
+                />
             )}
         </main>
     );

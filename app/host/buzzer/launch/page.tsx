@@ -1,4 +1,5 @@
 'use client';
+import ClassSelector from '@/components/ClassSelector';
 
 import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
@@ -57,6 +58,10 @@ function BuzzerLaunchContent() {
     };
 
     if (!classId) return <div className="text-white p-8">Missing Class ID</div>;
+
+    if (!classId) {
+        return <ClassSelector toolName="Buzzer" toolIcon="🔔" />;
+    }
 
     return (
         <main className="min-h-screen p-8 transition-colors duration-300 bg-slate-900">

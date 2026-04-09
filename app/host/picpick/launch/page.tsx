@@ -9,6 +9,7 @@ import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { User } from 'firebase/auth';
 import HostMenu from '@/components/HostMenu';
+import ClassSelector from '@/components/ClassSelector';
 
 function LaunchPicPickContent() {
     const router = useRouter();
@@ -31,6 +32,10 @@ function LaunchPicPickContent() {
                 setUser(currentUser);
             }
         });
+    if (!classId) {
+        return <ClassSelector toolName="PicPick" toolIcon="📸" />;
+    }
+
         return () => unsubscribe();
     }, [router]);
 
