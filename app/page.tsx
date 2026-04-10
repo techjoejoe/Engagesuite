@@ -47,6 +47,12 @@ export default function Home() {
         </div>
         <div className="flex items-center gap-4">
           <Link 
+            href="/pricing" 
+            className="px-4 py-2 text-sm font-semibold whitespace-nowrap text-white hover:text-indigo-300 transition-colors"
+          >
+            Pricing
+          </Link>
+          <Link 
             href="/login" 
             className="px-4 py-2 text-sm font-semibold whitespace-nowrap text-white hover:text-indigo-300 transition-colors"
           >
