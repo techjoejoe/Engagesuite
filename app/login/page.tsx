@@ -32,12 +32,7 @@ function LoginContent() {
             } else {
                 const profile = await getUserProfile(user.uid);
                 if (profile?.role === 'host') {
-                const profile = await getUserProfile(user.uid);
-                if (profile?.role === 'host') {
                     router.push('/dashboard');
-                } else {
-                    router.push('/student/dashboard');
-                }
                 } else {
                     router.push('/student/dashboard');
                 }
@@ -60,12 +55,7 @@ function LoginContent() {
             } else {
                 const gProfile = await getUserProfile(gUser.uid);
                 if (gProfile?.role === 'host') {
-                const gProfile = await getUserProfile(gUser.uid);
-                if (gProfile?.role === 'host') {
                     router.push('/dashboard');
-                } else {
-                    router.push('/student/dashboard');
-                }
                 } else {
                     router.push('/student/dashboard');
                 }

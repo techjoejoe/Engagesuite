@@ -3,17 +3,20 @@ import Stripe from 'stripe';
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2024-12-18.acacia' as any,
-});
-
-// Initialize Firebase Admin (server-side)
-if (!getApps().length) {
-  initializeApp({
-    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'quiz2-1a35d',
+function getStripe() {
+  return new Stripe(process.env.STRIPE_SECRET_KEY || '', {
+    apiVersion: '2024-12-18.acacia' as any,
   });
 }
-const adminDb = getFirestore();
+
+function getAdminDb() {
+  if (!getApps().length) {
+    initializeApp({
+      projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'quiz2-1a35d',
+    });
+  }
+  return getFirestore();
+}
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
@@ -25,7 +28,7 @@ export async function POST(req: NextRequest) {
 
   let event: Stripe.Event;
   try {
-    event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+    event = getStripe().webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET);
   } catch (err: any) {
     console.error('Webhook signature verification failed:', err.message);
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
@@ -39,6 +42,7 @@ export async function POST(req: NextRequest) {
         const tier = session.metadata?.tier;
 
         if (uid && tier) {
+          const adminDb = getAdminDb();
           await adminDb.collection('subscriptions').doc(uid).set({
             tier,
             status: session.subscription ? 'active' : 'active',
@@ -62,6 +66,7 @@ export async function POST(req: NextRequest) {
                          subscription.status === 'active' ? 'active' :
                          subscription.status === 'past_due' ? 'past_due' : 'canceled';
 
+          const adminDb = getAdminDb();
           await adminDb.collection('subscriptions').doc(uid).set({
             tier: tier || 'starter',
             status,
@@ -79,6 +84,7 @@ export async function POST(req: NextRequest) {
         const uid = subscription.metadata?.uid;
 
         if (uid) {
+          const adminDb = getAdminDb();
           await adminDb.collection('subscriptions').doc(uid).set({
             tier: 'free',
             status: 'canceled',
@@ -93,9 +99,10 @@ export async function POST(req: NextRequest) {
         const invoice = event.data.object as Stripe.Invoice;
         const subId = (invoice as any).subscription as string;
         if (subId) {
-          const sub = await stripe.subscriptions.retrieve(subId);
+          const sub = await getStripe().subscriptions.retrieve(subId);
           const uid = sub.metadata?.uid;
           if (uid) {
+            const adminDb = getAdminDb();
             await adminDb.collection('subscriptions').doc(uid).set({
               status: 'past_due',
               updatedAt: Date.now(),

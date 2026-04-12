@@ -3,14 +3,18 @@ import Stripe from 'stripe';
 import { initializeApp, getApps } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2024-12-18.acacia' as any,
-});
-
-if (!getApps().length) {
-  initializeApp({ projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'quiz2-1a35d' });
+function getStripe() {
+  return new Stripe(process.env.STRIPE_SECRET_KEY || '', {
+    apiVersion: '2024-12-18.acacia' as any,
+  });
 }
-const adminDb = getFirestore();
+
+function getAdminDb() {
+  if (!getApps().length) {
+    initializeApp({ projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'quiz2-1a35d' });
+  }
+  return getFirestore();
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -20,7 +24,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing uid' }, { status: 400 });
     }
 
-    // Get customer ID from subscription doc
+    const adminDb = getAdminDb();
     const subDoc = await adminDb.collection('subscriptions').doc(uid).get();
     const customerId = subDoc.data()?.stripeCustomerId;
 
@@ -30,7 +34,7 @@ export async function POST(req: NextRequest) {
 
     const origin = req.headers.get('origin') || 'https://quiz2-1a35d.firebaseapp.com';
 
-    const session = await stripe.billingPortal.sessions.create({
+    const session = await getStripe().billingPortal.sessions.create({
       customer: customerId as string,
       return_url: `${origin}/dashboard`,
     });
