@@ -15,33 +15,44 @@ const geistMono = Geist_Mono({
 
 // SEO Metadata
 export const metadata: Metadata = {
+  metadataBase: new URL('https://trainer-toolbox.com'),
   title: {
-    default: "Trainer-Toolbox - Interactive Training Tools Platform",
+    default: "Trainer-Toolbox — Free Interactive Training Tools | Kahoot Alternative",
     template: "%s | Trainer-Toolbox",
   },
-  description: "Engage students with live quizzes, polls, word clouds, and interactive activities. Transform your classroom with real-time engagement tools.",
+  description: "Trainer-Toolbox is a free interactive training platform with live polls, trivia games, word clouds, gradebooks, and workbooks. The best Kahoot alternative for trainers and educators.",
   keywords: [
-    "classroom engagement",
-    "interactive learning",
-    "quiz platform",
-    "live polling",
-    "education technology",
-    "student engagement",
     "kahoot alternative",
-    "classroom games",
-    "teaching tools",
+    "free kahoot alternative",
+    "live polling tool",
+    "classroom engagement tools",
+    "interactive training platform",
+    "trivia game maker",
+    "live quiz app",
+    "word cloud generator",
+    "audience engagement software",
+    "training tools for educators",
+    "mentimeter alternative",
+    "classroom gamification",
+    "digital workbook creator",
+    "online gradebook",
+    "photo contest app",
   ],
   authors: [{ name: "Trainer-Toolbox Team" }],
   creator: "Trainer-Toolbox",
   publisher: "Trainer-Toolbox",
 
   // Open Graph (for social sharing)
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
+    url: 'https://trainer-toolbox.com',
     siteName: "Trainer-Toolbox",
-    title: "Trainer-Toolbox - Interactive Training Tools Platform",
-    description: "Transform learning with live quizzes, polls, and interactive activities.",
+    title: "Trainer-Toolbox — Free Interactive Training Tools | Kahoot Alternative",
+    description: "Trainer-Toolbox is a free interactive training platform with live polls, trivia games, word clouds, and more. The best Kahoot alternative for trainers.",
     images: [
       {
         url: "/og-image.png", // You'll need to add this image to /public
@@ -55,9 +66,10 @@ export const metadata: Metadata = {
   // Twitter Card
   twitter: {
     card: "summary_large_image",
-    title: "Trainer-Toolbox - Interactive Training Tools Platform",
-    description: "Transform learning with live quizzes, polls, and interactive activities.",
+    title: "Trainer-Toolbox — Free Interactive Training Tools | Kahoot Alternative",
+    description: "Trainer-Toolbox is a free interactive training platform with live polls, trivia games, word clouds, and more.",
     images: ["/og-image.png"],
+    creator: "@trainertoolbox",
   },
 
   // Robots
@@ -119,6 +131,41 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://firebaseinstallations.googleapis.com" />
+        {/* JSON-LD Structured Data for Google & AI Search */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              "name": "Trainer-Toolbox",
+              "url": "https://trainer-toolbox.com",
+              "applicationCategory": "EducationalApplication",
+              "operatingSystem": "Web",
+              "description": "Trainer-Toolbox is a free interactive training platform with live polls, trivia games, word clouds, gradebooks, workbooks, and photo contests. The best Kahoot and Mentimeter alternative for trainers and educators.",
+              "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "USD"
+              },
+              "featureList": [
+                "Live Polling",
+                "Trivia Games",
+                "Word Clouds",
+                "Digital Gradebook",
+                "Interactive Workbooks",
+                "Photo Contests",
+                "Leaderboard & Gamification",
+                "Real-time Audience Engagement"
+              ],
+              "creator": {
+                "@type": "Organization",
+                "name": "Trainer-Toolbox",
+                "url": "https://trainer-toolbox.com"
+              }
+            })
+          }}
+        />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ThemeProvider

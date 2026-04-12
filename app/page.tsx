@@ -227,9 +227,44 @@ export default function Home() {
       </div>
 
       {/* Footer */}
-      <footer className="relative z-10 border-t border-white/10 py-8">
-        <div className="container mx-auto px-6 text-center text-white/60 text-sm">
-          <p>© 2026 Trainer-Toolbox. Making learning fun, one question at a time.</p>
+      <footer className="relative z-10 border-t border-white/10 py-12">
+        <div className="container mx-auto px-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+            <div>
+              <h3 className="text-white font-bold mb-4">Features</h3>
+              <ul className="space-y-2 text-sm text-white/60">
+                <li><Link href="/features/live-polling" className="hover:text-white transition-colors">Live Polling</Link></li>
+                <li><Link href="/features/trivia-games" className="hover:text-white transition-colors">Trivia Games</Link></li>
+                <li><Link href="/features/word-cloud" className="hover:text-white transition-colors">Word Clouds</Link></li>
+                <li><Link href="/features/photo-contests" className="hover:text-white transition-colors">Photo Contests</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-white font-bold mb-4">Tools</h3>
+              <ul className="space-y-2 text-sm text-white/60">
+                <li><Link href="/features/gradebook" className="hover:text-white transition-colors">Gradebook</Link></li>
+                <li><Link href="/features/workbooks" className="hover:text-white transition-colors">Workbooks</Link></li>
+                <li><Link href="/features/leaderboard" className="hover:text-white transition-colors">Leaderboard</Link></li>
+                <li><Link href="/features" className="hover:text-white transition-colors">All Features</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-white font-bold mb-4">Resources</h3>
+              <ul className="space-y-2 text-sm text-white/60">
+                <li><Link href="/blog" className="hover:text-white transition-colors">Blog</Link></li>
+                <li><Link href="/signup" className="hover:text-white transition-colors">Sign Up Free</Link></li>
+                <li><Link href="/join" className="hover:text-white transition-colors">Join a Class</Link></li>
+                <li><Link href="/templates/public" className="hover:text-white transition-colors">Templates</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-white font-bold mb-4">Trainer-Toolbox</h3>
+              <p className="text-sm text-white/60">The free interactive training platform. A better alternative to Kahoot and Mentimeter for trainers and educators.</p>
+            </div>
+          </div>
+          <div className="text-center text-white/40 text-sm border-t border-white/10 pt-8">
+            <p>© 2026 Trainer-Toolbox. Making learning fun, one question at a time.</p>
+          </div>
         </div>
       </footer>
     </main>
