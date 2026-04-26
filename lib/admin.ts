@@ -4,7 +4,7 @@ import { db } from './firebase';
 import { UserProfile } from './auth';
 import { Subscription, SubscriptionTier, SubscriptionStatus } from './subscription';
 
-export const ADMIN_EMAIL = 'joe_o@mac.com';
+export const ADMIN_EMAIL = 'joe_o@me.com';
 
 export function isAdmin(email: string | null | undefined): boolean {
   return email?.toLowerCase() === ADMIN_EMAIL.toLowerCase();
