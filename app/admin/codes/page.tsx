@@ -9,7 +9,7 @@ import { User } from 'firebase/auth';
 type Tier = 'starter' | 'pro' | 'unlimited' | 'trial';
 
 const TIER_CONFIG: Record<Tier, { label: string; color: string; bg: string }> = {
-  starter: { label: 'Starter ($9.99)', color: 'text-blue-400', bg: 'bg-blue-500/20' },
+  starter: { label: 'Starter ($10)', color: 'text-blue-400', bg: 'bg-blue-500/20' },
   pro: { label: 'Pro ($15)', color: 'text-purple-400', bg: 'bg-purple-500/20' },
   unlimited: { label: 'Unlimited ($20)', color: 'text-teal-400', bg: 'bg-teal-500/20' },
   trial: { label: '14-Day Trial', color: 'text-amber-400', bg: 'bg-amber-500/20' },
@@ -111,7 +111,7 @@ export default function AdminCodesPage() {
             <div>
               <label className="block text-xs text-white/50 mb-1">Tier</label>
               <select value={selectedTier} onChange={(e) => setSelectedTier(e.target.value as Tier)} className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-indigo-500">
-                <option value="trial">14-Day Trial</option><option value="starter">Starter ($9.99/mo)</option><option value="pro">Pro ($15/mo)</option><option value="unlimited">Unlimited ($20/mo)</option>
+                <option value="trial">14-Day Trial</option><option value="starter">Starter ($10/mo)</option><option value="pro">Pro ($15/mo)</option><option value="unlimited">Unlimited ($20/mo)</option>
               </select>
             </div>
             <div><label className="block text-xs text-white/50 mb-1">Quantity</label><input type="number" min={1} max={50} value={batchCount} onChange={(e) => setBatchCount(Math.min(50, Math.max(1, parseInt(e.target.value) || 1)))} className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-indigo-500" /></div>

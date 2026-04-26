@@ -1,6 +1,5 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   // Build optimization
   reactStrictMode: true,
   
@@ -60,8 +59,6 @@ const nextConfig: NextConfig = {
           },
           {
             // Content Security Policy
-            // Note: 'unsafe-inline' and 'unsafe-eval' needed for Next.js dev mode
-            // In production, consider using nonces for inline scripts
             key: 'Content-Security-Policy',
             value: process.env.NODE_ENV === 'production'
               ? [
@@ -77,7 +74,7 @@ const nextConfig: NextConfig = {
                 "form-action 'self'",
                 "frame-ancestors 'self'",
               ].join('; ')
-              : '', // Don't apply CSP in development (causes issues with hot reload)
+              : '',
           },
         ],
       },
@@ -85,4 +82,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+module.exports = nextConfig;

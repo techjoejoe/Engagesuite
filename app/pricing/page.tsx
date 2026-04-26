@@ -11,7 +11,7 @@ const TIERS = [
   {
     id: 'starter' as SubscriptionTier,
     name: 'Starter',
-    price: '$9.99',
+    price: '$10',
     period: '/month',
     description: 'Perfect for trying out training tools',
     features: [
