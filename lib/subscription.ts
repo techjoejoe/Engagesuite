@@ -37,7 +37,7 @@ export const TIER_LIMITS: Record<SubscriptionTier, {
     maxStudentsPerClass: 15,
     tools: ['quizbattle', 'poll'],
     label: 'Starter',
-    price: '$9.99/mo',
+    price: '$10/mo',
   },
   pro: {
     maxClasses: 3,
