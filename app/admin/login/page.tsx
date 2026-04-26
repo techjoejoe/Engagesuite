@@ -3,6 +3,7 @@
 import { Suspense, useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { signInWithEmail, signInWithGoogle, getUserProfile, onAuthStateChange } from '@/lib/auth';
+import { isAdmin } from '@/lib/admin';
 import { ThemeToggle } from '@/components/ThemeToggle';
 
 function AdminLoginContent() {
@@ -20,8 +21,9 @@ function AdminLoginContent() {
         const unsubscribe = onAuthStateChange(async (user) => {
             if (user) {
                 const profile = await getUserProfile(user.uid);
-                if (profile?.role === 'host') {
-                    // Already logged in as host, redirect to dashboard
+                if (isAdmin(user.email)) {
+                    router.push('/admin');
+                } else if (profile?.role === 'host') {
                     router.push('/dashboard');
                 }
             }
@@ -47,6 +49,8 @@ function AdminLoginContent() {
 
             if (redirectUrl) {
                 router.push(decodeURIComponent(redirectUrl));
+            } else if (isAdmin(user.email)) {
+                router.push('/admin');
             } else if (profile?.role === 'host') {
                 router.push('/dashboard');
             } else {
@@ -67,7 +71,9 @@ function AdminLoginContent() {
             const user = await signInWithGoogle('host');
             const profile = await getUserProfile(user.uid);
 
-            if (profile?.role === 'host') {
+            if (isAdmin(user.email)) {
+                router.push('/admin');
+            } else if (profile?.role === 'host') {
                 router.push('/dashboard');
             } else {
                 router.push('/student/dashboard');
